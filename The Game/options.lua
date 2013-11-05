@@ -31,7 +31,8 @@ function scene:createScene (event)
 	local group = self.view
 	
 	-- create a grey rectangle as the backdrop
-	local background = display.newImageRect( "optionsScreen.png", display.contentWidth, display.contentHeight )
+	local background = display.newRect( 0,0, display.contentWidth, display.contentHeight )
+	background:setFillColor(255,235,205)
 	background:setReferencePoint( display.TopLeftReferencePoint )
 	background.x, background.y = 0, 0
 
@@ -47,7 +48,42 @@ function scene:createScene (event)
 	menuBtn:setReferencePoint( display.CenterReferencePoint )
 	menuBtn.x = 77
 	menuBtn.y = 20
-
+    
+    easyMode = widget.newButton{
+    	label="Easy",
+    	labelColor = { default = {34,139,34}, over ={100,100,250}},
+    	defaultFile="button.png",
+    	overFile="button-over.png",
+    	width=154, height=40,
+    	
+    }
+    easyMode:setReferencePoint(display.CenterReferencePoint)
+    easyMode.x = 200
+    easyMode.y = 240
+    
+    mediumMode = widget.newButton{
+    	label="Medium",
+    	labelColor = { default = {0,0,225}, over ={100,100,250}},
+    	defaultFile="button.png",
+    	overFile="button-over.png",
+    	width=154, height=40,
+    	
+    }
+    mediumMode:setReferencePoint(display.CenterReferencePoint)
+    mediumMode.x = 200
+    mediumMode.y = 290
+    
+    hardMode = widget.newButton{
+    	label="Hard",
+    	labelColor = { default = {255,0,0}, over ={100,100,250}},
+    	defaultFile="button.png",
+    	overFile="button-over.png",
+    	width=154, height=40,
+    	
+    }
+    hardMode:setReferencePoint(display.CenterReferencePoint)
+    hardMode.x = 200
+    hardMode.y = 340
 	local titleText = display.newText( "Options", display.contentWidth * .45, 50, "Canterbury" ,display.contentHeight * .1)
 	titleText:setTextColor{ 0,0,0}
 	
@@ -59,6 +95,7 @@ function scene:createScene (event)
 	
 	-- all display objects must be inserted into group
 	group:insert( background )
+	group:insert(easyMode)
 	group:insert( menuBtn )
 	group:insert( titleText )
 	group:insert( difficultyText )
