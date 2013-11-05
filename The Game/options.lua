@@ -96,6 +96,8 @@ function scene:createScene (event)
 	-- all display objects must be inserted into group
 	group:insert( background )
 	group:insert(easyMode)
+	group:insert( mediumMode )
+	group:insert( hardMode )
 	group:insert( menuBtn )
 	group:insert( titleText )
 	group:insert( difficultyText )
