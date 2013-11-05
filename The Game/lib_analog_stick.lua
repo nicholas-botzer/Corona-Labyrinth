@@ -71,19 +71,21 @@ function NewStick( Props )
         Group.snapBackSpeed = Props.snapBackSpeed ~= nil and Props.snapBackSpeed or .7
  
         Group.Border = display.newCircle(0,0,Props.borderSize)
-        Group.Border.strokeWidth = 1
-        Group.Border:setFillColor  (Props.R,Props.G,Props.B,46)
-        Group.Border:setStrokeColor(Props.R,Props.G,Props.B,255)
+        Group.Border.strokeWidth = 2
+        --Group.Border:setFillColor  (Props.R,Props.G,Props.B,46)
+        --Group.Border:setStrokeColor(Props.R,Props.G,Props.B,255)
+        Group.Border:setFillColor  (Props.R,Props.G,Props.B,0)
+        Group.Border:setStrokeColor(Props.R,Props.G,Props.B,0)
         Group:insert(Group.Border)
  
         Group.Thumb = display.newCircle(0,0,Props.thumbSize)
-        Group.Thumb.strokeWidth = 1
+        Group.Thumb.strokeWidth = 3
         Group.Thumb:setFillColor  (Props.R,Props.G,Props.B,96)
         Group.Thumb:setStrokeColor(Props.R,Props.G,Props.B,255)
         Group.Thumb.x0 = 0
         Group.Thumb.y0 = 0
         Group:insert(Group.Thumb)
- 
+       
         ---------------------------------------------
         -- METHOD: DELETE STICK
         ---------------------------------------------

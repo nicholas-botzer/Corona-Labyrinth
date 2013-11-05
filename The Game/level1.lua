@@ -55,8 +55,8 @@ function scene:createScene (event)
 		{
 			x = display.contentWidth * .1,
 			y = display.contentHeight * .80,
-			thumbSize = 25,
-			borderSize = 50,
+			thumbSize = 50,
+			borderSize = 30,
 			snapBackSpeed = .75,
 			R = 255,
 			G = 255,
