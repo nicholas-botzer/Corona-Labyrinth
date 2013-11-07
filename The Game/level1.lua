@@ -51,7 +51,6 @@ function scene:createScene (event)
 	background:setReferencePoint( display.TopLeftReferencePoint )
 	background.x, background.y = 0, 0
 	
-	
 	background:setMask(mask) 
 	
 	-- add an inventory button
@@ -64,8 +63,8 @@ function scene:createScene (event)
 		onRelease = onInvBtnRelease	-- event listener function
 	}
 	invBtn:setReferencePoint( display.CenterReferencePoint )
-	invBtn.x = 800 - 77
-	invBtn.y = 20
+	invBtn.x = display.contentWidth - invBtn.width * .5
+	invBtn.y = invBtn.height * .5
 	
 	--add a swordBtn
 	swordBtn = widget.newButton{

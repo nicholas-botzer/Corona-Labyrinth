@@ -46,8 +46,8 @@ function scene:createScene (event)
 		onRelease = onMenuBtnRelease	-- event listener function
 	}
 	menuBtn:setReferencePoint( display.CenterReferencePoint )
-	menuBtn.x = 77
-	menuBtn.y = 20
+	menuBtn.x = menuBtn.width * .5
+	menuBtn.y = menuBtn.height * .5
     
     easyMode = widget.newButton{
     	label="Easy",
