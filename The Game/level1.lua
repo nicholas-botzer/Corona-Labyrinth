@@ -33,11 +33,18 @@ function scene:createScene (event)
 	local group = self.view
 	physics.start()
 	physics.setGravity(0,0)
-	-- create a grey rectangle as the backdrop
+	--Black background 
+	local blkbg = display.newRect(0, 0, display.contentWidth, display.contentHeight)
+	blkbg:setFillColor(0) 
+
+	--Scene background (not visible unless in circle) 
 	local background = display.newImageRect( "title.png", display.contentWidth, display.contentHeight )
 	background:setReferencePoint( display.TopLeftReferencePoint )
 	background.x, background.y = 0, 0
-
+	
+	local mask = graphics.newMask("circlemask.png")
+	background:setMask(mask) 
+	
 	-- add an inventory button
 	invBtn = widget.newButton{
 		label="Inv",
@@ -56,7 +63,7 @@ function scene:createScene (event)
 			x = display.contentWidth * .1,
 			y = display.contentHeight * .80,
 			thumbSize = 50,
-			borderSize = 30,
+			borderSize = 55,
 			snapBackSpeed = .75,
 			R = 255,
 			G = 255,
@@ -64,16 +71,14 @@ function scene:createScene (event)
 		} )
 	
 	rect = display.newRect(50, 50, 50 , 50)
-	local wall = display.newRect(400, 200, 10 , 200)
+	--local wall = display.newRect(400, 200, 10 , 200)
 	physics.addBody(rect, { density=1, friction=0.1, bounce=1 })
-	physics.addBody(wall, "static", {friction=.5})
-	
-	-- all display objects must be inserted into group
+	-- all display objects must be inserted into group in layer order 
+	group:insert( blkbg )
 	group:insert( background )
 	group:insert( analogStick )
 	group:insert( invBtn )
 	group:insert( rect )
-	group:insert( wall )
 end
 
 -- Called immediately after scene has moved onscreen:
@@ -84,7 +89,6 @@ end
 -- Called when scene is about to move offscreen:
 function scene:exitScene( event )
 	local group = self.view
-	
 end
 
 -- If scene's view is removed, scene:destroyScene() will be called just prior to:
@@ -99,7 +103,7 @@ end
 local function main( event )
         
         -- MOVE THE SHIP
-        analogStick:move(rect, 7.0, true)
+        analogStick:move(rect, 8.0, true)
 
 end
 
