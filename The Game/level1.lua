@@ -15,6 +15,8 @@ local physics = require("physics")
 local rect, invBtn, screenW, screenH, halfW = display.contentWidth, display.contentHeight, display.contentWidth*0.5
 local swordBtn
 local swordClashSound = audio.loadSound("Sword clash sound effect.mp3")
+local blkbg = display.newRect(0, 0, display.contentWidth, display.contentHeight)
+local mask = graphics.newMask("circlemask.png")
 
 -- 'onRelease' event listener
 local function onInvBtnRelease()
@@ -41,7 +43,7 @@ function scene:createScene (event)
 	physics.start()
 	physics.setGravity(0,0)
 	--Black background 
-	local blkbg = display.newRect(0, 0, display.contentWidth, display.contentHeight)
+	
 	blkbg:setFillColor(0) 
 
 	--Scene background (not visible unless in circle) 
@@ -49,7 +51,7 @@ function scene:createScene (event)
 	background:setReferencePoint( display.TopLeftReferencePoint )
 	background.x, background.y = 0, 0
 	
-	local mask = graphics.newMask("circlemask.png")
+	
 	background:setMask(mask) 
 	
 	-- add an inventory button
