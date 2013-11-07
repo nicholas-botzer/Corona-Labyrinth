@@ -4,6 +4,7 @@
 --
 -----------------------------------------------------------------------------------------
 
+require("main") 
 local storyboard = require( "storyboard" )
 local scene = storyboard.newScene()
 
@@ -107,6 +108,7 @@ end
 -- Called immediately after scene has moved onscreen:
 function scene:enterScene( event )
 	local group = self.view
+	storyboard.returnTo = "menu" 
 end
 
 -- Called when scene is about to move offscreen:

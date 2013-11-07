@@ -4,6 +4,7 @@
 --
 -----------------------------------------------------------------------------------------
 
+require("main") 
 local storyboard = require( "storyboard" )
 local scene = storyboard.newScene()
 
@@ -84,6 +85,7 @@ end
 --Called immediately after scene has moved onscreen:
 function scene:enterScene (event)
 	local group = self.view
+	storyboard.returnTo = "menu" 
 	--insert code here (e.g. stop timers, remove listenets, unload sounds etc)
 end
 
@@ -108,20 +110,6 @@ function scene:destroyScene( event )
 	end
 end
 
---Codes the keys for back button functionality 
-local function onKeyEvent(event)
-	local phase = event.phase
-    local keyName = event.keyName 
-    
-	if ( "back" == keyName and phase == "up" ) then
-		storyboard.gotoScene( "menu", "fade", 500 )
-		return true	-- indicates successful touch
-		
-	else 
-		return false ; 
-	end
-end
-
 -----------------------------------------------------------------------------------------
 -- END OF YOUR IMPLEMENTATION
 -----------------------------------------------------------------------------------------
@@ -139,8 +127,6 @@ scene:addEventListener( "exitScene", scene )
 -- automatically unloaded in low memory situations, or explicitly via a call to
 -- storyboard.purgeScene() or storyboard.removeScene().
 scene:addEventListener( "destroyScene", scene )
-
-Runtime:addEventListener( "key", onKeyEvent )
 
 -----------------------------------------------------------------------------------------
 

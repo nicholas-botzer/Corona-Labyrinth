@@ -10,6 +10,7 @@ system.activate("multitouch")
 local widget = require "widget"
 local StickLib   = require("lib_analog_stick")
 local physics = require("physics")
+require("main") 
 
 -- declarations
 local rect, invBtn, screenW, screenH, halfW = display.contentWidth, display.contentHeight, display.contentWidth*0.5
@@ -104,6 +105,7 @@ end
 -- Called immediately after scene has moved onscreen:
 function scene:enterScene( event )
 	local group = self.view
+	storyboard.returnTo = "menu" 
 end
 
 -- Called when scene is about to move offscreen:
@@ -129,19 +131,6 @@ local function main( event )
 
 end
 
---Codes the keys for back button functionality 
-local function onKeyEvent(event)
-	local phase = event.phase
-    local keyName = event.keyName 
-    
-	if ( "back" == keyName and phase == "up" ) then
-		storyboard.gotoScene( "menu", "fade", 500 )
-		return true	-- indicates successful touch
-		
-	else 
-		return false ; 
-	end
-end
 -----------------------------------------------------------------------------------------
 -- END OF YOUR IMPLEMENTATION
 -----------------------------------------------------------------------------------------
@@ -159,8 +148,6 @@ scene:addEventListener( "exitScene", scene )
 -- automatically unloaded in low memory situations, or explicitly via a call to
 -- storyboard.purgeScene() or storyboard.removeScene().
 scene:addEventListener( "destroyScene", scene )
-
-Runtime:addEventListener( "key", onKeyEvent )
 
 Runtime:addEventListener( "enterFrame", main )
 -----------------------------------------------------------------------------------------
