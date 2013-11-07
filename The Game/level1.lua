@@ -13,12 +13,19 @@ local physics = require("physics")
 
 -- declarations
 local rect, invBtn, screenW, screenH, halfW = display.contentWidth, display.contentHeight, display.contentWidth*0.5
+local swordBtn
+local swordClashSound = audio.loadSound("Sword clash sound effect.mp3")
 
 -- 'onRelease' event listener
 local function onInvBtnRelease()
 	-- go to inventory.lua scene
 	storyboard.gotoScene( "inventory", "fade", 500 )
 	return true	-- indicates successful touch
+end
+
+local function onSwordBtnRelease()
+	audio.play( swordClashSound )
+	return true
 end
 
 -----------------------------------------------------------------------------------------
@@ -58,6 +65,19 @@ function scene:createScene (event)
 	invBtn.x = 800 - 77
 	invBtn.y = 20
 	
+	--add a swordBtn
+	swordBtn = widget.newButton{
+		label="Attack",
+		labelColor = {default = {0}, over = {128} },
+		defaultFile="swordIcon.png",
+		overFile="swordIcon.png",
+		width = 75, height = 75,
+		onRelease = onSwordBtnRelease
+	}
+	swordBtn:setReferencePoint( display.CenterReferencePoint )
+	swordBtn.x = 725
+	swordBtn.y = 375
+	
 	analogStick = StickLib.NewStick(
 		{
 			x = display.contentWidth * .1,
@@ -70,7 +90,7 @@ function scene:createScene (event)
 			B = 255
 		} )
 	
-	rect = display.newRect(50, 50, 50 , 50)
+	rect = display.newRect(375, 225, 50 , 50)
 	--local wall = display.newRect(400, 200, 10 , 200)
 	physics.addBody(rect, { density=1, friction=0.1, bounce=1 })
 	-- all display objects must be inserted into group in layer order 
@@ -78,6 +98,7 @@ function scene:createScene (event)
 	group:insert( background )
 	group:insert( analogStick )
 	group:insert( invBtn )
+	group:insert( swordBtn )
 	group:insert( rect )
 end
 
@@ -103,7 +124,7 @@ end
 local function main( event )
         
         -- MOVE THE SHIP
-        analogStick:move(rect, 8.0, true)
+        analogStick:rotate(rect, true)
 
 end
 

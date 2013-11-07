@@ -104,6 +104,13 @@ function NewStick( Props )
                 Obj.x = Obj.x + Cos( Rad(self.angle-90) ) * (maxSpeed * self.percent) 
                 Obj.y = Obj.y + Sin( Rad(self.angle-90) ) * (maxSpeed * self.percent) 
         end
+		
+		---------------------------------------------
+		-- METHOD: ROTATE AN OBJECT
+		---------------------------------------------
+		function Group:rotate(Obj, rotate)
+				if rotate == true then Obj.rotation = self.angle end
+		end
         
         ---------------------------------------------
         -- GETTER METHODS
