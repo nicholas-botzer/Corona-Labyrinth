@@ -83,7 +83,7 @@ function scene:createScene (event)
 		{
 			x = display.contentWidth * .1,
 			y = display.contentHeight * .80,
-			thumbSize = 50,
+			thumbSize = 60,
 			borderSize = 55,
 			snapBackSpeed = .75,
 			R = 255,
