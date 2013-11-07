@@ -15,8 +15,8 @@ local physics = require("physics")
 local rect, invBtn, screenW, screenH, halfW = display.contentWidth, display.contentHeight, display.contentWidth*0.5
 local swordBtn
 local swordClashSound = audio.loadSound("Sword clash sound effect.mp3")
-local blkbg = display.newRect(0, 0, display.contentWidth, display.contentHeight)
 local mask = graphics.newMask("circlemask.png")
+local background
 
 -- 'onRelease' event listener
 local function onInvBtnRelease()
@@ -42,16 +42,16 @@ function scene:createScene (event)
 	local group = self.view
 	physics.start()
 	physics.setGravity(0,0)
-	--Black background 
-	
-	blkbg:setFillColor(0) 
 
 	--Scene background (not visible unless in circle) 
-	local background = display.newImageRect( "title.png", display.contentWidth, display.contentHeight )
+	background = display.newImageRect( "title.png", display.contentWidth, display.contentHeight )
 	background:setReferencePoint( display.TopLeftReferencePoint )
 	background.x, background.y = 0, 0
 	
-	background:setMask(mask) 
+	-- background:setMask(mask)
+	background:setMask(mask)
+	--group.maskX = display.contentWidth * .5
+	--group.maskY = display.contentHeight * .5
 	
 	-- add an inventory button
 	invBtn = widget.newButton{
@@ -79,6 +79,7 @@ function scene:createScene (event)
 	swordBtn.x = 725
 	swordBtn.y = 375
 	
+	-- adds an analog stick
 	analogStick = StickLib.NewStick(
 		{
 			x = display.contentWidth * .1,
@@ -95,7 +96,6 @@ function scene:createScene (event)
 	--local wall = display.newRect(400, 200, 10 , 200)
 	physics.addBody(rect, { density=1, friction=0.1, bounce=1 })
 	-- all display objects must be inserted into group in layer order 
-	group:insert( blkbg )
 	group:insert( background )
 	group:insert( analogStick )
 	group:insert( invBtn )
@@ -126,6 +126,7 @@ local function main( event )
         
         -- MOVE THE SHIP
         analogStick:rotate(rect, true)
+		analogStick:slide(background, 8.0)
 
 end
 

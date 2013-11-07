@@ -106,6 +106,14 @@ function NewStick( Props )
         end
 		
 		---------------------------------------------
+        -- METHOD: SLIDE AN OBJECT
+        ---------------------------------------------
+        function Group:slide(Obj, maxSpeed)
+                Obj.x =  Obj.x + Cos( Rad(self.angle-90) ) * (maxSpeed * self.percent) 
+                Obj.y =  Obj.y + Sin( Rad(self.angle-90) ) * (maxSpeed * self.percent) 
+        end
+		
+		---------------------------------------------
 		-- METHOD: ROTATE AN OBJECT
 		---------------------------------------------
 		function Group:rotate(Obj, rotate)
