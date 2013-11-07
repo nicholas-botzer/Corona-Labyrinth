@@ -15,7 +15,8 @@ local physics = require("physics")
 local rect, invBtn, screenW, screenH, halfW = display.contentWidth, display.contentHeight, display.contentWidth*0.5
 local swordBtn
 local swordClashSound = audio.loadSound("Sword clash sound effect.mp3")
-local mask = graphics.newMask("circlemask.png")
+--local mask = graphics.newMask("circlemask.png")
+local mask = graphics.newMask("masked.png")
 local background
 
 -- 'onRelease' event listener
