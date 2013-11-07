@@ -47,11 +47,8 @@ function scene:createScene (event)
 	background = display.newImageRect( "title.png", display.contentWidth, display.contentHeight )
 	background:setReferencePoint( display.TopLeftReferencePoint )
 	background.x, background.y = 0, 0
-	
-	-- background:setMask(mask)
+
 	background:setMask(mask)
-	--group.maskX = display.contentWidth * .5
-	--group.maskY = display.contentHeight * .5
 	
 	-- add an inventory button
 	invBtn = widget.newButton{
