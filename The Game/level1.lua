@@ -16,7 +16,7 @@ local rect, invBtn, screenW, screenH, halfW = display.contentWidth, display.cont
 local swordBtn
 local swordClashSound = audio.loadSound("Sword clash sound effect.mp3")
 --local mask = graphics.newMask("circlemask.png")
-local mask = graphics.newMask("masked.png")
+mask = graphics.newMask("masked.png")
 local background
 
 -- 'onRelease' event listener
@@ -122,12 +122,26 @@ end
 
 local function main( event )
         
-        -- MOVE THE SHIP
-        analogStick:rotate(rect, true)
-		analogStick:slide(background, 8.0)
+	-- MOVE THE SHIP
+    analogStick:rotate(rect, true)
+    --analogStick:move(mask, 8.0, false)
+	analogStick:slide(background, 8.0)
 
 end
 
+--Codes the keys for back button functionality 
+local function onKeyEvent(event)
+	local phase = event.phase
+    local keyName = event.keyName 
+    
+	if ( "back" == keyName and phase == "up" ) then
+		storyboard.gotoScene( "menu", "fade", 500 )
+		return true	-- indicates successful touch
+		
+	else 
+		return false ; 
+	end
+end
 -----------------------------------------------------------------------------------------
 -- END OF YOUR IMPLEMENTATION
 -----------------------------------------------------------------------------------------
@@ -146,6 +160,7 @@ scene:addEventListener( "exitScene", scene )
 -- storyboard.purgeScene() or storyboard.removeScene().
 scene:addEventListener( "destroyScene", scene )
 
+Runtime:addEventListener( "key", onKeyEvent )
 
 Runtime:addEventListener( "enterFrame", main )
 -----------------------------------------------------------------------------------------
