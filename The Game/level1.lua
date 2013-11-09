@@ -68,10 +68,10 @@ function scene:createScene (event)
 	--add a swordBtn
 	swordBtn = widget.newButton{
 		label="Attack",
-		labelColor = {default = {0}, over = {128} },
+		labelColor = {default = {255}, over = {128} },
 		defaultFile="swordIcon.png",
 		overFile="swordIcon.png",
-		width = 75, height = 75,
+		width = 65, height = 75,
 		onRelease = onSwordBtnRelease
 	}
 	swordBtn:setReferencePoint( display.CenterReferencePoint )

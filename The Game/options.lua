@@ -32,8 +32,8 @@ function scene:createScene (event)
 	local group = self.view
 	
 	-- create a grey rectangle as the backdrop
-	local background = display.newRect( 0,0, display.contentWidth, display.contentHeight )
-	background:setFillColor(255,235,205)
+	local background = display.newImageRect( "optionsScreen.png", display.contentWidth, display.contentHeight )
+	--background:setFillColor(255,235,205)
 	background:setReferencePoint( display.TopLeftReferencePoint )
 	background.x, background.y = 0, 0
 
