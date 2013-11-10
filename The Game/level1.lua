@@ -54,7 +54,7 @@ function scene:createScene (event)
 	
 	-- add an inventory button
 	invBtn = widget.newButton{
-		label="Inv",
+		label="Inventory",
 		labelColor = { default = {255}, over= {128} },
 		defaultFile="button.png",
 		overFile="button-over.png",

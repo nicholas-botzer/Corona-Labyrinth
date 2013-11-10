@@ -50,10 +50,6 @@ function scene:createScene (event)
 		width=154, height=40,
 		onRelease = onMenuBtnRelease	-- event listener function
 	}
-	menuBtn:setReferencePoint( display.CenterReferencePoint )
-	menuBtn.x = menuBtn.width * .5
-	menuBtn.y = menuBtn.height * .5
-
 	
 	backBtn = widget.newButton{
 		label="Back",
@@ -64,9 +60,12 @@ function scene:createScene (event)
 		onRelease = onBackBtnRelease	-- event listener function
 	}
 	backBtn:setReferencePoint( display.CenterReferencePoint )
-	backBtn.x = backBtn.width * .5
-	backBtn.y = display.contentHeight - backBtn.height * .5
+	backBtn.x = backBtn.width *.5 
+	backBtn.y = menuBtn.height * .5 
 	
+	menuBtn:setReferencePoint( display.CenterReferencePoint )
+	menuBtn.x = display.contentWidth - menuBtn.width * .5 
+	menuBtn.y = menuBtn.height * .5
 	
 	local titleText = display.newText( "Inventory", display.contentWidth * .4, 50, "Canterbury" ,display.contentHeight * .1)
 	titleText:setTextColor{ 0,0,0}
