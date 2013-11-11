@@ -20,6 +20,26 @@ local function onMenuBtnRelease()
 	return true	-- indicates successful touch
 end
 
+local function onRelease(btnName)
+    
+    easyR.isVisible = false ; 
+    medR.isVisible = false ; 
+    hardR.isVisible = false ; 
+    
+    if(btnName == "easy") then 
+    	easyR.isVisible = true ; 
+
+    elseif(btnName == "med") then 
+    	medR.isVisible = true ; 
+    
+    else 
+    	hardR.isVisible = true ; 
+    	
+    end 
+
+    return true ;
+end
+
 -----------------------------------------------------------------------------------------
 -- BEGINNING OF YOUR IMPLEMENTATION
 --
@@ -49,6 +69,33 @@ function scene:createScene (event)
 	menuBtn:setReferencePoint( display.CenterReferencePoint )
 	menuBtn.x = menuBtn.width * .5
 	menuBtn.y = menuBtn.height * .5
+
+    easyR = display.newRect(200, 240, 154, 40) 
+    easyR:setReferencePoint(display.CenterReferencePoint) 
+    easyR.x = 200 
+    easyR.y = 240 
+    easyR.isVisible = false ;
+    easyR.strokeWidth = 3
+    easyR:setFillColor(180,0,0)
+    easyR:setStrokeColor(180,0,0) 
+    
+    medR = display.newRect(200, 240, 154, 40) 
+    medR:setReferencePoint(display.CenterReferencePoint) 
+    medR.x = 200 
+    medR.y = 290 
+    medR.isVisible = true ;
+    medR.strokeWidth = 3
+    medR:setFillColor(180,0,0)
+    medR:setStrokeColor(180,0,0) 
+    
+    hardR = display.newRect(200, 240, 154, 40) 
+    hardR:setReferencePoint(display.CenterReferencePoint) 
+    hardR.x = 200 
+    hardR.y = 340 
+    hardR.isVisible = false ;
+    hardR.strokeWidth = 3
+    hardR:setFillColor(180,0,0)
+    hardR:setStrokeColor(180,0,0) 
     
     easyMode = widget.newButton{
     	label="Easy",
@@ -56,6 +103,7 @@ function scene:createScene (event)
     	defaultFile="button.png",
     	overFile="button-over.png",
     	width=154, height=40,
+    	onRelease = function() return onRelease("easy") end
     	
     }
     easyMode:setReferencePoint(display.CenterReferencePoint)
@@ -68,6 +116,7 @@ function scene:createScene (event)
     	defaultFile="button.png",
     	overFile="button-over.png",
     	width=154, height=40,
+    	onRelease = function() return onRelease("med") end
     	
     }
     mediumMode:setReferencePoint(display.CenterReferencePoint)
@@ -80,11 +129,13 @@ function scene:createScene (event)
     	defaultFile="button.png",
     	overFile="button-over.png",
     	width=154, height=40,
+    	onRelease = function() return onRelease("hard") end
     	
     }
     hardMode:setReferencePoint(display.CenterReferencePoint)
     hardMode.x = 200
     hardMode.y = 340
+    
 	local titleText = display.newText( "Options", display.contentWidth * .45, 50, "Canterbury" ,display.contentHeight * .1)
 	titleText:setTextColor{ 0,0,0}
 	
@@ -96,8 +147,11 @@ function scene:createScene (event)
 	
 	-- all display objects must be inserted into group
 	group:insert( background )
+	group:insert(easyR)
 	group:insert(easyMode)
+	group:insert(medR) 
 	group:insert( mediumMode )
+	group:insert(hardR)
 	group:insert( hardMode )
 	group:insert( menuBtn )
 	group:insert( titleText )
