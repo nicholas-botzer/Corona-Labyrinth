@@ -63,6 +63,7 @@ function scene:createScene ( event )
 	playBtn.x = display.contentWidth*.75
 	playBtn.y = display.contentHeight * .85
 	
+	-- create a widget button which will load options.lua
 	optionsBtn = widget.newButton{
 		label="Options",
 		labelColor = { default={255}, over={128} },

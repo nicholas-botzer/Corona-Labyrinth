@@ -22,16 +22,15 @@ end
 
 local function onRelease(btnName)    
     if(btnName == "easy") then 
-    	selected.y = 240 
+    	selected.y = easyMode.y
 
     elseif(btnName == "med") then 
-    	selected.y = 290 
+    	selected.y = mediumMode.y
     
     else 
-    	selected.y = 340  
-    	
+    	selected.y = hardMode.y
+   
     end 
-
     return true ;
 end
 
@@ -106,7 +105,6 @@ function scene:createScene (event)
     	overFile="button-over.png",
     	width=154, height=40,
     	onRelease = function() return onRelease("hard") end
-    	
     }
     hardMode:setReferencePoint(display.CenterReferencePoint)
     hardMode.x = 200
@@ -123,8 +121,8 @@ function scene:createScene (event)
 	
 	-- all display objects must be inserted into group
 	group:insert( background )
-	group:insert(selected)
-	group:insert(easyMode)
+	group:insert( selected )	-- the red rectangle behind the difficulty
+	group:insert( easyMode )
 	group:insert( mediumMode )
 	group:insert( hardMode )
 	group:insert( menuBtn )
@@ -151,6 +149,18 @@ function scene:destroyScene( event )
 	if menuBtn then
 		menuBtn:removeSelf()
 		menuBtn = nil
+	end
+	if easyMode then
+		easyMode:removeSelf()
+		easyMode = nil
+	end
+	if mediumMode then
+		mediumMode:removeSelf()
+		mediumMode = nil
+	end
+	if mediumMode then
+		mediumMode:removeSelf()
+		mediumMode = nil
 	end
 end
 

@@ -16,9 +16,7 @@ require("main")
 local rect, invBtn, screenW, screenH, halfW = display.contentWidth, display.contentHeight, display.contentWidth*0.5
 local swordBtn
 local swordClashSound = audio.loadSound("Sword clash sound effect.mp3")
---local mask = graphics.newMask("circlemask.png")
-mask = graphics.newMask("masked.png")
-local background
+local background, wall, ground, mask
 
 -- 'onRelease' event listener
 local function onInvBtnRelease()
@@ -46,11 +44,18 @@ function scene:createScene (event)
 	physics.setGravity(0,0)
 
 	--Scene background (not visible unless in circle) 
-	background = display.newImageRect( "title.png", display.contentWidth, display.contentHeight )
-	background:setReferencePoint( display.TopLeftReferencePoint )
-	background.x, background.y = 0, 0
+	--background = display.newImageRect( "title.png", display.contentWidth, display.contentHeight )
+	--background:setReferencePoint( display.TopLeftReferencePoint )
+	--background.x, background.y = 0, 0
+	
+	mask = display.newImageRect( "masked2.png", display.contentWidth, display.contentHeight )
+	mask:setReferencePoint( display.TopLeftReferencePoint )
+	mask.x, mask.y = 0, 0
 
-	background:setMask(mask)
+	ground = display.newImageRect( "ground.jpg", 1600, 1600 )
+	ground:setReferencePoint( display.TopLeftReferencePoint )
+	ground.x, ground.y = 0, 0
+	
 	
 	-- add an inventory button
 	invBtn = widget.newButton{
@@ -92,14 +97,18 @@ function scene:createScene (event)
 		} )
 	
 	rect = display.newRect(375, 225, 50 , 50)
-	--local wall = display.newRect(400, 200, 10 , 200)
+	wall = display.newRect(200, 200, 10 , 200)
 	physics.addBody(rect, { density=1, friction=0.1, bounce=1 })
+	physics.addBody( wall , "static", { friction=0.5 })
+	
 	-- all display objects must be inserted into group in layer order 
-	group:insert( background )
+	--group:insert( background )
+	group:insert( ground )
+	group:insert( rect )
+	group:insert( mask )
 	group:insert( analogStick )
 	group:insert( invBtn )
 	group:insert( swordBtn )
-	group:insert( rect )
 end
 
 -- Called immediately after scene has moved onscreen:
@@ -126,8 +135,9 @@ local function main( event )
         
 	-- MOVE THE SHIP
     analogStick:rotate(rect, true)
-    --analogStick:move(mask, 8.0, false)
-	analogStick:slide(background, 8.0)
+	--analogStick:slide(background, 8.0)
+	analogStick:slide(ground, 8.0)
+	analogStick:slide(wall, 8.0)
 
 end
 
