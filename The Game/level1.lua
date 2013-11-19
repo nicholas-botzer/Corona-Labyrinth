@@ -17,6 +17,7 @@ local rect, invBtn, screenW, screenH, halfW = display.contentWidth, display.cont
 local swordBtn
 local swordClashSound = audio.loadSound("Sword clash sound effect.mp3")
 local background, wall, ground, mask
+local speed = 8.0
 
 -- 'onRelease' event listener
 local function onInvBtnRelease()
@@ -28,6 +29,15 @@ end
 local function onSwordBtnRelease()
 	audio.play( swordClashSound )
 	return true
+end
+
+local function onCollision( event )
+        if ( event.phase == "began" ) then
+			speed = 0.0
+        end
+		if ( event.phase == "ended" ) then
+			speed = 8.0
+        end
 end
 
 -----------------------------------------------------------------------------------------
@@ -43,10 +53,6 @@ function scene:createScene (event)
 	physics.start()
 	physics.setGravity(0,0)
 
-	--Scene background (not visible unless in circle) 
-	--background = display.newImageRect( "title.png", display.contentWidth, display.contentHeight )
-	--background:setReferencePoint( display.TopLeftReferencePoint )
-	--background.x, background.y = 0, 0
 	
 	mask = display.newImageRect( "masked2.png", display.contentWidth, display.contentHeight )
 	mask:setReferencePoint( display.TopLeftReferencePoint )
@@ -90,7 +96,7 @@ function scene:createScene (event)
 			y = display.contentHeight * .80,
 			thumbSize = 60,
 			borderSize = 55,
-			snapBackSpeed = .75,
+			snapBackSpeed = .35,
 			R = 255,
 			G = 255,
 			B = 255
@@ -98,14 +104,14 @@ function scene:createScene (event)
 	
 	rect = display.newRect(375, 225, 50 , 50)
 	wall = display.newRect(200, 200, 10 , 200)
-	physics.addBody(rect, { density=1, friction=0.1, bounce=1 })
-	physics.addBody( wall , "static", { friction=0.5 })
+	physics.addBody(rect, { density=0, friction=0, bounce=0 })
+	physics.addBody( wall , "static", { friction=0 })
 	
 	-- all display objects must be inserted into group in layer order 
 	--group:insert( background )
 	group:insert( ground )
 	group:insert( rect )
-	group:insert ( wall )
+	group:insert( wall )
 	group:insert( mask )
 	group:insert( analogStick )
 	group:insert( invBtn )
@@ -134,12 +140,11 @@ end
 
 local function main( event )
         
-	-- MOVE THE SHIP
-    analogStick:rotate(rect, true)
-	--analogStick:slide(background, 8.0)
-	analogStick:slide(ground, 8.0)
-	analogStick:slide(wall, 8.0)
-
+	-- MOVE THE EVERYTHING
+	analogStick:rotate(rect, true)
+	analogStick:slide(wall, speed)
+	analogStick:slide(ground, speed)
+	
 end
 
 -----------------------------------------------------------------------------------------
@@ -161,6 +166,8 @@ scene:addEventListener( "exitScene", scene )
 scene:addEventListener( "destroyScene", scene )
 
 Runtime:addEventListener( "enterFrame", main )
+
+Runtime:addEventListener( "collision", onCollision )
 -----------------------------------------------------------------------------------------
 
 return scene
