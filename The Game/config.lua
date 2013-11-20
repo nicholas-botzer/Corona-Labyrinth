@@ -99,7 +99,8 @@ else
         {
             width = 320,
             height = 512,
-            scale = "letterBox",
+            --scale = "letterBox",
+            scale = "zoomEven", 
             xAlign = "center",
             yAlign = "center",
             imageSuffix = 

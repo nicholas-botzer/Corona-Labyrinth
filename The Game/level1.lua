@@ -69,7 +69,7 @@ function scene:createScene (event)
 		labelColor = { default = {255}, over= {128} },
 		defaultFile="button.png",
 		overFile="button-over.png",
-		width=154, height=30,
+		width=140, height=30,
 		onRelease = onInvBtnRelease	-- event listener function
 	}
 	invBtn:setReferencePoint( display.CenterReferencePoint )
@@ -83,7 +83,7 @@ function scene:createScene (event)
 		labelColor = {default = {255}, over = {128} },
 		defaultFile="swordIcon.png",
 		overFile="swordIcon.png",
-		width = 65, height = 75,
+		width = 58, height = 65,
 		onRelease = onSwordBtnRelease
 	}
 	swordBtn:setReferencePoint( display.CenterReferencePoint )
@@ -96,7 +96,7 @@ function scene:createScene (event)
 		{
 			x = display.contentWidth * .1,
 			y = display.contentHeight * .75,
-			thumbSize = 60,
+			thumbSize = 50,
 			borderSize = 55,
 			snapBackSpeed = .35,
 			R = 255,
