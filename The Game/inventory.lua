@@ -47,7 +47,7 @@ function scene:createScene (event)
 		labelColor = { default = {255}, over= {128} },
 		defaultFile="button.png",
 		overFile="button-over.png",
-		width=154, height=40,
+		width=154, height=30,
 		onRelease = onMenuBtnRelease	-- event listener function
 	}
 	
@@ -56,7 +56,7 @@ function scene:createScene (event)
 		labelColor = { default = {255}, over= {128} },
 		defaultFile="button.png",
 		overFile="button-over.png",
-		width=154, height=40,
+		width=154, height=30,
 		onRelease = onBackBtnRelease	-- event listener function
 	}
 	backBtn:setReferencePoint( display.CenterReferencePoint )

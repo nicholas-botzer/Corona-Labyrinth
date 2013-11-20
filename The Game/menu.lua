@@ -46,9 +46,11 @@ function scene:createScene ( event )
 	background:setReferencePoint( display.TopLeftReferencePoint )
 	background.x, background.y = 0, 0
 	
-	local titleText = display.newImageRect("titleText.png", 700, 300)
+	local titleText = display.newImageRect("titleText.png", display.contentWidth*.85, display.contentHeight*.7)
 	titleText:setReferencePoint(display.TopLeftReferencePoint)
-	titleText.x , titleText.y = 50, -50
+	--titleText.x , titleText.y = 50, -50
+	titleText.x = display.contentWidth*.07
+	titleText.y = display.contentHeight*.05
 	
 	-- create a widget button which will load level1.lua
 	playBtn = widget.newButton{
@@ -56,7 +58,7 @@ function scene:createScene ( event )
 		labelColor = { default={255}, over={128} },
 		defaultFile="button.png",
 		overFile="button-over.png",
-		width=175, height=50,
+		width=175, height=40,
 		onRelease = onPlayBtnRelease
 	}
 	playBtn:setReferencePoint( display.CenterReferencePoint )
@@ -69,7 +71,7 @@ function scene:createScene ( event )
 		labelColor = { default={255}, over={128} },
 		defaultFile="button.png",
 		overFile="button-over.png",
-		width=175, height=50,
+		width=175, height=40,
 		onRelease = onOptionsBtnRelease
 	}
 	optionsBtn:setReferencePoint( display.CenterReferencePoint )

@@ -69,12 +69,13 @@ function scene:createScene (event)
 		labelColor = { default = {255}, over= {128} },
 		defaultFile="button.png",
 		overFile="button-over.png",
-		width=154, height=40,
+		width=154, height=30,
 		onRelease = onInvBtnRelease	-- event listener function
 	}
 	invBtn:setReferencePoint( display.CenterReferencePoint )
 	invBtn.x = display.contentWidth - invBtn.width * .5
 	invBtn.y = invBtn.height * .5
+	
 	
 	--add a swordBtn
 	swordBtn = widget.newButton{
@@ -86,14 +87,15 @@ function scene:createScene (event)
 		onRelease = onSwordBtnRelease
 	}
 	swordBtn:setReferencePoint( display.CenterReferencePoint )
-	swordBtn.x = 725
-	swordBtn.y = 375
+	swordBtn.x = display.contentWidth - swordBtn.width*.5 
+	swordBtn.y = display.contentHeight - swordBtn.height 
+	
 	
 	-- adds an analog stick
 	analogStick = StickLib.NewStick(
 		{
 			x = display.contentWidth * .1,
-			y = display.contentHeight * .80,
+			y = display.contentHeight * .75,
 			thumbSize = 60,
 			borderSize = 55,
 			snapBackSpeed = .35,
@@ -102,8 +104,8 @@ function scene:createScene (event)
 			B = 255
 		} )
 	
-	rect = display.newRect(375, 225, 50 , 50)
-	wall = display.newRect(200, 200, 10 , 200)
+	rect = display.newRect(display.contentWidth*.45, display.contentHeight*.5, 50, 50)
+	wall = display.newRect(display.contentWidth*.2, display.contentHeight*.5, 10, 200) 
 	physics.addBody(rect, { density=0, friction=0, bounce=0 })
 	physics.addBody( wall , "static", { friction=0 })
 	

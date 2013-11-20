@@ -22,13 +22,13 @@ end
 
 local function onRelease(btnName)    
     if(btnName == "easy") then 
-    	selected.y = easyMode.y
+    	selected.y = easyMode.y + 40*.5
 
     elseif(btnName == "med") then 
-    	selected.y = mediumMode.y
+    	selected.y = mediumMode.y + 40*.5
     
     else 
-    	selected.y = hardMode.y
+    	selected.y = hardMode.y + 40 *.5
    
     end 
     return true ;
@@ -57,7 +57,7 @@ function scene:createScene (event)
 		labelColor = { default = {255}, over= {128} },
 		defaultFile="button.png",
 		overFile="button-over.png",
-		width=154, height=40,
+		width=154, height=30,
 		onRelease = onMenuBtnRelease	-- event listener function
 	}
 	menuBtn:setReferencePoint( display.CenterReferencePoint )
@@ -66,8 +66,8 @@ function scene:createScene (event)
 
     selected = display.newRect(200, 290, 158, 45) 
     selected:setReferencePoint(display.CenterReferencePoint) 
-    selected.x = 200 
-    selected.y = 290 
+    selected.x = display.contentWidth *.15 + (154)*.5 
+    selected.y = display.contentHeight *.45 + (40)*.5
     selected.strokeWidth = 3
     selected:setFillColor(180,0,0)
     selected:setStrokeColor(180,0,0) 
@@ -81,9 +81,9 @@ function scene:createScene (event)
     	onRelease = function() return onRelease("easy") end
     	
     }
-    easyMode:setReferencePoint(display.CenterReferencePoint)
-    easyMode.x = 200
-    easyMode.y = 240
+    easyMode:setReferencePoint(display.TopLeftReferencePoint)
+    easyMode.x = display.contentWidth * .15
+    easyMode.y = display.contentHeight*.45
     
     mediumMode = widget.newButton{
     	label="Medium",
@@ -94,9 +94,9 @@ function scene:createScene (event)
     	onRelease = function() return onRelease("med") end
     	
     }
-    mediumMode:setReferencePoint(display.CenterReferencePoint)
-    mediumMode.x = 200
-    mediumMode.y = 290
+    mediumMode:setReferencePoint(display.TopLeftReferencePoint)
+    mediumMode.x = display.contentWidth * .15
+    mediumMode.y = display.contentHeight*.60
     
     hardMode = widget.newButton{
     	label="Hard",
@@ -106,17 +106,17 @@ function scene:createScene (event)
     	width=154, height=40,
     	onRelease = function() return onRelease("hard") end
     }
-    hardMode:setReferencePoint(display.CenterReferencePoint)
-    hardMode.x = 200
-    hardMode.y = 340
+    hardMode:setReferencePoint(display.TopLeftReferencePoint)
+    hardMode.x = display.contentWidth * .15
+    hardMode.y = display.contentHeight*.75
     
-	local titleText = display.newText( "Options", display.contentWidth * .45, 50, "Canterbury" ,display.contentHeight * .1)
+	local titleText = display.newText( "Options", display.contentWidth * .40, display.contentHeight*.15, "Canterbury" ,display.contentHeight * .1)
 	titleText:setTextColor{ 0,0,0}
 	
-	local difficultyText = display.newText( "Difficulty", display.contentWidth * .15, 145, "Canterbury" ,display.contentHeight * .1)
+	local difficultyText = display.newText( "Difficulty", display.contentWidth * .15, display.contentHeight*.3, "Canterbury" ,display.contentHeight * .1)
 	difficultyText:setTextColor{ 0,0,0}
 	
-	local levelsText = display.newText( "Levels", display.contentWidth * .7, 145, "Canterbury" ,display.contentHeight * .1)
+	local levelsText = display.newText( "Levels", display.contentWidth * .7, display.contentHeight*.3, "Canterbury" ,display.contentHeight * .1)
 	levelsText:setTextColor{ 0,0,0}
 	
 	-- all display objects must be inserted into group
