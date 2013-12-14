@@ -18,7 +18,7 @@ local swordBtn
 local swordClashSound = audio.loadSound("Sword clash sound effect.mp3")
 local background, wall, ground, mask
 local speed = 8.0
-
+local playerHealth = 100
 -- 'onRelease' event listener
 local function onInvBtnRelease()
 	-- go to inventory.lua scene
@@ -61,6 +61,22 @@ function scene:createScene (event)
 	ground = display.newImageRect( "ground.jpg", 1600, 1600 )
 	ground:setReferencePoint( display.TopLeftReferencePoint )
 	ground.x, ground.y = 0, 0
+	
+	healthBackground = display.newRect(10,10,100,15) 
+    healthBackground:setReferencePoint(display.TopLeftReferencePoint) 
+    healthBackground.strokeWidth = 3
+    healthBackground:setFillColor(0,0,0)
+    healthBackground:setStrokeColor(255,255,255)
+    
+    healthBar = display.newRect(10,10,100,15)
+    healthBar:setReferencePoint(display.TopLeftReferencePoint)
+    healthBar:setFillColor(180,0,0)
+    
+    healthAmount = display.newText {
+    	text = "100/100",
+    	x = 60,
+    	y = 17
+    }
 	
 	
 	-- add an inventory button
@@ -118,6 +134,9 @@ function scene:createScene (event)
 	group:insert( analogStick )
 	group:insert( invBtn )
 	group:insert( swordBtn )
+	group:insert(healthBackground)
+	group:insert(healthBar)
+	group:insert(healthAmount)
 end
 
 -- Called immediately after scene has moved onscreen:

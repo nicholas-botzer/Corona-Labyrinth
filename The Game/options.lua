@@ -7,6 +7,8 @@
 require("main") 
 local storyboard = require( "storyboard" )
 local scene = storyboard.newScene()
+difficulty = 1
+levels = 1
 
 local widget = require "widget"
 
@@ -23,15 +25,30 @@ end
 local function onRelease(btnName)    
     if(btnName == "easy") then 
     	selected.y = easyMode.y + 40*.5
-
+		difficulty = 1
     elseif(btnName == "med") then 
     	selected.y = mediumMode.y + 40*.5
-    
+    	difficulty = 2
     else 
     	selected.y = hardMode.y + 40 *.5
-   
+   		difficulty = 3
     end 
     return true ;
+end
+
+local function levelSelected(level)
+
+	if(level == "low") then
+		selected2.y = lowLevels.y + 40*.5
+		levels = 1
+	elseif(level == "medium") then
+		selected2.y = midLevels.y + 40*.5
+		levels = 2
+	else
+		selected2.y = highLevels.y + 40*.5
+		levels = 3
+	end
+	return true ;
 end
 
 -----------------------------------------------------------------------------------------
@@ -70,8 +87,18 @@ function scene:createScene (event)
     selected.y = display.contentHeight *.45 + (40)*.5
     selected.strokeWidth = 3
     selected:setFillColor(180,0,0)
-    selected:setStrokeColor(180,0,0) 
-
+    selected:setStrokeColor(180,0,0)
+    
+    selected2 = display.newRect(400,290,158,45)
+    selected2:setReferencePoint(display.CenterReferencePoint)
+    selected2.x = display.contentWidth *.67 + (154)*.5
+    selected2.y = display.contentHeight *.45+ (40)*.5
+    selected2.strokeWidth = 3
+    selected2:setFillColor(180,0,0)
+    selected2:setStrokeColor(180,0,0)
+	
+	--begin creation of mode buttons
+	
     easyMode = widget.newButton{
     	label="Easy",
     	labelColor = { default = {34,139,34}, over ={100,100,250}},
@@ -110,6 +137,46 @@ function scene:createScene (event)
     hardMode.x = display.contentWidth * .15
     hardMode.y = display.contentHeight*.75
     
+    --begin creation of levels button
+    
+    lowLevels = widget.newButton{
+    	label="3 - 5",
+    	labelColor = { default = {34,139,34}, over={100,100,250}},
+    	defaultFile="button.png",
+    	overFile="button-over.png",
+    	width=154, height=40,
+    	onRelease = function() return levelSelected("low") end
+    }
+    lowLevels:setReferencePoint(display.TopLeftReferencePoint)
+    lowLevels.x = display.contentWidth * .67
+    lowLevels.y = display.contentHeight*.45
+    
+    midLevels = widget.newButton{
+    	label="6 - 8",
+    	labelColor = { default = {0,0,255}, over={100,100,250}},
+    	defaultFile="button.png",
+    	overFile="button-over.png",
+    	width=154, height=40,
+    	onRelease = function() return levelSelected("medium") end
+    }
+    midLevels:setReferencePoint(display.TopLeftReferencePoint)
+    midLevels.x = display.contentWidth * .67
+    midLevels.y = display.contentHeight*.60
+    
+    highLevels = widget.newButton{
+    	label="9 - 11",
+    	labelColor = { default = {255,0,0}, over={100,100,250}},
+    	defaultFile="button.png",
+    	overFile="button-over.png",
+    	width=154, height=40,
+    	onRelease = function() return levelSelected("high") end
+    }
+    highLevels:setReferencePoint(display.TopLeftReferencePoint)
+    highLevels.x = display.contentWidth * .67
+    highLevels.y = display.contentHeight*.75
+    
+    --end creation of levels buttons
+    
 	local titleText = display.newText( "Options", display.contentWidth * .40, display.contentHeight*.15, "Canterbury" ,display.contentHeight * .1)
 	titleText:setTextColor{ 0,0,0}
 	
@@ -122,9 +189,13 @@ function scene:createScene (event)
 	-- all display objects must be inserted into group
 	group:insert( background )
 	group:insert( selected )	-- the red rectangle behind the difficulty
+	group:insert( selected2)    --the red rectangle behind the levels
 	group:insert( easyMode )
 	group:insert( mediumMode )
 	group:insert( hardMode )
+	group:insert( lowLevels)
+	group:insert( midLevels)
+	group:insert( highLevels)
 	group:insert( menuBtn )
 	group:insert( titleText )
 	group:insert( difficultyText )
