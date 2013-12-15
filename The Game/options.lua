@@ -229,9 +229,21 @@ function scene:destroyScene( event )
 		mediumMode:removeSelf()
 		mediumMode = nil
 	end
-	if mediumMode then
-		mediumMode:removeSelf()
-		mediumMode = nil
+	if hardMode then
+		hardMode:removeSelf()
+		hardMode = nil
+	end
+	if lowLevels then
+		lowLevels:removeSelf()
+		lowLevels = nil
+	end
+	if midLevels then
+		midLevels:removeSelf()
+		midLevels = nil
+	end
+	if highLevels then
+		highLevels:removeSelf()
+		highLevels = nil
 	end
 end
 
