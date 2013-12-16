@@ -24,13 +24,13 @@ end
 
 local function onRelease(btnName)    
     if(btnName == "easy") then 
-    	selected.y = easyMode.y + 40*.5
+    	selected.y = easyMode.y + 20
 		difficulty = 1
     elseif(btnName == "med") then 
-    	selected.y = mediumMode.y + 40*.5
+    	selected.y = mediumMode.y + 20
     	difficulty = 2
     else 
-    	selected.y = hardMode.y + 40 *.5
+    	selected.y = hardMode.y + 20
    		difficulty = 3
     end 
     return true ;
@@ -39,13 +39,13 @@ end
 local function levelSelected(level)
 
 	if(level == "low") then
-		selected2.y = lowLevels.y + 40*.5
+		selected2.y = lowLevels.y + 20
 		levels = 1
 	elseif(level == "medium") then
-		selected2.y = midLevels.y + 40*.5
+		selected2.y = midLevels.y + 20
 		levels = 2
 	else
-		selected2.y = highLevels.y + 40*.5
+		selected2.y = highLevels.y + 20
 		levels = 3
 	end
 	return true ;

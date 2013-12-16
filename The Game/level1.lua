@@ -10,15 +10,21 @@ system.activate("multitouch")
 local widget = require "widget"
 local StickLib   = require("lib_analog_stick")
 local physics = require("physics")
+local PerspectiveLib = require("perspective")
 require("main") 
 
 -- declarations
-local rect, invBtn, screenW, screenH, halfW = display.contentWidth, display.contentHeight, display.contentWidth*0.5
+local rect, invBtn
+local screenW, screenH, halfW = display.contentWidth, display.contentHeight, display.contentWidth*0.5
 local swordBtn
 local swordClashSound = audio.loadSound("Sword clash sound effect.mp3")
 local background, wall, ground, mask
 local speed = 8.0
 local playerHealth = 100
+local camera=PerspectiveLib.createView()
+
+
+
 -- 'onRelease' event listener
 local function onInvBtnRelease()
 	-- go to inventory.lua scene
@@ -34,10 +40,15 @@ end
 local function onCollision( event )
         if ( event.phase == "began" ) then
 			speed = 0.0
+			playerHealth = playerHealth - 1
         end
 		if ( event.phase == "ended" ) then
 			speed = 8.0
         end
+end
+
+local function updateHealth( event )
+	healthAmount.text = playerHealth .. "/100"
 end
 
 -----------------------------------------------------------------------------------------
@@ -54,7 +65,7 @@ function scene:createScene (event)
 	physics.setGravity(0,0)
 
 	
-	mask = display.newImageRect( "masked2.png", display.contentWidth, display.contentHeight )
+	mask = display.newImageRect( "masked2.png", screenW, screenH )
 	mask:setReferencePoint( display.TopLeftReferencePoint )
 	mask.x, mask.y = 0, 0
 
@@ -62,22 +73,21 @@ function scene:createScene (event)
 	ground:setReferencePoint( display.TopLeftReferencePoint )
 	ground.x, ground.y = 0, 0
 	
-	healthBackground = display.newRect(10,10,100,15) 
+	healthBackground = display.newRect(10,10,120,15) 
     healthBackground:setReferencePoint(display.TopLeftReferencePoint) 
     healthBackground.strokeWidth = 3
     healthBackground:setFillColor(0,0,0)
     healthBackground:setStrokeColor(255,255,255)
     
-    healthBar = display.newRect(10,10,100,15)
+    healthBar = display.newRect(10,10,120,15)
     healthBar:setReferencePoint(display.TopLeftReferencePoint)
     healthBar:setFillColor(180,0,0)
     
     healthAmount = display.newText {
-    	text = "100/100",
-    	x = 60,
+    	text = playerHealth .. "/100",
+    	x = 70,
     	y = 17
     }
-	
 	
 	-- add an inventory button
 	invBtn = widget.newButton{
@@ -89,9 +99,8 @@ function scene:createScene (event)
 		onRelease = onInvBtnRelease	-- event listener function
 	}
 	invBtn:setReferencePoint( display.CenterReferencePoint )
-	invBtn.x = display.contentWidth - invBtn.width * .5
+	invBtn.x = screenW - invBtn.width * .5
 	invBtn.y = invBtn.height * .5
-	
 	
 	--add a swordBtn
 	swordBtn = widget.newButton{
@@ -103,15 +112,14 @@ function scene:createScene (event)
 		onRelease = onSwordBtnRelease
 	}
 	swordBtn:setReferencePoint( display.CenterReferencePoint )
-	swordBtn.x = display.contentWidth - swordBtn.width*.5 
-	swordBtn.y = display.contentHeight - swordBtn.height 
-	
+	swordBtn.x = screenW - swordBtn.width*.5 
+	swordBtn.y = screenH - swordBtn.height 
 	
 	-- adds an analog stick
 	analogStick = StickLib.NewStick(
 		{
-			x = display.contentWidth * .1,
-			y = display.contentHeight * .75,
+			x = screenW * .1,
+			y = screenH * .75,
 			thumbSize = 50,
 			borderSize = 55,
 			snapBackSpeed = .35,
@@ -120,9 +128,10 @@ function scene:createScene (event)
 			B = 255
 		} )
 	
-	rect = display.newRect(display.contentWidth*.45, display.contentHeight*.5, 50, 50)
-	wall = display.newRect(display.contentWidth*.2, display.contentHeight*.5, 10, 200) 
-	physics.addBody(rect, { density=0, friction=0, bounce=0 })
+	rect = display.newRect(screenW*.45, screenH*.5, 50, 50)
+	rect.isBullet = true
+	wall = display.newRect(screenW*.2, screenH*.5, 10, 200) 
+	physics.addBody(rect, { density=1, friction=0, bounce=0 })
 	physics.addBody( wall , "static", { friction=0 })
 	
 	-- all display objects must be inserted into group in layer order 
@@ -137,6 +146,13 @@ function scene:createScene (event)
 	group:insert(healthBackground)
 	group:insert(healthBar)
 	group:insert(healthAmount)
+	
+	--camera set up
+	camera:add(rect, 2, true)
+	camera:setFocus(rect)
+	camera:setBounds(false)
+	camera:track()
+	group:insert( camera )
 end
 
 -- Called immediately after scene has moved onscreen:
@@ -187,6 +203,7 @@ scene:addEventListener( "exitScene", scene )
 scene:addEventListener( "destroyScene", scene )
 
 Runtime:addEventListener( "enterFrame", main )
+Runtime:addEventListener( "enterFrame", updateHealth )
 
 Runtime:addEventListener( "collision", onCollision )
 -----------------------------------------------------------------------------------------
