@@ -41,6 +41,8 @@ local function onCollision( event )
         if ( event.phase == "began" ) then
 			speed = 0.0
 			playerHealth = playerHealth - 1
+			healthBar.width = healthBar.width - 1.2
+			healthBar.x = healthBar.x - .6
         end
 		if ( event.phase == "ended" ) then
 			speed = 8.0
@@ -82,6 +84,8 @@ function scene:createScene (event)
     healthBar = display.newRect(10,10,120,15)
     healthBar:setReferencePoint(display.TopLeftReferencePoint)
     healthBar:setFillColor(180,0,0)
+    healthBar.x = 10
+    healthBar.y = 10
     
     healthAmount = display.newText {
     	text = playerHealth .. "/100",
