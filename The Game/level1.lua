@@ -138,7 +138,6 @@ function scene:createScene (event)
 	physics.addBody( wall , "static", { friction=0 })
 	
 	-- all display objects must be inserted into group in layer order 
-	--group:insert( background )
 	group:insert( ground )
 	group:insert( rect )
 	group:insert( wall )
