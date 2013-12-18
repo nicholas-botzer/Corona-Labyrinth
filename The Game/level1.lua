@@ -38,13 +38,12 @@ local function onSwordBtnRelease()
 end
 
 local function onCollision( event )
-        if ( event.phase == "began" ) then
-			speed = 0.0
-			playerHealth = playerHealth - 1
-        end
-		if ( event.phase == "ended" ) then
-			speed = 8.0
-        end
+    if ( event.phase == "began" ) then
+		speed = -8.0
+		playerHealth = playerHealth - 1
+	elseif ( event.phase == "ended" ) then
+		speed = 8.0
+    end
 end
 
 local function updateHealth( event )
@@ -134,7 +133,7 @@ function scene:createScene (event)
 	
 	rect = display.newRect(screenW*.45, screenH*.5, 50, 50)
 	rect.isBullet = true
-	wall = display.newRect(screenW*.2, screenH*.5, 10, 200) 
+	wall = display.newRect(screenW*.2, screenH*.5, 10, 200)
 	physics.addBody(rect, { density=1, friction=0, bounce=0 })
 	physics.addBody( wall , "static", { friction=0 })
 	
