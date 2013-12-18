@@ -41,8 +41,6 @@ local function onCollision( event )
         if ( event.phase == "began" ) then
 			speed = 0.0
 			playerHealth = playerHealth - 1
-			healthBar.width = healthBar.width - 1.2
-			healthBar.x = healthBar.x - .6
         end
 		if ( event.phase == "ended" ) then
 			speed = 8.0
@@ -51,7 +49,9 @@ end
 
 local function updateHealth( event )
 	healthAmount.text = playerHealth .. "/100"
-end
+	healthBar.width = playerHealth * 1.2			--decreases the red in the health bar by 1% of its width
+	healthBar.x = 10 - ((100 - playerHealth) * .6)	--shifts the healthBar so it decreases from the right only
+end													-- = starting X - ((playerMaxHealth - playerCurrentHealth) * half of 1% of the healthBar.width)
 
 -----------------------------------------------------------------------------------------
 -- BEGINNING OF YOUR IMPLEMENTATION
