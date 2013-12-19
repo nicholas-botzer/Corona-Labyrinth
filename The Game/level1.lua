@@ -39,7 +39,7 @@ end
 
 local function onCollision( event )
     if ( event.phase == "began" ) then
-		speed = -8.0
+		speed = 0
 		playerHealth = playerHealth - 1
 	elseif ( event.phase == "ended" ) then
 		speed = 8.0
