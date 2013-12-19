@@ -1,0 +1,9 @@
+-Map generation
+-Enemies that track player 
+-Sprites
+-Fix collisions (issue with "mask" moving on collision or player moving through walls)
+-Global attack function that can be called
+-Generation of later levels (all within same level1.lua file?) 
+-Inventory objects 
+-Handling saving progress on app exit 
+-Death handler / Resetting progress 
