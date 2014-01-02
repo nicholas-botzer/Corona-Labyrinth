@@ -112,8 +112,8 @@ function NewStick( Props )
         ---------------------------------------------
         function Group:slide(Obj, maxSpeed)
 				if (not Group.collisionDetected) then
-                Obj.x = ( Obj.x + Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
-                Obj.y = ( Obj.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
+					Obj.x = ( Obj.x + Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
+					Obj.y = ( Obj.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 				else 
 					Obj.x = ( Obj.x + Cos( Rad((-Group.lockedAngle)-90) ) * (-maxSpeed * 1.0) )
 				end

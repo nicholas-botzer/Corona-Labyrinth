@@ -1,18 +1,17 @@
--Global attack function that can be called / handling attacking
 -Generation of later levels (all within same level1.lua file?) 
 -Inventory objects 
 -Handling saving progress on app exit 
--Death handler / Resetting progress 
 -Remove any potential copy right stuff
 
-
 Zach: 
--Fix collisions (issue with "mask" moving on collision or player moving through walls)
+-Fix collisions 
+-Sprites 
+-Attacking w/sword button animation
+-Death Handler
 
 Will: 
 -Enemies that track player 
 -Create enemy/player class "objects" 
--Sprites 
 
 Nick:
 -Map generation 
