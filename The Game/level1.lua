@@ -3,7 +3,9 @@
 -- level1.lua
 --
 -----------------------------------------------------------------------------------------
-
+local Rad   = math.rad
+local Sin   = math.sin
+local Cos   = math.cos
 local storyboard = require( "storyboard" )
 local scene = storyboard.newScene()
 system.activate("multitouch")
@@ -24,7 +26,6 @@ local playerHealth = 100
 local camera=PerspectiveLib.createView()
 
 
-
 -- 'onRelease' event listener
 local function onInvBtnRelease()
 	-- go to inventory.lua scene
@@ -37,13 +38,15 @@ local function onSwordBtnRelease()
 	return true
 end
 
+-- Handles collision events
 local function onCollision( event )
     if ( event.phase == "began" ) then
-		speed = 0
 		playerHealth = playerHealth - 1
-	elseif ( event.phase == "ended" ) then
+		--analogStick:reverse()
+		speed = -8.0
+	elseif( event.phase == "ended" ) then
 		speed = 8.0
-    end
+	end
 end
 
 local function updateHealth( event )
@@ -53,7 +56,7 @@ local function updateHealth( event )
 end													-- = starting X - ((playerMaxHealth - playerCurrentHealth) * half of 1% of the healthBar.width)
 
 -----------------------------------------------------------------------------------------
--- BEGINNING OF YOUR IMPLEMENTATION
+-- BEGINNING OF YOUR IMPLEMENTATIONd
 --
 -- NOTE: Code outside of listener functions (below) will only be executed once,
 --		 unless storyboard.removeScene() is called.
@@ -121,7 +124,7 @@ function scene:createScene (event)
 	-- adds an analog stick
 	analogStick = StickLib.NewStick(
 		{
-			x = screenW * .1,
+			x = screenW * .15,
 			y = screenH * .75,
 			thumbSize = 50,
 			borderSize = 55,
@@ -129,18 +132,23 @@ function scene:createScene (event)
 			R = 255,
 			G = 255,
 			B = 255
-		} )
+		} 
+	)
 	
 	rect = display.newRect(screenW*.45, screenH*.5, 50, 50)
-	rect.isBullet = true
-	wall = display.newRect(screenW*.2, screenH*.5, 10, 200)
-	physics.addBody(rect, { density=1, friction=0, bounce=0 })
-	physics.addBody( wall , "static", { friction=0 })
+	wall = display.newRect(screenW*.2, screenH*.5, 10, 200) 
+	wall2 = display.newRect(screenW*.2, screenH*.2, 200, 20) 
+	physics.addBody(rect, {radius = 40}) 
+	physics.addBody( wall , "dynamic",  {})
+	physics.addBody( wall2, "dynamic", {}) 
+	wall2.isSensor = true 
+	wall.isSensor = true
 	
 	-- all display objects must be inserted into group in layer order 
 	group:insert( ground )
 	group:insert( rect )
 	group:insert( wall )
+	group:insert (wall2) 
 	group:insert( mask )
 	group:insert( analogStick )
 	group:insert( invBtn )
@@ -177,13 +185,12 @@ function scene:destroyScene( event )
 	end
 end
 
-local function main( event )
-        
+function main( event )
 	-- MOVE THE EVERYTHING
-	analogStick:rotate(rect, true)
 	analogStick:slide(wall, speed)
 	analogStick:slide(ground, speed)
-	
+	analogStick:slide(wall2, speed)
+	analogStick:rotate(rect, true) 
 end
 
 -----------------------------------------------------------------------------------------
@@ -206,7 +213,7 @@ scene:addEventListener( "destroyScene", scene )
 
 Runtime:addEventListener( "enterFrame", main )
 Runtime:addEventListener( "enterFrame", updateHealth )
-
+ 
 Runtime:addEventListener( "collision", onCollision )
 -----------------------------------------------------------------------------------------
 
