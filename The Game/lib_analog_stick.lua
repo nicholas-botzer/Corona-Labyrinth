@@ -1,5 +1,4 @@
 module (..., package.seeall)
-local physics = require("physics") 
  
 --[[
 ----------------------------------------------------------------
@@ -61,7 +60,7 @@ local Atan2 = math.atan2
 ----------------------------------------------------------------
 function NewStick( Props )
  
-        Group         = display.newGroup()
+        local Group         = display.newGroup()
         Group.x             = Props.x
         Group.y             = Props.y
         Group.Timer                     = nil
@@ -73,6 +72,8 @@ function NewStick( Props )
  
         Group.Border = display.newCircle(0,0,Props.borderSize)
         Group.Border.strokeWidth = 2
+        --Group.Border:setFillColor  (Props.R,Props.G,Props.B,46)
+        --Group.Border:setStrokeColor(Props.R,Props.G,Props.B,255)
         Group.Border:setFillColor  (Props.R,Props.G,Props.B,0)
         Group.Border:setStrokeColor(Props.R,Props.G,Props.B,0)
         Group:insert(Group.Border)
@@ -84,12 +85,7 @@ function NewStick( Props )
         Group.Thumb.x0 = 0
         Group.Thumb.y0 = 0
         Group:insert(Group.Thumb)
-		
-		function Group:reverse() 
-			--Group.angle = -1 * Group.angle 
-			Group.angle = Group.angle - 180 
-		end
-		
+       
         ---------------------------------------------
         -- METHOD: DELETE STICK
         ---------------------------------------------
@@ -113,19 +109,15 @@ function NewStick( Props )
         -- METHOD: SLIDE AN OBJECT
         ---------------------------------------------
         function Group:slide(Obj, maxSpeed)
-				transition.to(Obj, {x=( Obj.x + Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) ), y =( Obj.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) ), time = 0})
-		end
-
-		function Group:reverseMove(Obj, maxSpeed) --(Obj, speedy, ang) 
-				transition.to(Obj, {x=( Obj.x - Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) ), y =( Obj.y - Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) ), time = 0})
-		end
+                Obj.x = ( Obj.x + Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
+                Obj.y = ( Obj.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
+        end
 		
 		---------------------------------------------
 		-- METHOD: ROTATE AN OBJECT
 		---------------------------------------------
 		function Group:rotate(Obj, rotate)
-				hit = Obj
-				if rotate == true then hit.rotation = self.angle end
+				if rotate == true then Obj.rotation = self.angle end
 		end
         
         ---------------------------------------------
@@ -218,4 +210,5 @@ function NewStick( Props )
         Group.Thumb:addEventListener( "touch", Group.onDrag )
  
         return Group
+ 
 end
