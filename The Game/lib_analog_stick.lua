@@ -85,7 +85,9 @@ function NewStick( Props )
         Group.Thumb.x0 = 0
         Group.Thumb.y0 = 0
         Group:insert(Group.Thumb)
-       
+        Group.collisionDetected = false 
+		Group.lockedAngle =  false
+		
         ---------------------------------------------
         -- METHOD: DELETE STICK
         ---------------------------------------------
@@ -109,9 +111,18 @@ function NewStick( Props )
         -- METHOD: SLIDE AN OBJECT
         ---------------------------------------------
         function Group:slide(Obj, maxSpeed)
+				if (not Group.collisionDetected) then
                 Obj.x = ( Obj.x + Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
                 Obj.y = ( Obj.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
+				else 
+					Obj.x = ( Obj.x + Cos( Rad((-Group.lockedAngle)-90) ) * (-maxSpeed * 1.0) )
+				end
         end
+		
+		function Group:collided(happened, ang)
+			Group.collisionDetected = happened
+			Group.lockedAngle = ang
+		end
 		
 		---------------------------------------------
 		-- METHOD: ROTATE AN OBJECT

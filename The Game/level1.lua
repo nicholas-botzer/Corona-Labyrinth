@@ -35,14 +35,16 @@ end
 local function onSwordBtnRelease()
 	audio.play( swordClashSound )
 	return true
-end
+end 
 
 local function onCollision( event )
     if ( event.phase == "began" ) then
-		speed = 0
+		--speed = -8.0
 		playerHealth = playerHealth - 1
+		analogStick:collided(true, analogStick:getAngle()) 
 	elseif ( event.phase == "ended" ) then
 		speed = 8.0
+		analogStick:collided(false, false)
     end
 end
 
@@ -349,13 +351,13 @@ function scene:createScene (event)
 		} )
 	
 	rect = display.newRect(screenW*.45, screenH*.5, 50, 50)
-	rect.isBullet = true
 	wall = display.newRect(screenW*.2, screenH*.5, 10, 200)
-	physics.addBody(rect, { density=1, friction=0, bounce=0 })
-	physics.addBody( wall , "static", { friction=0 })
+	physics.addBody(rect, {})
+	physics.addBody( wall , "dynamic", {})
+	wall.isSensor = true 
 	
 	-- all display objects must be inserted into group in layer order 
-	g1:insert(wall)
+	group:insert(wall)
 	group:insert(g1)
 	group:insert( rect )
 	--group:insert( mask )
@@ -399,6 +401,7 @@ local function main( event )
 	-- MOVE THE EVERYTHING
 	analogStick:rotate(rect, true)
 	analogStick:slide(g1, speed)
+	analogStick:slide(wall, speed) 
 	
 end
 
