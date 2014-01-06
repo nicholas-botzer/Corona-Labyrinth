@@ -19,7 +19,7 @@ local screenW, screenH, halfW = display.contentWidth, display.contentHeight, dis
 local swordBtn
 local swordClashSound = audio.loadSound("Sword clash sound effect.mp3")
 local background, wall, ground, mask
-local speed = 8.0
+local speed = 3.0
 local playerHealth = 100
 local camera=PerspectiveLib.createView()
 
@@ -39,11 +39,9 @@ end
 
 local function onCollision( event )
     if ( event.phase == "began" ) then
-		--speed = -8.0
 		playerHealth = playerHealth - 1
 		analogStick:collided(true, analogStick:getAngle()) 
 	elseif ( event.phase == "ended" ) then
-		speed = 8.0
 		analogStick:collided(false, false)
     end
 end
@@ -52,6 +50,16 @@ local function updateHealth( event )
 	healthAmount.text = playerHealth .. "/100"
 	healthBar.width = playerHealth * 1.2			--decreases the red in the health bar by 1% of its width
 	healthBar.x = 10 - ((100 - playerHealth) * .6)	--shifts the healthBar so it decreases from the right only
+	--[[
+	if(playerHealth <= 0) then
+		storyboard.gotoScene( "menu" )
+		storyboard.purgeScene("level1")
+		physics.removeBody(wall)
+		physics.stop()
+		analogStick:delete()
+		camera:destroy() 
+	end
+	]]
 end					
 								-- = starting X - ((playerMaxHealth - playerCurrentHealth) * half of 1% of the healthBar.width)
 								
@@ -214,7 +222,6 @@ local function randomWalk(nodes,edges)
 
 
 end
-
 -----------------------------------------------------------------------------------------
 -- BEGINNING OF YOUR IMPLEMENTATION
 --
@@ -348,17 +355,50 @@ function scene:createScene (event)
 			R = 255,
 			G = 255,
 			B = 255
-		} )
+		} 
+	)
 	
-	rect = display.newRect(screenW*.45, screenH*.5, 50, 50)
+	sequenceData = {
+		---{name = "forwardL", frames={1,10,2,11,3,12}, time = 2000, loopCount = 1},
+		{name = "forward", frames={1,2,3}, time = 1000, loopCount = 1},
+		---{name = "forwardR", frames={1,4,2,5,3,6}, time = 2000, loopCount = 1},
+		{name = "right", frames={4,5,6}, time = 1000, loopCount = 1}, 
+		---{name = "backR", frames={7,4,8,5,9,6}, time = 2000, loopCount = 1},
+		{name = "back", frames= {7,8,9}, time = 1000, loopCount = 1}, 
+		----{name = "backL", frames={7,10,8,11,9,12}, time = 2000, loopCount = 1},
+		{name = "left", frames={10,11,12}, time = 1000, loopCount = 1}
+	}
+
+	--Declare Image Sheet 
+	spriteOptions = {	
+		height = 32, 
+		width = 24, 
+		numFrames = 12, 
+		sheetContentWidth = 72, 
+		sheetContentHeight = 128 
+	}
+ 
+	mySheet = graphics.newImageSheet("knight3.png", spriteOptions) 
+	
+	--Declare Sprite Object 
+	rect = display.newSprite(mySheet, sequenceData) 
+	rect.x = screenW*.45  
+	rect.y = screenH*.5 
+	
+	--Used to aid collision detection for the sprite image
+	colRect = display.newRect(rect.x, rect.y, 55, 30)
+	colRect.isVisible = false
+		
 	wall = display.newRect(screenW*.2, screenH*.5, 10, 200)
-	physics.addBody(rect, {})
+	physics.addBody(colRect, "kinematic", {})
+	physics.addBody(rect, "static", {})
 	physics.addBody( wall , "dynamic", {})
 	wall.isSensor = true 
 	
 	-- all display objects must be inserted into group in layer order 
 	group:insert(wall)
 	group:insert(g1)
+	group:insert(colRect)
 	group:insert( rect )
 	--group:insert( mask )
 	group:insert( analogStick )
@@ -399,10 +439,39 @@ end
 local function main( event )
         
 	-- MOVE THE EVERYTHING
-	analogStick:rotate(rect, true)
 	analogStick:slide(g1, speed)
 	analogStick:slide(wall, speed) 
 	
+	--Determine animation to play 
+	angle = analogStick:getAngle() 
+	moving = analogStick:getMoving()
+	if(not rect.isPlaying) then
+		if(angle <= 22.5 or angle > 338) then
+			rect:setSequence("forward")
+		elseif(angle <= 70 and angle > 22.5) then
+			---rect:setSequence("forwardR")
+			rect:setSequence("forward")
+		elseif(angle < 110 and angle > 70) then
+			rect:setSequence("right") 
+		elseif(angle <= 160 and angle > 110) then 
+			---rect:setSequence("backR") 
+			rect:setSequence("back")
+		elseif(angle <= 200 and angle > 160) then 
+			rect:setSequence("back")
+		elseif(angle <= 250 and angle > 200) then 
+			---rect:setSequence("backL") 
+			rect:setSequence("back")
+		elseif(angle <= 290 and angle > 250) then 
+			rect:setSequence("left") 
+		elseif(angle <= 338 and angle > 290) then 
+			---rect:setSequence("forwardL")
+			rect:setSequence("forward")
+		end
+	end
+	
+	if(moving) then 
+		rect:play() 
+	end
 end
 
 -----------------------------------------------------------------------------------------

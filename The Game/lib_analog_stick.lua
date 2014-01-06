@@ -87,6 +87,7 @@ function NewStick( Props )
         Group:insert(Group.Thumb)
         Group.collisionDetected = false 
 		Group.lockedAngle =  false
+		Group.beingMoved = false
 		
         ---------------------------------------------
         -- METHOD: DELETE STICK
@@ -137,7 +138,8 @@ function NewStick( Props )
         function Group:getDistance() return self.distance    end
         function Group:getPercent () return self.percent     end
         function Group:getAngle   () return Ceil(self.angle) end
- 
+		function Group:getMoving  () return Group.beingMoved end
+		
         ---------------------------------------------
         -- HANDLER: ON DRAG
         ---------------------------------------------
@@ -151,6 +153,7 @@ function NewStick( Props )
                       ey = ey - T.y0
  
                 if "began" == phase then
+						Group.beingMoved = true 
                         if S.Timer ~= nil then timer.cancel(S.Timer); S.Timer = nil end
                         --display.getCurrentStage():setFocus( T )
 						display.getCurrentStage():setFocus( T, event.id )
@@ -171,6 +174,7 @@ function NewStick( Props )
                                 T.y       = Sin( Rad(S.angle-90) ) * (S.maxDist * S.percent) 
                         
                         elseif "ended"== phase or "cancelled" == phase then
+								Group.beingMoved = false 
                                 T.x0      = 0
                                 T.y0      = 0
                                 T.isFocus = false
