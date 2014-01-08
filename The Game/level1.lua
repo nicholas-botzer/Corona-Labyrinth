@@ -32,8 +32,35 @@ local function onInvBtnRelease()
 	return true	-- indicates successful touch
 end
 
+--Picks combat animation based on which way the player is facing
+local function pickAnimation() 
+	facing = rect.sequence 
+	if(facing == "foward") then 
+		rect:setSequence("attackForward")
+	elseif(facing == "right") then 
+		rect:setSequence("attackRight") 
+	elseif(facing == "back") then
+		rect:setSequence("attackBack") 
+	elseif(facing == "left") then
+		rect:setSequence("attackLeft") 
+	end
+end
+
 local function onSwordBtnRelease()
-	audio.play( swordClashSound )
+	pickAnimation()
+	rect:play()
+	if(enemyRect) then 
+		--Test to see if enemy is range of player character. This can be a variable later. 
+		if(math.abs(rect.x - enemyRect.x) < 30 and math.abs(rect.y - enemyRect.y)) then
+			enemyRect.health = enemyRect.health - 25 
+			audio.play( swordClashSound ) 
+			--Remove enemy if 0 HP or lower
+			if (enemyRect.health <= 0) then 
+				enemyRect:removeSelf() 
+				enemyRect = nil 
+			end
+		end
+	end
 	return true
 end 
 
@@ -359,14 +386,14 @@ function scene:createScene (event)
 	)
 	
 	sequenceData = {
-		---{name = "forwardL", frames={1,10,2,11,3,12}, time = 2000, loopCount = 1},
-		{name = "forward", frames={1,2,3}, time = 1000, loopCount = 1},
-		---{name = "forwardR", frames={1,4,2,5,3,6}, time = 2000, loopCount = 1},
-		{name = "right", frames={4,5,6}, time = 1000, loopCount = 1}, 
-		---{name = "backR", frames={7,4,8,5,9,6}, time = 2000, loopCount = 1},
-		{name = "back", frames= {7,8,9}, time = 1000, loopCount = 1}, 
-		----{name = "backL", frames={7,10,8,11,9,12}, time = 2000, loopCount = 1},
-		{name = "left", frames={10,11,12}, time = 1000, loopCount = 1}
+		{name = "forward", frames={1,2,3,0}, time = 1000, loopCount = 1},
+		{name = "right", frames={4,5,6,0}, time = 1000, loopCount = 1}, 
+		{name = "back", frames= {7,8,9,0}, time = 1000, loopCount = 1}, 
+		{name = "left", frames={10,11,12,0}, time = 1000, loopCount = 1},
+		{name = "attackForward", frames={3,0}, time = 200, loopCount = 1},
+		{name = "attackRight", frames={6,7,0}, time = 200, loopCount = 1},
+		{name = "attackBack", frames={8,10,0}, time = 200, loopCount = 1},
+		{name = "attackLeft", frames={12,1,0}, time = 200, loopCount = 1},
 	}
 
 	--Declare Image Sheet 
@@ -385,12 +412,17 @@ function scene:createScene (event)
 	rect.x = screenW*.45  
 	rect.y = screenH*.5 
 	
-	--Used to aid collision detection for the sprite image
-	colRect = display.newRect(rect.x, rect.y, 55, 30)
+	--Helps with collision, sprite doesn't detect right side boundary properly  
+	colRect = display.newRect(rect.x, rect.y-25, 65, 60)
 	colRect.isVisible = false
+	
+	--Represents a potential enemy, used to test attack button
+	enemyRect = display.newRect(50,50, 20,20) 
+	enemyRect.health = 50
 		
 	wall = display.newRect(screenW*.2, screenH*.5, 10, 200)
 	physics.addBody(colRect, "kinematic", {})
+	physics.addBody(enemyRect, "dynamic", {})
 	physics.addBody(rect, "static", {})
 	physics.addBody( wall , "dynamic", {})
 	wall.isSensor = true 
@@ -399,6 +431,7 @@ function scene:createScene (event)
 	group:insert(wall)
 	group:insert(g1)
 	group:insert(colRect)
+	group:insert(enemyRect)
 	group:insert( rect )
 	--group:insert( mask )
 	group:insert( analogStick )
@@ -441,34 +474,30 @@ local function main( event )
 	-- MOVE THE EVERYTHING
 	analogStick:slide(g1, speed)
 	analogStick:slide(wall, speed) 
-	
-	--Determine animation to play 
-	angle = analogStick:getAngle() 
-	moving = analogStick:getMoving()
-	if(not rect.isPlaying) then
-		if(angle <= 22.5 or angle > 338) then
-			rect:setSequence("forward")
-		elseif(angle <= 70 and angle > 22.5) then
-			---rect:setSequence("forwardR")
-			rect:setSequence("forward")
-		elseif(angle < 110 and angle > 70) then
-			rect:setSequence("right") 
-		elseif(angle <= 160 and angle > 110) then 
-			---rect:setSequence("backR") 
-			rect:setSequence("back")
-		elseif(angle <= 200 and angle > 160) then 
-			rect:setSequence("back")
-		elseif(angle <= 250 and angle > 200) then 
-			---rect:setSequence("backL") 
-			rect:setSequence("back")
-		elseif(angle <= 290 and angle > 250) then 
-			rect:setSequence("left") 
-		elseif(angle <= 338 and angle > 290) then 
-			---rect:setSequence("forwardL")
-			rect:setSequence("forward")
-		end
+	if(enemyRect) then 
+		analogStick:slide(enemyRect, speed)
 	end
 	
+	angle = analogStick:getAngle() 
+	moving = analogStick:getMoving()
+	
+	--Determine which animation to play based on the direction of the analog stick
+	if(angle <= 70 or angle > 290) then
+		seq = "forward"
+	elseif(angle <= 110 and angle > 70) then
+		seq = "right"
+	elseif(angle <= 250 and angle > 160) then 
+		seq = "back"
+	elseif(angle <= 290 and angle > 250) then 
+		seq = "left" 
+	end
+	
+	--Change the sequence only if another sequence isn't still playing 
+	if(not rect.isPlaying) then
+		rect:setSequence(seq)
+	end
+	
+	--If the analog stick is moving, animate the sprite
 	if(moving) then 
 		rect:play() 
 	end
