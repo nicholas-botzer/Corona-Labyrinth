@@ -4,7 +4,7 @@
 -Remove any potential copy right stuff
 
 Zach: 
--Fix collisions 
+-Interactive chest and Inventory 
 -Sprites 
 -Attacking w/sword button animation
 -Death Handler
@@ -14,4 +14,7 @@ Will:
 -Create enemy/player class "objects" 
 
 Nick:
--Map generation 
+-Specific start location
+-Fix collisions
+-Stairway to next floor
+-Floor and wall images/sprites
