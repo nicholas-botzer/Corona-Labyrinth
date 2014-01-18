@@ -1,7 +1,7 @@
 local LCS = require 'LCS'
 require "options"
 
-Creature = LCS.class(takeDamage(),{health, maxHealth, damage, armor, speed, spriteOptions, mySheet ,model})
+Creature = LCS.class({health, maxHealth, damage, armor, speed, spriteOptions, mySheet ,model})
 
 function Creature:init(posX, posY)
 	self.health = 100
@@ -32,6 +32,8 @@ function Creature:init(posX, posY)
 	
 	self.model = display.newSprite(mySheet, sequenceData)
 	self.model:setSequence("forward")
+	self.model.x = posX
+	self.model.y = posY
 end
 
 local function takeDamage(dmg)

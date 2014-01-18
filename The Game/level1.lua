@@ -10,6 +10,7 @@ system.activate("multitouch")
 local widget = require "widget"
 local StickLib   = require("lib_analog_stick")
 local physics = require("physics")
+local CreatureClasses = require('CreatureClasses')
 local PerspectiveLib = require("perspective")
 require("main") 
 
@@ -373,6 +374,7 @@ end
 
 function scene:createScene (event)
 	local group = self.view
+	boss = Creature(110, 110)
 	physics.start()
 	physics.setGravity(0,0)
 	
@@ -544,6 +546,12 @@ function scene:createScene (event)
 	physics.addBody(rect, "static", {})
 	physics.addBody( wall , "dynamic", {})
 	wall.isSensor = true 
+	
+	--
+	
+	
+	
+	--
 	
 	-- all display objects must be inserted into group in layer order 
 	group:insert(wall)
