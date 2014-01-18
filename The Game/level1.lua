@@ -19,7 +19,7 @@ local screenW, screenH, halfW = display.contentWidth, display.contentHeight, dis
 local swordBtn
 local swordClashSound = audio.loadSound("Sword clash sound effect.mp3")
 local background, wall, ground, mask
-local speed = 3.0
+local speed = 8.0
 local playerHealth = 100
 local camera=PerspectiveLib.createView()
 
@@ -90,163 +90,277 @@ local function updateHealth( event )
 end					
 								-- = starting X - ((playerMaxHealth - playerCurrentHealth) * half of 1% of the healthBar.width)
 								
-local function checkValidDir(r,c)
-	if(adjMatrix[r][c] == 9 or adjMatrix[r][c] == 1)then
-		return false
-	end
+local function checkValidDir(r,c,botRow,botCol,dir)
+	--subtract row 11 times making sure whole area is valid over 6 columns
+	flag = true
+	count = 0
+	if(dir == 0)then
+		for i=1,11 do
+			for j=1,7 do
+				if(adjMatrix[c+j][r-i] == 9 or count > 6)then
+					return false
+				elseif(adjMatrix[c+j][r-i] == 1)then
+					count = count + 1
+				end
+			end
+		end
+	elseif(dir == 1)then
+		for i=1,7 do
+			for j=1,11 do
+				if(adjMatrix[botCol+j][r+i] == 9 or count > 6)then
+					return false
+				elseif(adjMatrix[botCol+j][r+i] == 1)then
+					count = count + 1
+				end
+			end
+		end
+	elseif(dir == 2)then
+		for i=1,11 do
+			for j=1,7 do
+				if(adjMatrix[botCol+j][botRow+i] == 9 or count > 6)then
+					return false
+				elseif(adjMatrix[botCol+j][botRow+i] == 1)then
+					count = count + 1
+				end
+			end
+		end	
+	elseif(dir == 3)then
+		for i=1,7 do
+			for j=1,11 do
+				if(adjMatrix[c-j][r+i] == 9 or count > 6)then
+					return false
+				elseif(adjMatrix[c-j][r+i] == 1)then
+					count = count + 1
+				end
+			end
+		end	
+	end--end if for direction
 	
-	if(adjMatrix[r][c] == 0)then
+	if(count > 6)then
+		return false
+	else
 		return true
 	end
-end
-
-local function createEdge(direction)
-
-	if(direction == 0 or direction == 2)then
-		edgeHeight = math.random(100,400)
-		edgeWidth = math.random(60,lastWidth/2)
-		if(direction == 0)then
-			edgeY = lastY - edgeHeight
-		elseif(direction == 2)then
-			edgeY = lastHeight + lastY
-		end
-		edgeX = math.random(lastX,(lastX + (lastWidth-edgeWidth)))
-	elseif(direction == 1 or direction == 3)then
-		edgeWidth = math.random(100,400)
-		edgeHeight = math.random(60,lastHeight/2)
-		if(direction == 1)then
-			edgeX = lastX + lastWidth
-		elseif(direction == 3)then
-			edgeX = lastX - edgeWidth
-		end
-		edgeY = math.random(lastY,(lastY + (lastHeight-edgeHeight)))
-	end
-		
-		
-	--redefine the ending values of the edge just created so we can generate another room
-	lastX = edgeX
-	lastY = edgeY
-	lastWidth = edgeWidth
-	lastHeight = edgeHeight
-	--create the connecting edge and return it to be added into the group
-	edge = display.newRect(edgeX,edgeY,edgeWidth,edgeHeight)
-	edge:setReferencePoint(display.TopLeftReferencePoint)
-	edge.x, edge.y = edgeX , edgeY
-	edge:setFillColor(0,0,255)
-	
-	return edge
 
 end
 
-local function createRoom(direction)
-
-	roomWidth = math.random(200,600)
-	roomHeight = math.random(200,600)
-	if(direction == 2)then --downward room
-		roomY = lastHeight + lastY
-		roomX = math.random((lastX+lastWidth) - roomWidth,lastX)
-	elseif(direction == 0)then --upward room
-		roomY = lastY - roomHeight
-		roomX = math.random((lastX+lastWidth) - roomWidth,lastX)
-	elseif(direction == 1)then-- right room
-		roomY = math.random(lastY-(roomHeight-lastHeight),lastY)
-		roomX = lastX + lastWidth
-	elseif(direction == 3)then-- left room
-		roomY = math.random(lastY-(roomHeight-lastHeight),lastY)
-		roomX = lastX - roomWidth
-	end
-	
-	--roomX = math.random(0,400)
-	--redefine ending values of room to generate next edge
-	lastX = roomX
-	lastY = roomY
-	lastWidth = roomWidth
-	lastHeight = roomHeight
-	
-	--create the room and return it, then add it to the group
-	room = display.newRect(roomX,roomY,roomWidth,roomHeight)
+local function makeRoom(r,c)
+    room = display.newRect(r*50,c*50,50,50)
     room:setReferencePoint(display.TopLeftReferencePoint)
-    room.x,room.y = roomX, roomY
+    room.x,room.y = r*50,c*50
     room:setFillColor(0,255,0)
-    
-    return room
+	
+	return room
+end
+local function makeWall(r,c)
+    wall = display.newRect(r*50,c*50,50,50)
+    wall:setReferencePoint(display.TopLeftReferencePoint)
+    wall.x,wall.y = r*50,c*50
+    wall:setFillColor(255,0,0)
+	
+	return wall
 end
 
-local function randomWalk(nodes,edges)
+local function generateRoom(r,c,botRow,botCol,dir)
+	
+	width = math.random(3,5)
+	height = math.random(3,5)
+	if(dir == 0)then
+		col = math.random((c+1)-width,c)
+		row = r -1
+		for i=0,height do
+			for j=0,width do
+			    adjMatrix[col + j][row - i] = 1
+			end
+		end
+		currentRow = r - height
+		currentCol = col
+		currentBotRow = r - 1
+		currentBotCol =  col + width
+	elseif(dir == 1)then	
+		col = c + 1
+		row = math.random((r-height + 1),r)
+		for i=0,height do
+			for j=0,width do
+			    adjMatrix[col+j][row+i] = 1
+			end
+		end
+		currentRow = row
+		currentCol = col
+		currentBotRow = row + height
+		currentBotCol = col + width	
+	elseif(dir == 2)then
+		row = r + 1
+		col = math.random((c+1)-width,c)
+		for i=0,height do
+			for j=0,width do
+			    adjMatrix[col+j][row+i] = 1
+			end
+		end
+		currentRow = row
+		currentCol = col
+		currentBotRow = row + height
+		currentBotCol = col + width	
+	elseif(dir == 3)then
+		col = c - 1
+		row = math.random(r,(r+height))
+		for i=0,height do
+			for j=0,width do
+			    adjMatrix[col-j][row-i] = 1
+			end
+		end
+		currentRow = row - height
+		currentCol = col - width
+		currentBotRow = row
+		currentBotCol = col	
+	end
+end
+local function generateEdge(r,c,botRow,botCol,dir)
+	
+	if(dir == 0 or dir == 2)then
+		height = math.random(2,5)
+		width = 1
+		col = math.random(c,(botCol-1))
+		for i=0,height do
+			for j=0,width do
+				if(dir == 0)then
+					adjMatrix[col+j][r-i] = 1
+				elseif(dir == 2)then
+					adjMatrix[col+j][botRow+i] = 1
+				end
+			end
+		end
+		if(dir == 0)then
+			currentRow = r - height
+			currentBotRow = r - 1
+			currentBotCol = col + 1
+			currentCol = col
+		elseif(dir == 2)then
+			currentRow = botRow + height
+			currentBotRow = botRow + 1
+			currentBotCol = col + 1
+			currentCol = col
+		end
+	elseif(dir == 1 or dir == 3)then
+		height = 1
+		width = math.random(2,5)
+		row = math.random(r,(botRow-1))
+		for i =0, height do
+			for j=0, width do
+				if(dir == 1)then
+					adjMatrix[botCol+j][row+i] = 1
+				elseif(dir == 3)then
+					adjMatrix[c-j][row+i] = 1
+				end
+			end
+		end
+		if(dir == 1)then
+			currentBotRow = row + 1
+			currentRow = row
+			currentCol = botCol + width
+			currentBotCol = botCol
+		elseif(dir == 3)then
+			currentCol = c - width
+			currentBotCol = c - 1
+			currentBotRow = row + 1
+			currentRow = row
+		end
+	end -- end outer if
+
+end
+local function generateStartRoom(r,c)
+
+	for i=0,3 do
+		for j=0,3 do
+			adjMatrix[c+j][r+i] = 1
+		end
+	end
+end
+local function randomWalk(nodes)
 --use the adj matrix and begin a random walk through the grid
 
 	--check open locations in matrix
-	row = math.random(1,5)
-	col = math.random(1,5)
+
+	currentRow = math.random(7,35)
+	currentCol = math.random(7,35)
+	currentBotRow = currentRow + 3
+	currentBotCol = currentCol + 3
+	generateStartRoom(currentRow,currentCol)
 	nodesPlaced = 0
 	flag = false
-	count = 0
-	while nodesPlaced < nodes do
+	while nodesPlaced < 12 do
 		--create the room at the start location
-		adjMatrix[row][col] = 1
 		--chooseRandom location and check if it is valid
 		--if it's valid go that direction and change adjMatrix
 		--if not check a new direction
 		rand = math.random(0,3)
 		flag = false
-		count = 0
-		while not flag and count < 4 do
+		counter = 0
+		while not flag and counter < 4 do
 			if(rand == 0)then
-				flag = checkValidDir(row+1,col)
+				--check upward
+				flag = checkValidDir(currentRow,currentCol,currentBotRow,currentBotCol,0)
 				if(flag)then
-					--creates the edge going downward
-					edge = createEdge(2)
-					room = createRoom(2)
-					row = row +1
+					generateEdge(currentRow,currentCol,currentBotRow,currentBotCol,0)
+					generateRoom(currentRow,currentCol,currentBotRow,currentBotCol,0)
 				end
-				count = count +1
+				counter = counter + 1
 			--creates edge going to the right
 			elseif(rand == 1)then
-				flag = checkValidDir(row,col+1)
+				flag = checkValidDir(currentRow,currentCol,currentBotRow,currentBotCol,1)
 				if(flag)then
-					edge = createEdge(1)
-					room = createRoom(1)
-					col = col +1
+					generateEdge(currentRow,currentCol,currentBotRow,currentBotCol,1)
+					generateRoom(currentRow,currentCol,currentBotRow,currentBotCol,1)
 				end
-				count = count + 1
-			--creates edge going upward
+				counter = counter + 1
+			--creates edge going downward
 			elseif(rand == 2)then
-				flag = checkValidDir(row-1,col)
+				flag = checkValidDir(currentRow,currentCol,currentBotRow,currentBotCol,2)
 				if(flag)then
-					edge = createEdge(0)
-					room = createRoom(0)
-					row = row - 1
+					generateEdge(currentRow,currentCol,currentBotRow,currentBotCol,2)
+					generateRoom(currentRow,currentCol,currentBotRow,currentBotCol,2)
 				end
-				count = count + 1
+				counter = counter + 1
 			--creates edge going to the left
 			elseif(rand == 3)then
-				flag = checkValidDir(row,col-1)
+				flag = checkValidDir(currentRow,currentCol,currentBotRow,currentBotCol,3)
 				if(flag)then
-					edge = createEdge(3)
-					room = createRoom(3)
-					col = col - 1
+					generateEdge(currentRow,currentCol,currentBotRow,currentBotCol,3)
+					generateRoom(currentRow,currentCol,currentBotRow,currentBotCol,3)
 				end
-				count = count + 1
+				counter = counter + 1
 			end
 			rand = rand + 1
 			if(rand > 3)then
 				rand = 0
 			end
 		end	--end inner while
-		g1:insert(room)
-		g1:insert(edge)
-		if(count >= 4)then
-				test = display.newRect(screenW*.25, 0, 100, 100 )
-				test:setReferencePoint( display.TopLeftReferencePoint )
-				test:setFillColor(122,122,0)
-				test.x, test.y = screenW*.25, 0
-				g1:insert(test)
+		print(counter)
+		if(counter >= 4 and not flag)then
+			adjMatrix[2][2] = 1
+			nodesPlaced = nodesPlaced + 1
+		else
+			nodesPlaced = nodesPlaced + 1
 		end
-		--for count equal four move to a neighbor that has an edge currently	
-		nodesPlaced = nodesPlaced + 1
 	end--end outer while signaling all nodes and edges have been placed
 
 
+
+end
+
+local function generateMap(rows,cols)
+	
+	for i=0,rows do
+		for j=0,cols do
+			if(adjMatrix[i][j] == 1)then
+				room = makeRoom(i,j)
+				g1:insert(room)
+			elseif(adjMatrix[i][j] == 0 or adjMatrix[i][j] == 9)then
+				wall = makeWall(i,j)
+				g1:insert(wall)
+			end-- end if
+		end -- end inner for
+	end--end outer for
 
 end
 -----------------------------------------------------------------------------------------
@@ -267,20 +381,20 @@ function scene:createScene (event)
 	
 	--[[mask = display.newImageRect( "masked2.png", screenW, screenH )
 	mask:setReferencePoint( display.TopLeftReferencePoint )
-	mask.x, mask.y = 0, 0]]
+	mask.x, mask.y = 0, 0
 	--Creates the intial starting room that the user will be placed into
 	ground = display.newRect(screenW*.25, 0, screenW*.4, 200 )
 	ground:setReferencePoint( display.TopLeftReferencePoint )
 	ground:setFillColor(255,0,0)
 	ground.x, ground.y = screenW*.25, 0
-	g1:insert(ground)
+	g1:insert(ground)]]
 	
 	
 	--define use for coordinates of last positioned room
 	--sets it to create a 5x5 grid of nodes with edges connecting the nodes
 	adjMatrix = {}
-	rows = 7
-	cols = 7
+	rows = 42
+	cols = 42
 	for i=0,rows do
 		adjMatrix[i] = {}
 		for j=0,cols do
@@ -288,9 +402,9 @@ function scene:createScene (event)
 				adjMatrix[i][j] = 9
 			elseif(j == 0)then
 				adjMatrix[i][j] = 9
-			elseif(i == 9)then
+			elseif(i == 42)then
 				adjMatrix[i][j] = 9
-			elseif(j == 9)then
+			elseif(j == 42)then
 				adjMatrix[i][j] = 9
 			else
 				adjMatrix[i][j] = 0
@@ -299,15 +413,18 @@ function scene:createScene (event)
 	end
 	
 	local nodes = math.random(10,20)
-	local edges = math.random(nodes,nodes*2)
 	
-	lastWidth = screenW*.4
+	--[[lastWidth = screenW*.4
 	lastHeight = 200
 	lastX = screenW*.25
 	lastY = 0
-	firstTime = 0
-	
-	randomWalk(nodes,edges)
+	firstTime = 0]]
+	currentRow = 0
+	currentCol = 0
+	currentBotRow = 0
+	currentBotCol = 0
+	randomWalk(nodes)
+	generateMap(rows,cols)
 	
 	
 	
