@@ -35,7 +35,7 @@ end
 --Picks combat animation based on which way the player is facing
 local function pickAnimation() 
 	facing = rect.sequence 
-	if(facing == "foward") then 
+	if(facing == "forward") then 
 		rect:setSequence("attackForward")
 	elseif(facing == "right") then 
 		rect:setSequence("attackRight") 
@@ -507,10 +507,11 @@ function scene:createScene (event)
 		{name = "right", frames={4,5,6,0}, time = 1000, loopCount = 1}, 
 		{name = "back", frames= {7,8,9,0}, time = 1000, loopCount = 1}, 
 		{name = "left", frames={10,11,12,0}, time = 1000, loopCount = 1},
-		{name = "attackForward", frames={3,0}, time = 200, loopCount = 1},
-		{name = "attackRight", frames={6,7,0}, time = 200, loopCount = 1},
-		{name = "attackBack", frames={8,10,0}, time = 200, loopCount = 1},
-		{name = "attackLeft", frames={12,1,0}, time = 200, loopCount = 1},
+		{name = "attackForward", frames={3,1,3}, time = 200, loopCount = 1},
+		{name = "attackRight", frames={6,7,6}, time = 200, loopCount = 1},
+		{name = "attackLeft", frames={11,12,12}, time = 200, loopCount = 1},
+		{name = "attackBack", frames={8,10,8}, time = 200, loopCount = 1},
+
 	}
 
 	--Declare Image Sheet 
@@ -610,7 +611,7 @@ local function main( event )
 	end
 	
 	--Change the sequence only if another sequence isn't still playing 
-	if(not rect.isPlaying) then
+	if(not (seq == rect.sequence) and moving) then
 		rect:setSequence(seq)
 	end
 	
@@ -619,6 +620,7 @@ local function main( event )
 		rect:play() 
 	end
 end
+
 
 -----------------------------------------------------------------------------------------
 -- END OF YOUR IMPLEMENTATION
