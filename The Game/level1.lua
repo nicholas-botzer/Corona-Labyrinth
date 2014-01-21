@@ -78,16 +78,14 @@ local function updateHealth( event )
 	healthAmount.text = playerHealth .. "/100"
 	healthBar.width = playerHealth * 1.2			--decreases the red in the health bar by 1% of its width
 	healthBar.x = 10 - ((100 - playerHealth) * .6)	--shifts the healthBar so it decreases from the right only
-	--[[
 	if(playerHealth <= 0) then
 		storyboard.gotoScene( "menu" )
-		storyboard.purgeScene("level1")
-		physics.removeBody(wall)
-		physics.stop()
-		analogStick:delete()
-		camera:destroy() 
+		--storyboard.purgeScene("level1")
+		--physics.removeBody(wall)
+		--physics.stop()
+		--analogStick:delete()
+		--camera:destroy() 
 	end
-	]]
 end					
 								-- = starting X - ((playerMaxHealth - playerCurrentHealth) * half of 1% of the healthBar.width)
 								
@@ -146,18 +144,16 @@ local function checkValidDir(r,c,botRow,botCol,dir)
 end
 
 local function makeRoom(r,c)
-    room = display.newRect(r*50,c*50,50,50)
+    room = display.newImageRect("flooring.JPG",50,50)
     room:setReferencePoint(display.TopLeftReferencePoint)
     room.x,room.y = r*50,c*50
-    room:setFillColor(0,255,0)
 	
 	return room
 end
 local function makeWall(r,c)
-    wall = display.newRect(r*50,c*50,50,50)
+    wall = display.newImageRect("stone_wall.png",50,50)
     wall:setReferencePoint(display.TopLeftReferencePoint)
     wall.x,wall.y = r*50,c*50
-    wall:setFillColor(255,0,0)
 	
 	return wall
 end
@@ -284,6 +280,8 @@ local function randomWalk(nodes)
 
 	currentRow = math.random(7,35)
 	currentCol = math.random(7,35)
+	startRow = currentRow + 1
+	startCol = currentCol + 1
 	currentBotRow = currentRow + 3
 	currentBotCol = currentCol + 3
 	generateStartRoom(currentRow,currentCol)
@@ -344,8 +342,6 @@ local function randomWalk(nodes)
 			nodesPlaced = nodesPlaced + 1
 		end
 	end--end outer while signaling all nodes and edges have been placed
-
-
 
 end
 
@@ -415,7 +411,8 @@ function scene:createScene (event)
 	end
 	
 	local nodes = math.random(10,20)
-	
+	startRow = 0
+	startCol = 0
 	--[[lastWidth = screenW*.4
 	lastHeight = 200
 	lastX = screenW*.25
@@ -529,23 +526,25 @@ function scene:createScene (event)
 	
 	--Declare Sprite Object 
 	rect = display.newSprite(mySheet, sequenceData) 
-	rect.x = screenW*.45  
-	rect.y = screenH*.5 
+	rect.x = startCol * 50  
+	rect.y = startRow * 50 
 	
 	--Helps with collision, sprite doesn't detect right side boundary properly  
 	colRect = display.newRect(rect.x, rect.y-25, 65, 60)
-	colRect.isVisible = false
+	colRect.isVisible = true
 	
 	--Represents a potential enemy, used to test attack button
-	enemyRect = display.newRect(50,50, 20,20) 
+	enemyRect = display.newRect(-50,-50, 20,20) 
 	enemyRect.health = 50
+	enemyRect:setFillColor(0,0,255)
 		
-	wall = display.newRect(screenW*.2, screenH*.5, 10, 200)
+	walle = display.newRect(100, 100, 200, 200)
+	walle:setFillColor(255,0,0)
 	physics.addBody(colRect, "kinematic", {})
 	physics.addBody(enemyRect, "dynamic", {})
 	physics.addBody(rect, "static", {})
-	physics.addBody( wall , "dynamic", {})
-	wall.isSensor = true 
+	physics.addBody( walle , "dynamic", {})
+	walle.isSensor = true 
 	
 	--
 	
@@ -554,25 +553,26 @@ function scene:createScene (event)
 	--
 	
 	-- all display objects must be inserted into group in layer order 
-	group:insert(wall)
+	g1:insert(walle)
 	group:insert(g1)
-	group:insert(colRect)
-	group:insert(enemyRect)
 	group:insert( rect )
 	--group:insert( mask )
+	
+	--camera set up
+	camera:add(g1,3,true)
+	camera:add(rect, 2, true)
+	camera:setFocus(rect)
+	camera:setBounds(false)
+	camera:track()
+	group:insert( camera )
 	group:insert( analogStick )
 	group:insert( invBtn )
 	group:insert( swordBtn )
 	group:insert(healthBackground)
 	group:insert(healthBar)
 	group:insert(healthAmount)
-	
-	--camera set up
-	camera:add(rect, 2, true)
-	camera:setFocus(rect)
-	camera:setBounds(false)
-	camera:track()
-	group:insert( camera )
+	group:insert(colRect)
+	group:insert(enemyRect)
 end
 
 -- Called immediately after scene has moved onscreen:
