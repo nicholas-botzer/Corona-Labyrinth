@@ -62,6 +62,18 @@ local function onSwordBtnRelease()
 			end
 		end
 	end
+	
+	--Open a chest if its in range
+	if(math.abs(rect.x - chest1.x) < 30 and math.abs(rect.y - chest1.y)) then
+		if(chest1.frame == 1) then  --Only lets chest animation play if the chest is closed
+			chest1:setSequence("open") 
+			chest1:play() 
+			treasure = display.newText("You found a ".."Giant Cock", rect.x, rect.y) 
+			timer.performWithDelay(1000, function() treasure:removeSelf() treasure = nil end)
+			items[table.getn(items)] = "Object Name"
+		end
+	end
+
 	return true
 end 
 
@@ -546,15 +558,30 @@ function scene:createScene (event)
 	physics.addBody( walle , "dynamic", {})
 	walle.isSensor = true 
 	
-	--
+	---Sample chest ----
+	chestData = {
+		{name = "open", frames={1, 5, 2, 2}, time = 1000, loopCount = 1},
+	}
 	
+	chestDetails = {	
+		height = 32, 
+		width = 32, 
+		numFrames = 6, 
+		sheetContentWidth = 96, 
+		sheetContentHeight = 64 
+	}
 	
+	chestSheet = graphics.newImageSheet("chestResize.png", chestDetails) 
+	chest1 = display.newSprite(chestSheet, chestData)
+	chest1.x = 100 
+	chest1.y = 50
+	--physics.addBody(chest1, "dynamic", {radius=20})
+	---End of sample chest ----
 	
-	--
 	
 	-- all display objects must be inserted into group in layer order 
-	g1:insert(walle)
 	group:insert(g1)
+	group:insert(walle)
 	group:insert( rect )
 	--group:insert( mask )
 	
@@ -599,7 +626,8 @@ local function main( event )
         
 	-- MOVE THE EVERYTHING
 	analogStick:slide(g1, speed)
-	analogStick:slide(wall, speed) 
+	analogStick:slide(walle, speed) 
+	analogStick:slide(chest1, speed)
 	if(enemyRect) then 
 		analogStick:slide(enemyRect, speed)
 	end
@@ -651,7 +679,7 @@ scene:addEventListener( "destroyScene", scene )
 Runtime:addEventListener( "enterFrame", main )
 Runtime:addEventListener( "enterFrame", updateHealth )
 
-Runtime:addEventListener( "collision", onCollision )
+--Runtime:addEventListener( "collision", onCollision )
 -----------------------------------------------------------------------------------------
 
 return scene
