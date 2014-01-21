@@ -12,6 +12,7 @@ local StickLib   = require("lib_analog_stick")
 local physics = require("physics")
 local CreatureClasses = require('CreatureClasses')
 local PerspectiveLib = require("perspective")
+local track = require ("track")
 require("main") 
 
 -- declarations
@@ -100,7 +101,13 @@ local function updateHealth( event )
 	end
 end					
 								-- = starting X - ((playerMaxHealth - playerCurrentHealth) * half of 1% of the healthBar.width)
-								
+					
+local function trackPlayer()
+	
+	track.doFollow (boss, rect, boss.speed)
+	
+end	
+					
 local function checkValidDir(r,c,botRow,botCol,dir)
 	--subtract row 11 times making sure whole area is valid over 6 columns
 	flag = true
@@ -600,6 +607,8 @@ function scene:createScene (event)
 	group:insert(healthAmount)
 	group:insert(colRect)
 	group:insert(enemyRect)
+	
+	g1:insert(boss.model)
 end
 
 -- Called immediately after scene has moved onscreen:
@@ -678,6 +687,7 @@ scene:addEventListener( "destroyScene", scene )
 
 Runtime:addEventListener( "enterFrame", main )
 Runtime:addEventListener( "enterFrame", updateHealth )
+Runtime:addEventListener( "enterFrame", trackPlayer)
 
 --Runtime:addEventListener( "collision", onCollision )
 -----------------------------------------------------------------------------------------
