@@ -58,7 +58,7 @@ function Perspective.createView(numLayers)
 			y1=0,
 			y2=ch,
 			prevDamping=10,
-			damping=0.1
+			damping=1.0
 		}
 
 

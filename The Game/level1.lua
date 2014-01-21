@@ -71,7 +71,6 @@ local function onSwordBtnRelease()
 			chest1:play() 
 			treasure = display.newText("You found a ".."Giant Cock", rect.x, rect.y) 
 			timer.performWithDelay(1000, function() treasure:removeSelf() treasure = nil end)
-			items[table.getn(items)] = "Object Name"
 		end
 	end
 
@@ -551,19 +550,9 @@ function scene:createScene (event)
 	--Helps with collision, sprite doesn't detect right side boundary properly  
 	colRect = display.newRect(rect.x, rect.y-25, 65, 60)
 	colRect.isVisible = true
-	
-	--Represents a potential enemy, used to test attack button
-	enemyRect = display.newRect(-50,-50, 20,20) 
-	enemyRect.health = 50
-	enemyRect:setFillColor(0,0,255)
-		
-	walle = display.newRect(100, 100, 200, 200)
-	walle:setFillColor(255,0,0)
+
 	physics.addBody(colRect, "kinematic", {})
-	physics.addBody(enemyRect, "dynamic", {})
 	physics.addBody(rect, "static", {})
-	physics.addBody( walle , "dynamic", {})
-	walle.isSensor = true 
 	
 	---Sample chest ----
 	chestData = {
@@ -587,8 +576,8 @@ function scene:createScene (event)
 	
 	
 	-- all display objects must be inserted into group in layer order 
+	g1:insert(chest1)
 	group:insert(g1)
-	group:insert(walle)
 	group:insert( rect )
 	--group:insert( mask )
 	
@@ -606,7 +595,6 @@ function scene:createScene (event)
 	group:insert(healthBar)
 	group:insert(healthAmount)
 	group:insert(colRect)
-	group:insert(enemyRect)
 	
 	g1:insert(boss.model)
 end
@@ -634,13 +622,8 @@ end
 local function main( event )
         
 	-- MOVE THE EVERYTHING
-	analogStick:slide(g1, speed)
-	analogStick:slide(walle, speed) 
-	analogStick:slide(chest1, speed)
-	if(enemyRect) then 
-		analogStick:slide(enemyRect, speed)
-	end
 	
+	analogStick:slide(rect,-speed)
 	angle = analogStick:getAngle() 
 	moving = analogStick:getMoving()
 	
