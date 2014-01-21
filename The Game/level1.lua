@@ -53,7 +53,7 @@ local function onSwordBtnRelease()
 	rect:play()
 	if(enemyRect) then 
 		--Test to see if enemy is range of player character. This can be a variable later. 
-		if(math.abs(rect.x - enemyRect.x) < 30 and math.abs(rect.y - enemyRect.y)) then
+		if(math.abs(rect.x - enemyRect.x) < 30 and math.abs(rect.y - enemyRect.y) < 30) then
 			enemyRect.health = enemyRect.health - 25 
 			audio.play( swordClashSound ) 
 			--Remove enemy if 0 HP or lower
@@ -65,7 +65,7 @@ local function onSwordBtnRelease()
 	end
 	
 	--Open a chest if its in range
-	if(math.abs(rect.x - chest1.x) < 30 and math.abs(rect.y - chest1.y)) then
+	if(math.abs(rect.x - chest1.x) < 30 and math.abs(rect.y - chest1.y) < 30) then
 		if(chest1.frame == 1) then  --Only lets chest animation play if the chest is closed
 			chest1:setSequence("open") 
 			chest1:play() 
@@ -521,10 +521,10 @@ function scene:createScene (event)
 	)
 	
 	sequenceData = {
-		{name = "forward", frames={1,2,3,0}, time = 1000, loopCount = 1},
-		{name = "right", frames={4,5,6,0}, time = 1000, loopCount = 1}, 
-		{name = "back", frames= {7,8,9,0}, time = 1000, loopCount = 1}, 
-		{name = "left", frames={10,11,12,0}, time = 1000, loopCount = 1},
+		{name = "forward", frames={1,2,3,3}, time = 1000, loopCount = 1},
+		{name = "right", frames={4,5,6,6}, time = 1000, loopCount = 1}, 
+		{name = "back", frames= {7,8,9,9}, time = 1000, loopCount = 1}, 
+		{name = "left", frames={10,11,12,12}, time = 1000, loopCount = 1},
 		{name = "attackForward", frames={3,1,3}, time = 200, loopCount = 1},
 		{name = "attackRight", frames={6,7,6}, time = 200, loopCount = 1},
 		{name = "attackLeft", frames={11,12,12}, time = 200, loopCount = 1},
