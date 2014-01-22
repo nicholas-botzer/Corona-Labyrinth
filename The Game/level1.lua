@@ -14,6 +14,7 @@ local CreatureClasses = require('CreatureClasses')
 local PerspectiveLib = require("perspective")
 local track = require ("track")
 require("main") 
+require("ChestClass") 
 
 -- declarations
 local rect, invBtn
@@ -62,18 +63,16 @@ local function onSwordBtnRelease()
 				enemyRect = nil 
 			end
 		end
-	end
-	
-	--Open a chest if its in range
-	if(math.abs(rect.x - chest1.x) < 30 and math.abs(rect.y - chest1.y) < 30) then
-		if(chest1.frame == 1) then  --Only lets chest animation play if the chest is closed
-			chest1:setSequence("open") 
-			chest1:play() 
-			treasure = display.newText("You found a ".."Giant Cock", rect.x, rect.y) 
-			timer.performWithDelay(1000, function() treasure:removeSelf() treasure = nil end)
+	end	
+
+	if(math.abs(rect.x - Chest:getX(chest1)) < 30 and math.abs(rect.y - Chest:getY(chest1)) < 30) then
+		if(chest1.closed == true) then 
+			Chest:open(chest1) 
+			local treasure = display.newText("You found a ".."Object", rect.x, rect.y) 
+			g1:insert(treasure) 
+			timer.performWithDelay(1500, function() g1:remove(treasure) treasure = nil end)	
 		end
 	end
-
 	return true
 end 
 
@@ -389,6 +388,7 @@ end
 function scene:createScene (event)
 	local group = self.view
 	boss = Creature(110, 110)
+	chest1 = Chest:new(100, 50) 
 	physics.start()
 	physics.setGravity(0,0)
 	
@@ -554,29 +554,11 @@ function scene:createScene (event)
 	physics.addBody(colRect, "kinematic", {})
 	physics.addBody(rect, "static", {})
 	
-	---Sample chest ----
-	chestData = {
-		{name = "open", frames={1, 5, 2, 2}, time = 1000, loopCount = 1},
-	}
-	
-	chestDetails = {	
-		height = 32, 
-		width = 32, 
-		numFrames = 6, 
-		sheetContentWidth = 96, 
-		sheetContentHeight = 64 
-	}
-	
-	chestSheet = graphics.newImageSheet("chestResize.png", chestDetails) 
-	chest1 = display.newSprite(chestSheet, chestData)
-	chest1.x = 100 
-	chest1.y = 50
 	--physics.addBody(chest1, "dynamic", {radius=20})
 	---End of sample chest ----
 	
-	
 	-- all display objects must be inserted into group in layer order 
-	g1:insert(chest1)
+	g1:insert(chest1.pic)
 	group:insert(g1)
 	group:insert( rect )
 	--group:insert( mask )
