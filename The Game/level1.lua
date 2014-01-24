@@ -77,7 +77,7 @@ local function onSwordBtnRelease()
 	end
 	
 	if(floorsDone < levels)then
-		if(math.abs(rect.x - stairs.x) < 30 and math.abs(rect.y - stairs.y) < 30)then
+		if(math.abs(rect.x - stairs.x) < 120 and math.abs(rect.y - stairs.y) < 120)then
 			floorsDone = floorsDone + 1
 			storyboard.purgeScene("level1")
 			storyboard.reloadScene("level1")
@@ -206,9 +206,9 @@ local function makeWall(r,c)
 	return wall
 end
 function makeStairs(r,c)
-	stairs = display.newImageRect("stairs.png",50,50)
+	stairs = display.newImageRect("stairs.png",100,100)
 	stairs:setReferencePoint(display.TopLeftReferencePoint)
-	stairs.x,stairs.y = r*50,c*50
+	stairs.x,stairs.y = (r*50)-50,(c*50)-50
 	
 	return stairs
 
@@ -391,14 +391,14 @@ local function randomWalk(nodes)
 		end	--end inner while
 		--print(counter)
 		if(counter >= 4 and not flag)then
-			adjMatrix[currentCol + 1][currentRow + 1] = 2
+			adjMatrix[currentCol + 2][currentRow + 2] = 2
 			adjMatrix[2][2] = 1
 			nodesPlaced = 50
 		else
 			nodesPlaced = nodesPlaced + 1
 		end
 	end--end outer while signaling all nodes and edges have been placed
-	adjMatrix[currentCol + 1][currentRow + 1] = 2
+	adjMatrix[currentCol + 2][currentRow + 2] = 2
 
 end
 
