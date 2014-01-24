@@ -11,6 +11,10 @@ display.setStatusBar( display.HiddenStatusBar )
 local storyboard = require "storyboard"
 
 -- load menu screen
+holding = {"great sword", "agile sword", "onyx sword", "Master's sword", "potion", "strong potion", "Master's armor", "Master's leg-armor","grand boots", 
+"great sword","great sword","great sword","great sword","great sword","great sword","great sword","great sword","great sword","great sword",
+"great sword","great sword","great sword","great sword","great sword","great sword"}
+ 
 storyboard.gotoScene( "menu" )
 
 --Codes the keys for back button functionality 

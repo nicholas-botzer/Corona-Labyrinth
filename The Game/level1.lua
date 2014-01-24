@@ -52,27 +52,31 @@ end
 local function onSwordBtnRelease()
 	pickAnimation()
 	rect:play()
+	audio.play( swordClashSound ) 
+	
+	--Handle swinging at enemies here
 	if(enemyRect) then 
 		--Test to see if enemy is range of player character. This can be a variable later. 
 		if(math.abs(rect.x - enemyRect.x) < 30 and math.abs(rect.y - enemyRect.y) < 30) then
 			enemyRect.health = enemyRect.health - 25 
-			audio.play( swordClashSound ) 
 			--Remove enemy if 0 HP or lower
 			if (enemyRect.health <= 0) then 
 				enemyRect:removeSelf() 
 				enemyRect = nil 
 			end
 		end
-	end	
 
-	if(math.abs(rect.x - Chest:getX(chest1)) < 30 and math.abs(rect.y - Chest:getY(chest1)) < 30) then
+	--Handle chest opening here  
+	elseif(math.abs(rect.x - Chest:getX(chest1)) < 50 and math.abs(rect.y - Chest:getY(chest1)) < 50) then
 		if(chest1.closed == true) then 
 			Chest:open(chest1) 
-			local treasure = display.newText("You found a ".."Object", rect.x, rect.y) 
+			local treasure = display.newText("You found a "..Chest:getContents(chest1), rect.x-65, rect.y-30, native.systemFontBold, 20) 
+			table.insert(holding, Chest:getContents(chest1)) 
 			g1:insert(treasure) 
-			timer.performWithDelay(1500, function() g1:remove(treasure) treasure = nil end)	
+			timer.performWithDelay(1250, function() g1:remove(treasure) treasure = nil end)	
 		end
 	end
+	
 	return true
 end 
 
@@ -508,7 +512,7 @@ function scene:createScene (event)
 	-- adds an analog stick
 	analogStick = StickLib.NewStick(
 		{
-			x = screenW * .1,
+			x = screenW * .17,
 			y = screenH * .75,
 			thumbSize = 50,
 			borderSize = 55,

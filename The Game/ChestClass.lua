@@ -1,5 +1,6 @@
 Chest = {} 
----Sample chest ----
+
+-- CHEST SPRITE/IMAGE SHEET INFO --
 chestData = {
 	{name = "open", frames={1, 5, 2, 2}, time = 1000, loopCount = 1},
 }
@@ -14,6 +15,7 @@ chestDetails = {
 	
 chestSheet = graphics.newImageSheet("chestResize.png", chestDetails) 
 
+-- END OF IMAGE SHEET DECLARATIONS/SETUP -- 
 
 function Chest:new (xpos, ypos)
 	c = {}   -- create object if user does not provide one
@@ -23,7 +25,8 @@ function Chest:new (xpos, ypos)
 	self.pic.x = xpos 
 	self.pic.y = ypos 
 	self.closed = true 
-	self.contents = {} 
+	self.contents = nil
+	generateContents(self) 
     return c
 end
 
@@ -33,6 +36,15 @@ function Chest:open(box, cX, cY)
 		box.pic:play() 
 		box.closed = false 
 	end
+end
+
+function generateContents(box) 
+	--Generate random item for the box here
+	box.contents = "onyx sword" 
+end
+
+function Chest:getContents(box)
+	return box.contents
 end
 
 function Chest:getX(box) 
