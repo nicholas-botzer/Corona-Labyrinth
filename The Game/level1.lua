@@ -15,7 +15,9 @@ local PerspectiveLib = require("perspective")
 local track = require ("track")
 local floorsDone = 0
 require("main") 
-require("ChestClass") 
+require("options")
+require("ChestClass")
+
 
 -- declarations
 local rect, invBtn
@@ -74,7 +76,7 @@ local function onSwordBtnRelease()
 		end
 	end
 	
-	if(floorsDone < 3)then
+	if(floorsDone < levels)then
 		if(math.abs(rect.x - stairs.x) < 30 and math.abs(rect.y - stairs.y) < 30)then
 			floorsDone = floorsDone + 1
 			storyboard.purgeScene("level1")
@@ -330,7 +332,7 @@ local function randomWalk(nodes)
 --use the adj matrix and begin a random walk through the grid
 
 	--check open locations in matrix
-
+	print(levels) 
 	currentRow = math.random(7,35)
 	currentCol = math.random(7,35)
 	startRow = currentRow + 1
@@ -387,7 +389,7 @@ local function randomWalk(nodes)
 				rand = 0
 			end
 		end	--end inner while
-		print(counter)
+		--print(counter)
 		if(counter >= 4 and not flag)then
 			adjMatrix[currentCol + 1][currentRow + 1] = 2
 			adjMatrix[2][2] = 1
@@ -411,6 +413,8 @@ local function generateMap(rows,cols)
 				wall = makeWall(i,j)
 				g1:insert(wall)
 			elseif(adjMatrix[j][i] == 2)then
+				room = makeRoom(i,j)
+				g1:insert(room)
 				stairs = makeStairs(i,j)
 				g1:insert(stairs)
 			end-- end if
@@ -450,7 +454,7 @@ function scene:createScene (event)
 	
 	--g1 is the display group for the map that the user will be placed into
 	g1 = display.newGroup()
-if(floorsDone >= 3)then
+if(floorsDone >= levels)then
 	bossRoom = {}
 	for x=0,9 do
 		bossRoom[x] = {}

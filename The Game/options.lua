@@ -8,7 +8,7 @@ require("main")
 local storyboard = require( "storyboard" )
 local scene = storyboard.newScene()
 difficulty = 1
-levels = 1
+levels = math.random(3,5)
 
 local widget = require "widget"
 
@@ -40,13 +40,13 @@ local function levelSelected(level)
 
 	if(level == "low") then
 		selected2.y = lowLevels.y + 20
-		levels = 1
+		levels = math.random(3,5)
 	elseif(level == "medium") then
 		selected2.y = midLevels.y + 20
-		levels = 2
+		levels = math.random(6,8)
 	else
 		selected2.y = highLevels.y + 20
-		levels = 3
+		levels = math.random(9,11)
 	end
 	return true ;
 end
