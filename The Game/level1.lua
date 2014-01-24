@@ -24,9 +24,6 @@ local swordBtn
 local swordClashSound = audio.loadSound("Sword clash sound effect.mp3")
 local background, wall, ground, mask
 local speed = 8.0
-local playerHealth = 100
-
-
 
 -- 'onRelease' event listener
 local function onInvBtnRelease()
@@ -445,6 +442,7 @@ end
 
 function scene:createScene (event)
 	local group = self.view
+	playerHealth = 100
 	boss = Creature(110, 110)
 	camera=PerspectiveLib.createView()
 	physics.start()
