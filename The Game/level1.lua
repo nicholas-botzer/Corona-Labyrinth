@@ -541,7 +541,7 @@ end--end if for map generation
 	-- adds an analog stick
 	analogStick = StickLib.NewStick(
 		{
-			x = screenW * .1,
+			x = screenW * .17,
 			y = screenH * .75,
 			thumbSize = 50,
 			borderSize = 55,
