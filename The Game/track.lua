@@ -1,19 +1,37 @@
 local track = {}
-local radians = 180/math.pi  --> precalculate radians
+
  
---[[
- track.distanceBetween = function ( pos1, pos2 )
-         local sqrt = math.sqrt
-        if not pos1 or not pos2 then
-                return
-        end
-        if (not pos1.x or not pos1.y or not pos2.x or not pos2.y) then
-                return
-        end
-        local factor = { x = pos2.x - pos1.x, y = pos2.y - pos1.y }
-        return sqrt( ( factor.x * factor.x ) + ( factor.y * factor.y ) )
+ track.changeSprite = function (follower)
+	if (math.abs(follower.moveY) > math.abs(follower.moveX)) then
+		if (follower.moveY > 0) then
+			if (not (follower.model.sequence == "back" or follower.model.sequence == "attackBack")) then
+				follower.model:setSequence("back")
+			end
+		elseif (not (follower.model.sequence == "forward" or follower.model.sequence == "attackForward")) then
+			follower.model:setSequence("forward")
+		end
+	elseif (follower.moveX > 0) then
+		if (not (follower.model.sequence == "right" or follower.model.sequence == "attackRight")) then
+			follower.model:setSequence("right")
+		end
+	elseif (not (follower.model.sequence == "left" or follower.model.sequence == "attackLeft")) then
+		follower.model:setSequence("left")
+	end
 end
- ]]
+
+
+track.attackSprite = function (follower)
+	if (follower.model.sequence == "back") then
+		follower.model:setSequence("attackBack")
+	elseif (follower.model.sequence == "forward") then
+		follower.model:setSequence("attackForward")
+	elseif (follower.model.sequence == "right") then
+		follower.model:setSequence("attackRight")
+	else
+		follower.model:setSequence("attackLeft")
+	end
+	follower.model:play()
+end
  
  
 track.doFollow = function (follower, target, missileSpeed)
@@ -27,14 +45,14 @@ track.doFollow = function (follower, target, missileSpeed)
         -- get total distance as one number
         local distanceTotal = math.sqrt ( ( distanceX * distanceX ) + ( distanceY * distanceY ) )
         
-		if (distanceTotal <500) then 
+		if (distanceTotal < 2500 and distanceTotal > 30) then 
 			-- calculate how much to move
 			local moveDistanceX = distanceX / distanceTotal;
 			local moveDistanceY = distanceY / distanceTotal;
 			
 			-- increase current speed
-			follower.moveX = (follower.moveX /3 ) + moveDistanceX; 
-			follower.moveY = (follower.moveY/3) + moveDistanceY;
+			follower.moveX = (follower.moveX /2 ) + moveDistanceX; 
+			follower.moveY = (follower.moveY/2) + moveDistanceY;
 			
 			-- get total move distance
 			local totalmove = math.sqrt(follower.moveX * follower.moveX + follower.moveY * follower.moveY);
@@ -48,19 +66,16 @@ track.doFollow = function (follower, target, missileSpeed)
 			follower.model.y = follower.model.y + follower.moveY;
 			
 			--change sprite
-			if (follower.moveY > follower.moveX) then
-				if (follower.moveY > 0) then
-					follower.model:setSequence("back")
-				else	
-					follower.model:setSequence("forward")
-				end
-			elseif (follower.moveX > 0) then
-				follower.model:setSequence("right")
-			else	
-				follower.model:setSequence("left")
-			end
-			follower.model:play()
+			track.changeSprite(follower)
+		else
+			--attacking stuff
+			track.attackSprite(follower)
+			attackPlayer(follower)
+
 		end
+		
+		-- play the sprite animation
+		follower.model:play()
         -- !!!!! you got to check if we hit the target - here or in main game logic !!!!!
  
 end

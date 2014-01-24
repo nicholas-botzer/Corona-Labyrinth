@@ -118,6 +118,25 @@ local function trackPlayer()
 	track.doFollow (boss, rect, boss.speed)
 	
 end	
+
+function knockback(attacker, victim, force)
+	local distanceX = attacker.x - victim.model.x
+	local distanceY = attacker.y - victim.model.y
+	local totalDistance = math.sqrt ( ( distanceX * distanceX ) + ( distanceY * distanceY ) )
+	local xForce = force * distanceX / totalDistance
+	local yForce = force * distanceY / totalDistance
+	victim.model.moveX = 0
+	victim.model.moveY = 0
+end
+
+function attackPlayer(attacker)
+	
+	if (math.abs(attacker.model.x - rect.x) < 40 and math.abs(attacker.model.y - rect.y) < 40) then
+		playerHealth = playerHealth -1
+		knockback (rect, attacker, 50)
+	end
+	
+end
 					
 local function checkValidDir(r,c,botRow,botCol,dir)
 	--subtract row 11 times making sure whole area is valid over 6 columns
