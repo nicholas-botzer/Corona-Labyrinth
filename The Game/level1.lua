@@ -652,19 +652,18 @@ end
 -- Called immediately after scene has moved onscreen:
 function scene:enterScene( event )
 	local group = self.view
-	Runtime:removeEventListener( "enterFrame", main )
-	Runtime:removeEventListener( "enterFrame", updateHealth )
-	Runtime:removeEventListener( "enterFrame", trackPlayer)
 	Runtime:addEventListener( "enterFrame", main )
 	Runtime:addEventListener( "enterFrame", updateHealth )
 	Runtime:addEventListener( "enterFrame", trackPlayer)
-	print("added mutiple")
 	storyboard.returnTo = "menu" 
 end
 
 -- Called when scene is about to move offscreen:
 function scene:exitScene( event )
 	local group = self.view
+	Runtime:removeEventListener( "enterFrame", main )
+	Runtime:removeEventListener( "enterFrame", updateHealth )
+	Runtime:removeEventListener( "enterFrame", trackPlayer)
 end
 
 -- If scene's view is removed, scene:destroyScene() will be called just prior to:
