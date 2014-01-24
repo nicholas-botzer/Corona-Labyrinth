@@ -13,6 +13,7 @@ local physics = require("physics")
 local CreatureClasses = require('CreatureClasses')
 local PerspectiveLib = require("perspective")
 local track = require ("track")
+local floorsDone = 0
 require("main") 
 require("ChestClass") 
 
@@ -24,7 +25,6 @@ local swordClashSound = audio.loadSound("Sword clash sound effect.mp3")
 local background, wall, ground, mask
 local speed = 8.0
 local playerHealth = 100
-local camera=PerspectiveLib.createView()
 
 
 
@@ -77,6 +77,14 @@ local function onSwordBtnRelease()
 		end
 	end
 	
+	if(floorsDone < 3)then
+		if(math.abs(rect.x - stairs.x) < 30 and math.abs(rect.y - stairs.y) < 30)then
+			floorsDone = floorsDone + 1
+			storyboard.purgeScene("level1")
+			storyboard.reloadScene("level1")
+		end
+	end
+	
 	return true
 end 
 
@@ -94,8 +102,9 @@ local function updateHealth( event )
 	healthBar.width = playerHealth * 1.2			--decreases the red in the health bar by 1% of its width
 	healthBar.x = 10 - ((100 - playerHealth) * .6)	--shifts the healthBar so it decreases from the right only
 	if(playerHealth <= 0) then
-		storyboard.gotoScene( "menu" )
-		--storyboard.purgeScene("level1")
+		storyboard.gotoScene("menu")
+		storyboard.purgeScene("level1")
+		--storyboard.removeScene("level1")
 		--physics.removeBody(wall)
 		--physics.stop()
 		--analogStick:delete()
@@ -178,7 +187,14 @@ local function makeWall(r,c)
 	
 	return wall
 end
+function makeStairs(r,c)
+	stairs = display.newImageRect("stairs.png",50,50)
+	stairs:setReferencePoint(display.TopLeftReferencePoint)
+	stairs.x,stairs.y = r*50,c*50
+	
+	return stairs
 
+end
 local function generateRoom(r,c,botRow,botCol,dir)
 	
 	width = math.random(3,5)
@@ -357,12 +373,14 @@ local function randomWalk(nodes)
 		end	--end inner while
 		print(counter)
 		if(counter >= 4 and not flag)then
+			adjMatrix[currentCol + 1][currentRow + 1] = 2
 			adjMatrix[2][2] = 1
-			nodesPlaced = nodesPlaced + 1
+			nodesPlaced = 50
 		else
 			nodesPlaced = nodesPlaced + 1
 		end
 	end--end outer while signaling all nodes and edges have been placed
+	adjMatrix[currentCol + 1][currentRow + 1] = 2
 
 end
 
@@ -370,16 +388,33 @@ local function generateMap(rows,cols)
 	
 	for i=0,rows do
 		for j=0,cols do
-			if(adjMatrix[i][j] == 1)then
+			if(adjMatrix[j][i] == 1)then
 				room = makeRoom(i,j)
 				g1:insert(room)
-			elseif(adjMatrix[i][j] == 0 or adjMatrix[i][j] == 9)then
+			elseif(adjMatrix[j][i] == 0 or adjMatrix[j][i] == 9)then
 				wall = makeWall(i,j)
 				g1:insert(wall)
+			elseif(adjMatrix[j][i] == 2)then
+				stairs = makeStairs(i,j)
+				g1:insert(stairs)
 			end-- end if
 		end -- end inner for
 	end--end outer for
 
+end
+local function generateBossRoom(rows,cols)
+
+	for i=0,rows do
+		for j=0,cols do
+			if(bossRoom[j][i] == 1)then
+				room = makeRoom(i,j)
+				g1:insert(room)
+			elseif(bossRoom[j][i] == 0 or bossRoom[j][i] == 9)then
+				wall = makeWall(i,j)
+				g1:insert(wall)
+			end
+		end
+	end
 end
 -----------------------------------------------------------------------------------------
 -- BEGINNING OF YOUR IMPLEMENTATION
@@ -392,13 +427,31 @@ end
 function scene:createScene (event)
 	local group = self.view
 	boss = Creature(110, 110)
-	chest1 = Chest:new(100, 50) 
+	camera=PerspectiveLib.createView()
 	physics.start()
 	physics.setGravity(0,0)
 	
 	--g1 is the display group for the map that the user will be placed into
 	g1 = display.newGroup()
+if(floorsDone >= 3)then
+	bossRoom = {}
+	for x=0,9 do
+		bossRoom[x] = {}
+		for y=0,9 do
+			if(x == 0 or x == 9)then
+				bossRoom[x][y] = 9
+			elseif(y == 0 or y == 9)then
+				bossRoom[x][y] = 9
+			else
+				bossRoom[x][y] = 1
+			end -- end if
+		end -- end for y
+	end--end for x
+	generateBossRoom(9,9)
+	startRow = 5
+	startCol = 5
 	
+else
 	--[[mask = display.newImageRect( "masked2.png", screenW, screenH )
 	mask:setReferencePoint( display.TopLeftReferencePoint )
 	mask.x, mask.y = 0, 0
@@ -418,13 +471,9 @@ function scene:createScene (event)
 	for i=0,rows do
 		adjMatrix[i] = {}
 		for j=0,cols do
-			if(i == 0)then
+			if(i == 0 or i == 42)then
 				adjMatrix[i][j] = 9
-			elseif(j == 0)then
-				adjMatrix[i][j] = 9
-			elseif(i == 42)then
-				adjMatrix[i][j] = 9
-			elseif(j == 42)then
+			elseif(j == 0 or j == 42)then 
 				adjMatrix[i][j] = 9
 			else
 				adjMatrix[i][j] = 0
@@ -433,35 +482,15 @@ function scene:createScene (event)
 	end
 	
 	local nodes = math.random(10,20)
-	startRow = 0
+	startRow = 0 --used for Rect's start position
 	startCol = 0
-	--[[lastWidth = screenW*.4
-	lastHeight = 200
-	lastX = screenW*.25
-	lastY = 0
-	firstTime = 0]]
 	currentRow = 0
 	currentCol = 0
 	currentBotRow = 0
 	currentBotCol = 0
 	randomWalk(nodes)
 	generateMap(rows,cols)
-	
-	
-	
-	--[[incase something messes up and i need to go back to it
-	lastWidth = screenW*.25
-	lastHeight = 200
-	lastX = screenW*.25
-	lastY = 0
-	
-	
-	for i=1,5 do
-		 edgey = createEdge();
-		 room = createRoom()
-		 g1:insert(edgey)
-		 g1:insert(room)
-	end]]
+end--end if for map generation
 	
 
 	--generate the health bar for the player
@@ -512,7 +541,7 @@ function scene:createScene (event)
 	-- adds an analog stick
 	analogStick = StickLib.NewStick(
 		{
-			x = screenW * .17,
+			x = screenW * .1,
 			y = screenH * .75,
 			thumbSize = 50,
 			borderSize = 55,
@@ -548,18 +577,23 @@ function scene:createScene (event)
 	
 	--Declare Sprite Object 
 	rect = display.newSprite(mySheet, sequenceData) 
-	rect.x = startCol * 50  
-	rect.y = startRow * 50 
+	rect.x = startRow * 50  
+	rect.y = startCol * 50 
 	
 	--Helps with collision, sprite doesn't detect right side boundary properly  
 	colRect = display.newRect(rect.x, rect.y-25, 65, 60)
-	colRect.isVisible = true
+	colRect.isVisible = false
 
 	physics.addBody(colRect, "kinematic", {})
 	physics.addBody(rect, "static", {})
 	
+	---Sample chest ----
+	
+	chest1 = Chest:new(100, 50) 
+
 	--physics.addBody(chest1, "dynamic", {radius=20})
 	---End of sample chest ----
+	
 	
 	-- all display objects must be inserted into group in layer order 
 	g1:insert(chest1.pic)
@@ -583,26 +617,6 @@ function scene:createScene (event)
 	group:insert(colRect)
 	
 	g1:insert(boss.model)
-end
-
--- Called immediately after scene has moved onscreen:
-function scene:enterScene( event )
-	local group = self.view
-	storyboard.returnTo = "menu" 
-end
-
--- Called when scene is about to move offscreen:
-function scene:exitScene( event )
-	local group = self.view
-end
-
--- If scene's view is removed, scene:destroyScene() will be called just prior to:
-function scene:destroyScene( event )
-	local group = self.view
-	if invBtn then
-		invBtn:removeSelf()
-		invBtn = nil
-	end
 end
 
 local function main( event )
@@ -635,6 +649,44 @@ local function main( event )
 	end
 end
 
+-- Called immediately after scene has moved onscreen:
+function scene:enterScene( event )
+	local group = self.view
+	Runtime:addEventListener( "enterFrame", main )
+	Runtime:addEventListener( "enterFrame", updateHealth )
+	Runtime:addEventListener( "enterFrame", trackPlayer)
+	storyboard.returnTo = "menu" 
+end
+
+-- Called when scene is about to move offscreen:
+function scene:exitScene( event )
+	local group = self.view
+end
+
+-- If scene's view is removed, scene:destroyScene() will be called just prior to:
+function scene:destroyScene( event )
+	local group = self.view
+	Runtime:removeEventListener( "enterFrame", main )
+	Runtime:removeEventListener( "enterFrame", updateHealth )
+	Runtime:removeEventListener( "enterFrame", trackPlayer)
+	if invBtn then
+		invBtn:removeSelf()
+		invBtn = nil
+	end
+	if camera then
+		camera:destroy()
+		camera = nil
+	end
+	if analogStick then
+		analogStick:delete()
+		analogStick = nil
+	end
+	display.remove(g1)
+	
+end
+
+
+
 
 -----------------------------------------------------------------------------------------
 -- END OF YOUR IMPLEMENTATION
@@ -654,9 +706,6 @@ scene:addEventListener( "exitScene", scene )
 -- storyboard.purgeScene() or storyboard.removeScene().
 scene:addEventListener( "destroyScene", scene )
 
-Runtime:addEventListener( "enterFrame", main )
-Runtime:addEventListener( "enterFrame", updateHealth )
-Runtime:addEventListener( "enterFrame", trackPlayer)
 
 --Runtime:addEventListener( "collision", onCollision )
 -----------------------------------------------------------------------------------------
