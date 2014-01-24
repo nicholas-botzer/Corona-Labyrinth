@@ -652,9 +652,13 @@ end
 -- Called immediately after scene has moved onscreen:
 function scene:enterScene( event )
 	local group = self.view
+	Runtime:removeEventListener( "enterFrame", main )
+	Runtime:removeEventListener( "enterFrame", updateHealth )
+	Runtime:removeEventListener( "enterFrame", trackPlayer)
 	Runtime:addEventListener( "enterFrame", main )
 	Runtime:addEventListener( "enterFrame", updateHealth )
 	Runtime:addEventListener( "enterFrame", trackPlayer)
+	print("added mutiple")
 	storyboard.returnTo = "menu" 
 end
 
