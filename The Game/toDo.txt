@@ -4,17 +4,17 @@
 -Remove any potential copy right stuff
 
 Zach: 
--Interactive chest and Inventory 
--Sprites 
--Attacking w/sword button animation
--Death Handler
+-Interactive inventory with drag and drop
+-New items that spawn from chests
+-Get chests to RNG the items
+-New sprite for character and attacking
 
 Will: 
--Enemies that track player 
--Create enemy/player class "objects" 
+-Finish combat between player and enemy
+-Make player creature class
 
 Nick:
--Specific start location
--Fix collisions
--Stairway to next floor
--Floor and wall images/sprites
+-Need to reset floors and anything else upon death
+-Random chest spawn locations
+-account for number of floors
+-death screen for dieing
