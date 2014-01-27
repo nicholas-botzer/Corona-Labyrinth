@@ -7,8 +7,8 @@
 require("main")
 local storyboard = require( "storyboard" )
 local scene = storyboard.newScene()
-
 local widget = require "widget"
+currentSelection = ""
 
 -- declarations
 local backBtn, screenW, screenH, halfW = display.contentWidth, display.contentHeight, display.contentWidth*0.5
@@ -25,16 +25,133 @@ local function onBackBtnRelease()
 	return true	-- indicates successful touch
 end
 
-local function displayInventory()
-	local yVal = 5
-	for i=0,table.getn(inBag)-1,1 do
-		multiplier = .08 * (i%5)
-		if(i%5 == 0) then 
-			yVal = yVal + 51.5 
+local function snapTo() --Function to implement "snapping" in the drag and drop interface 
+	itemName = inBag[currentSelection].sequence 
+	item = inBag[currentSelection]
+
+	---SWORD SNAP---
+	if string.find(itemName, "sword") then 
+		if(math.abs(item.x - selectedSword.x) < 50 and math.abs(item.y - selectedSword.y) < 50) then 
+			item.x = selectedSword.x 
+			item.y = selectedSword.y
+			if(inUse["sword"]) then 
+				inUse["sword"].x = inUse["sword"].origX
+				inUse["sword"].y = inUse["sword"].origY
+				inBag[inUse["sword"].num].equipped = false 
+				inUse["sword"] = item
+				inUse["sword"].equipped = true
+			else
+				inUse["sword"] = item
+				inUse["sword"].equipped = true
+			end
+		else
+			item.x = item.origX 
+			item.y = item.origY
 		end
-		inBag[i+1].x = display.contentWidth* (.64 + multiplier) 
-		inBag[i+1].y = yVal   -- Start at 85
-		group:insert(inBag[i+1]) 
+	end
+	
+	---ARMOR SNAP---
+	if string.find(itemName, "armor") then 
+		if(math.abs(item.x - selectedArmor.x) < 50 and math.abs(item.y - selectedArmor.y) < 50) then 
+			item.x = selectedArmor.x 
+			item.y = selectedArmor.y
+			if(inUse["armor"]) then 
+				inUse["armor"].x = inUse["armor"].origX
+				inUse["armor"].y = inUse["armor"].origY
+				inBag[inUse["armor"].num].equipped = false 
+				inUse["armor"] = item
+				inUse["armor"].equipped = true
+			else
+				inUse["armor"] = item
+				inUse["armor"].equipped = true
+			end
+		else
+			item.x = item.origX 
+			item.y = item.origY
+		end
+	end
+	
+	---BOOT SNAP---
+	if string.find(itemName, "boots") then 
+		if(math.abs(item.x - selectedBoots.x) < 50 and math.abs(item.y - selectedBoots.y) < 50) then 
+			item.x = selectedBoots.x 
+			item.y = selectedBoots.y
+			if(inUse["boots"]) then 
+				inUse["boots"].x = inUse["boots"].origX
+				inUse["boots"].y = inUse["boots"].origY
+				inBag[inUse["boots"].num].equipped = false 
+				inUse["boots"] = item
+				inUse["boots"].equipped = true
+			else
+				inUse["boots"] = item
+				inUse["boots"].equipped = true
+			end
+		else
+			item.x = item.origX 
+			item.y = item.origY
+		end
+	end
+	
+	---POTION SNAP--- 
+	if string.find(itemName, "potion") then 
+		if(math.abs(item.x - potionSlot.x) < 50 and math.abs(item.y - potionSlot.y) < 50) then 
+			inUse["potion"] = inUse["potion"]+1
+			if(string.find(itemName, "strong")) then --Add another to counter for a strong potion (strong potion = 2 normal potions)
+				inUse["potion"] = inUse["potion"]+1 
+			end
+			inBag[currentSelection].equipped = true
+			item:removeSelf()
+		else
+			item.x = item.origX 
+			item.y = item.origY
+		end
+	end
+end
+
+local function touchHandler(event) 
+	num = event.target.num
+	display.currentStage:setFocus(event.target) 
+
+	if event.phase == "began" then
+		currentSelection = num
+		for i=1,table.getn(inBag),1 do 
+			if(not i == num) then
+				inBag[i]:removeEventListener("touch")
+			end
+		end
+		inBag[num].markX = inBag[num].x    -- store x location of object
+		inBag[num].markY = inBag[num].y    -- store y location of object
+    elseif event.phase == "moved" then	
+		inBag[currentSelection].x = (event.x - event.xStart) + inBag[currentSelection].markX
+		inBag[currentSelection].y = (event.y - event.yStart) + inBag[currentSelection].markY
+	elseif event.phase == "ended" then 
+		snapTo() 
+		for i=1,table.getn(inBag),1 do 
+			if(not i == currentSelection) then
+				inBag[i]:addEventListener("touch", touchHandler)
+			end
+		end
+		display.currentStage:setFocus(nil) 
+	end
+    
+    return true
+end
+
+yVal = 5
+local function displayInventory()
+	for i=inventoried,table.getn(holding)-1,1 do
+		if(not inBag[i+1].equipped) then
+			multiplier = .08 * (i%5)
+			if(i%5 == 0) then 
+				yVal = yVal + 51.5 
+			end
+			inBag[i+1].x = display.contentWidth* (.64 + multiplier) 
+			inBag[i+1].y = yVal   -- Start at 85
+			inBag[i+1].origX = inBag[i+1].x 
+			inBag[i+1].origY = inBag[i+1].y
+			inBag[i+1]:addEventListener( "touch", touchHandler )
+			group:insert(inBag[i+1]) 
+		end
 	end
 end
 	
@@ -42,8 +159,8 @@ local function matchItem(item)
 	table.insert(inBag, display.newSprite(weaponImage, weapons))
 	newIndex = table.getn(inBag) 
 	inBag[newIndex]:setSequence(item)
+	inBag[newIndex].num = newIndex
 end
-
 -----------------------------------------------------------------------------------------
 -- BEGINNING OF YOUR IMPLEMENTATION
 --
@@ -55,6 +172,10 @@ end
 function scene:createScene (event)
 	group = self.view
 	inBag = {}   --items in players bag (holding[] elements are converted from strings to their respective sprite when placed into inBag
+	inUse = {}  --Items currently equipped 
+	inUse["sword"] = nil 
+	inUse["armor"] = nil 
+	inUse["boots"] = nil 	
 	--Declaration of Inventory Images 
 	weaponSettings =  {
 		height = 32, 
@@ -66,7 +187,7 @@ function scene:createScene (event)
 
 	weapons = { 
 		{name = "great sword", frames = { 52 }},
-		{name = "onyx sword", frames = { 39 }},
+		{name = "long sword", frames = { 39 }},
 		{name = "agile sword", frames = { 31 }}, 
 		{name = "Master's sword", frames = { 30 }},
 		{name = "potion", frames = { 6 }},
@@ -74,6 +195,10 @@ function scene:createScene (event)
 		{name = "Master's armor", frames = { 58 }}, 
 		{name = "Master's leg-armor", frames = { 60 }}, 
 		{name = "grand boots", frames = { 61 }}, 
+		{name = "standard armor", frames = { 10 }}, 
+		{name = "standard boots", frames = { 13 }}, 
+		{name = "standard sword", frames = { 38 }},
+		{name = "standard leg-armor", frames = { 12 }},
 	}
 	
 	weaponImage = graphics.newImageSheet("icons2.png", weaponSettings)
@@ -127,13 +252,28 @@ function scene:createScene (event)
 	sword.x = display.contentWidth*.3 
 	sword.y = menuBtn.y + menuBtn.height 
 	
-	--[[
-	local titleText = display.newText( "Bag Contents", display.contentWidth - (bag.width*.5), 40, "Canterbury" , 20)
-	titleText:setReferencePoint(CenterReferencePoint)
-	titleText.x = display.contentWidth - (bag.width*.5)
-	--titleText:setTextColor{ 0,0,0}
-	]]
+	--selectedSword = display.newRect(display.contentWidth *.3, sword.y+(sword.height*.5), sword.width*.5, sword.height*.3)
+	selectedSword = display.newRect(sword.x+(sword.width*.5), sword.y+(sword.height*.5), 30, 30)
+	selectedSword.strokeWidth = 3 
+	selectedSword:setStrokeColor(204, 51, 204)
 	
+	selectedBoots = display.newRect(armor.x+(armor.width*.4), armor.y+armor.height*.9, 30,30)
+	selectedBoots.strokeWidth = 3 
+	selectedBoots:setStrokeColor(135, 196, 250)
+	
+	selectedArmor = display.newRect(armor.x+(armor.width*.4), armor.y+armor.height*.1, 30,30)
+	selectedArmor.strokeWidth = 3 
+	selectedArmor:setStrokeColor( 0, 204, 153)
+	
+	potionLabel = display.newText("  Place Potion\n  To Consume", selectedSword.x-96, selectedBoots.y)
+	potionLabel:setTextColor(0,0,0)
+	
+	potionSlot = display.newRect(potionLabel.x, potionLabel.y, potionLabel.width, potionLabel.height) 
+	potionSlot:setReferencePoint(display.CenterReferencePoint)
+	potionSlot.x = potionLabel.x 
+	potionSlot.y = potionLabel.y
+	potionSlot:setFillColor(229,8,8)
+
 	-- all display objects must be inserted into group
 	group:insert( background )
 	group:insert( menuBtn )
@@ -141,20 +281,23 @@ function scene:createScene (event)
 	group:insert( bag ) 
 	group:insert( armor ) 
 	group:insert( sword ) 
-	--group:insert( titleText )
-	
-	for i=1, table.getn(holding), 1 do 
-		matchItem( holding[i] ) 
-	end
+	group:insert ( selectedSword ) 
+	group:insert ( selectedBoots ) 
+	group:insert ( selectedArmor ) 
+	group:insert ( potionSlot ) 
+	group:insert ( potionLabel ) 
 end
 
 -- Called immediately after scene has moved onscreen:
 function scene:enterScene( event )
 	group = self.view
+	inUse["potion"] = 0 
+	inventoried = table.getn(inBag) 
+	
 	for i=table.getn(inBag), table.getn(holding)-1, 1 do 
 		matchItem( holding[i+1] ) 
 	end
-
+	
 	displayInventory() 
 	storyboard.returnTo = "level1"
 end
@@ -196,7 +339,6 @@ scene:addEventListener( "exitScene", scene )
 -- automatically unloaded in low memory situations, or explicitly via a call to
 -- storyboard.purgeScene() or storyboard.removeScene().
 scene:addEventListener( "destroyScene", scene )
-
 -----------------------------------------------------------------------------------------
 
 return scene

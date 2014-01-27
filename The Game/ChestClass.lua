@@ -40,7 +40,7 @@ end
 
 function generateContents(box) 
 	--Generate random item for the box here
-	box.contents = "onyx sword" 
+	box.contents = "long sword" 
 end
 
 function Chest:getContents(box)
