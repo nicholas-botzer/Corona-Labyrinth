@@ -51,7 +51,7 @@ local function snapTo() --Function to implement "snapping" in the drag and drop 
 	end
 	
 	---ARMOR SNAP---
-	if string.find(itemName, "armor") then 
+	if string.find(itemName, "armor") or string.find(itemName, "vest") then 
 		if(math.abs(item.x - selectedArmor.x) < 50 and math.abs(item.y - selectedArmor.y) < 50) then 
 			item.x = selectedArmor.x 
 			item.y = selectedArmor.y
@@ -194,12 +194,13 @@ function scene:createScene (event)
 		{name = "potion", frames = { 6 }},
 		{name = "strong potion", frames = { 3 }},
 		{name = "Master's armor", frames = { 58 }}, 
-		{name = "Master's leg-armor", frames = { 60 }}, 
+		{name = "Master's leg-mail", frames = { 60 }}, 
 		{name = "grand boots", frames = { 61 }}, 
 		{name = "standard armor", frames = { 10 }}, 
 		{name = "standard boots", frames = { 13 }}, 
 		{name = "standard sword", frames = { 38 }},
-		{name = "standard leg-armor", frames = { 12 }},
+		{name = "standard leg-mail", frames = { 12 }},
+		{name = "leather vest", frames = { 32 }},
 	}
 	
 	weaponImage = graphics.newImageSheet("icons2.png", weaponSettings)
@@ -253,7 +254,6 @@ function scene:createScene (event)
 	sword.x = display.contentWidth*.3 
 	sword.y = menuBtn.y + menuBtn.height 
 	
-	--selectedSword = display.newRect(display.contentWidth *.3, sword.y+(sword.height*.5), sword.width*.5, sword.height*.3)
 	selectedSword = display.newRect(sword.x+(sword.width*.5), sword.y+(sword.height*.5), 30, 30)
 	selectedSword.strokeWidth = 3 
 	selectedSword:setStrokeColor(204, 51, 204)

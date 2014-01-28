@@ -2,6 +2,7 @@ Chest = {}
 
 -- CHEST SPRITE/IMAGE SHEET INFO --
 chestData = {
+	{name = "close", frames = {1}, time = 1000, loopCount = 1},
 	{name = "open", frames={1, 5, 2, 2}, time = 1000, loopCount = 1},
 }
 	
@@ -14,6 +15,9 @@ chestDetails = {
 }
 	
 chestSheet = graphics.newImageSheet("chestResize.png", chestDetails) 
+
+itemChoices = {"great sword","long sword","Master's sword","potion","strong potion","Master's armor", "grand boots", "standard armor","standard boots",
+"standard sword", "leather vest"}
 
 -- END OF IMAGE SHEET DECLARATIONS/SETUP -- 
 
@@ -30,7 +34,7 @@ function Chest:new (xpos, ypos)
     return c
 end
 
-function Chest:open(box, cX, cY) 
+function Chest:open(box) 
 	if(box.pic.frame == 1) then
 		box.pic:setSequence("open") 
 		box.pic:play() 
@@ -40,7 +44,8 @@ end
 
 function generateContents(box) 
 	--Generate random item for the box here
-	box.contents = "long sword" 
+	rand = math.random(11) 
+	box.contents = itemChoices[rand] 
 end
 
 function Chest:getContents(box)
