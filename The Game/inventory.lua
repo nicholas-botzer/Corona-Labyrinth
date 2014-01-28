@@ -109,31 +109,32 @@ local function snapTo() --Function to implement "snapping" in the drag and drop 
 end
 
 local function touchHandler(event) 
-	num = event.target.num
-	display.currentStage:setFocus(event.target) 
+	if(not event.target.equipped) then
+		num = event.target.num
+		display.currentStage:setFocus(event.target) 
 
-	if event.phase == "began" then
-		currentSelection = num
-		for i=1,table.getn(inBag),1 do 
-			if(not i == num) then
-				inBag[i]:removeEventListener("touch")
+		if event.phase == "began" then
+			currentSelection = num
+			for i=1,table.getn(inBag),1 do 
+				if(not i == num) then
+					inBag[i]:removeEventListener("touch")
+				end
 			end
-		end
-		inBag[num].markX = inBag[num].x    -- store x location of object
-		inBag[num].markY = inBag[num].y    -- store y location of object
-    elseif event.phase == "moved" then	
-		inBag[currentSelection].x = (event.x - event.xStart) + inBag[currentSelection].markX
-		inBag[currentSelection].y = (event.y - event.yStart) + inBag[currentSelection].markY
-	elseif event.phase == "ended" then 
-		snapTo() 
-		for i=1,table.getn(inBag),1 do 
-			if(not i == currentSelection) then
-				inBag[i]:addEventListener("touch", touchHandler)
+			
+		elseif event.phase == "moved" then	
+			inBag[currentSelection].x = (event.x - event.xStart) + inBag[currentSelection].origX
+			inBag[currentSelection].y = (event.y - event.yStart) + inBag[currentSelection].origY
+			
+		elseif event.phase == "ended" then 
+			snapTo() 
+			for i=1,table.getn(inBag),1 do 
+				if(not i == currentSelection) then
+					inBag[i]:addEventListener("touch", touchHandler)
+				end
 			end
+			display.currentStage:setFocus(nil) 
 		end
-		display.currentStage:setFocus(nil) 
-	end
-    
+    end
     return true
 end
 
