@@ -27,7 +27,7 @@ track.attackSprite = function (follower)
 		follower.model:setSequence("attackForward")
 	elseif (follower.model.sequence == "right") then
 		follower.model:setSequence("attackRight")
-	else
+	elseif (follower.model.sequence == "left") then
 		follower.model:setSequence("attackLeft")
 	end
 end
