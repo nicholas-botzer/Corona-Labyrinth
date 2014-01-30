@@ -14,6 +14,7 @@ require('CreatureClass')
 require('PlayerClass')
 local PerspectiveLib = require("perspective")
 local track = require ("track")
+playerHeatlh = 100
 local floorsDone = 0
 require("main") 
 require("options")
@@ -52,17 +53,26 @@ local function onSwordBtnRelease()
 				enemyRect = nil 
 			end
 		end
+	end
 
 	--Handle chest opening here  
-	elseif(math.abs(rect.model.x - Chest:getX(chest1)) < 50 and math.abs(rect.model.y - Chest:getY(chest1)) < 50) then
-		if(chest1.closed == true) then 
-			Chest:open(chest1) 
-			local treasure = display.newText("You found a "..Chest:getContents(chest1), rect.model.x-65, rect.model.y-30, native.systemFontBold, 20) 
-			table.insert(holding, Chest:getContents(chest1)) 
-			g1:insert(treasure) 
-			timer.performWithDelay(1250, function() g1:remove(treasure) treasure = nil end)	
-		end
-	end
+	--check all chests and use a flag
+	flag = false
+	chestNum = 1
+	while(not flag and chestNum <= table.getn(chests)) do
+		print(chests[chestNum])
+		if(math.abs(rect.model.x - Chest:getX(chests[chestNum])) < 50 and math.abs(rect.model.y - Chest:getY(chests[chestNum])) < 50)then
+			if(chests[chestNum].closed == true) then 
+				Chest:open(chests[chestNum]) 
+				local treasure = display.newText("You found a "..Chest:getContents(chests[chestNum]), rect.model.x-65, rect.model.y-30, native.systemFontBold, 20) 
+				table.insert(holding, Chest:getContents(chests[chestNum])) 
+				g1:insert(treasure) 
+				timer.performWithDelay(1250, function() g1:remove(treasure) treasure = nil end)
+				flag = true
+			end--end if the chest is closed
+		end--end checking if player is near chest
+		chestNum = chestNum + 1
+	end--end while
 	
 	if(floorsDone < levels)then
 		if(math.abs(rect.model.x - stairs.x) < 120 and math.abs(rect.model.y - stairs.y) < 120)then
@@ -89,13 +99,9 @@ local function updateHealth( event )
 	healthBar.width = rect.health * 1.2			--decreases the red in the health bar by 1% of its width
 	healthBar.x = 10 - ((100 - rect.health) * .6)	--shifts the healthBar so it decreases from the right only
 	if(rect.health <= 0) then
-		storyboard.gotoScene("menu")
+		storyboard.gotoScene("death")
 		storyboard.purgeScene("level1")
-		--storyboard.removeScene("level1")
-		--physics.removeBody(wall)
-		--physics.stop()
-		--analogStick:delete()
-		--camera:destroy() 
+
 	end
 end					
 								-- = starting X - ((playerMaxHealth - playerCurrentHealth) * half of 1% of the healthBar.width)
@@ -121,7 +127,7 @@ end
 function attackPlayer(attacker)
 	
 	if (math.abs(attacker.model.x - rect.model.x) < 40 and math.abs(attacker.model.y - rect.model.y) < 40) then
-		rect:takeDamage(attacker.damage)
+		rect.health = rect.heatlh - (attacker.damage - rect.armor)
 		knockbackPlayer(attacker, rect, 30)
 	end
 	
@@ -399,6 +405,12 @@ local function generateMap(rows,cols)
 			if(adjMatrix[j][i] == 1)then
 				room = makeRoom(i,j)
 				g1:insert(room)
+				rand = math.random(1,100)
+				if(rand == 1)then
+					chest = Chest:new((i*50),(j*50))
+					table.insert(chests,chest)
+					g1:insert(chest.pic)
+				end
 			elseif(adjMatrix[j][i] == 0 or adjMatrix[j][i] == 9)then
 				wall = makeWall(i,j)
 				g1:insert(wall)
@@ -437,7 +449,7 @@ end
 function scene:createScene (event)
 	local group = self.view
 	boss = Creature(110, 110)
-	
+	chests = {}
 	camera=PerspectiveLib.createView()
 	physics.start()
 	physics.setGravity(0,0)
@@ -577,14 +589,12 @@ end--end if for map generation
 	
 	---Sample chest ----
 	
-	chest1 = Chest:new(100, 50) 
 
 	--physics.addBody(chest1, "dynamic", {radius=20})
 	---End of sample chest ----
 	
 	
 	-- all display objects must be inserted into group in layer order 
-	g1:insert(chest1.pic)
 	group:insert(g1)
 	group:insert( rect.model )
 	--group:insert( mask )
