@@ -103,8 +103,8 @@ local function updateHealth( event )
 	healthBar.x = 10 - ((100 - rect.health) * .6)	--shifts the healthBar so it decreases from the right only
 	if(rect.health <= 0) then
 		storyboard.gotoScene("death")
-		storyboard.purgeScene("level1")
-		storyboard.purgeScene("inventory") 
+		storyboard.purgeScene("inventory")
+		storyboard.purgeScene("level1") 
 	end
 end					
 								-- = starting X - ((playerMaxHealth - playerCurrentHealth) * half of 1% of the healthBar.width)
