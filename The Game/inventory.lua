@@ -311,6 +311,7 @@ end
 
 -- If scene's view is removed, scene:destroyScene() will be called just prior to:
 function scene:destroyScene( event )
+	holding = {}
 	local group = self.view
 	if menuBtn then
 		menuBtn:removeSelf()
