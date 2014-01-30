@@ -9,7 +9,7 @@ function Player:init(posX, posY)
 		self.maxHealth = 100
 		self.damage = 10
 		self.armor = 1
-		self.speed = 5
+		self.speed = 15
 	
 		--Declare Image Sheet 
 		spriteOptions = {	

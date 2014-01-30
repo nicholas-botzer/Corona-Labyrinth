@@ -8,7 +8,7 @@ function Creature:init(posX, posY)
 	self.maxHealth = 100
 	self.damage = 5 + difficulty * 3
 	self.armor = 1 * difficulty
-	self.speed = 2 + difficulty
+	self.speed = -1 + difficulty
 
 	--Declare Image Sheet 
 	spriteOptions = {	

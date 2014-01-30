@@ -15,7 +15,7 @@ require('PlayerClass')
 local PerspectiveLib = require("perspective")
 local track = require ("track")
 playerHeatlh = 100
-local floorsDone = 0
+floorsDone = 3
 require("main") 
 require("options")
 require("ChestClass")
@@ -27,7 +27,6 @@ local screenW, screenH, halfW = display.contentWidth, display.contentHeight, dis
 local swordBtn
 local swordClashSound = audio.loadSound("Sword clash sound effect.mp3")
 local background, wall, ground, mask
-local speed = 8.0
 
 -- 'onRelease' event listener
 local function onInvBtnRelease()
@@ -86,8 +85,9 @@ local function onSwordBtnRelease()
 end 
 
 local function onCollision( event )
+	print("NO")
     if ( event.phase == "began" ) then
-		playerHealth = playerHealth - 1
+		rect.health = rect.health - 1
 		analogStick:collided(true, analogStick:getAngle()) 
 	elseif ( event.phase == "ended" ) then
 		analogStick:collided(false, false)
@@ -198,6 +198,9 @@ local function makeWall(r,c)
     wall = display.newImageRect("stone_wall.png",50,50)
     wall:setReferencePoint(display.TopLeftReferencePoint)
     wall.x,wall.y = r*50,c*50
+	if(floorsDone == levels)then
+		physics.addBody(wall,"dynamic",{})
+	end
 	
 	return wall
 end
@@ -585,7 +588,8 @@ end--end if for map generation
 	--colRect.isVisible = false
 
 	--physics.addBody(colRect, "kinematic", {})
-	physics.addBody(rect.model, "static", {})
+	physics.addBody(rect.model, "dynamic", {})
+	rect.model.isSensor = true
 	
 	---Sample chest ----
 	
@@ -637,7 +641,7 @@ local function main( event )
 	end
 	
 	--Change the sequence only if another sequence isn't still playing 
-	if(not (seq == rect.sequence) and moving) then
+	if(not (seq == rect.model.sequence) and moving) then
 		rect.model:setSequence(seq)
 	end
 	
@@ -708,7 +712,7 @@ scene:addEventListener( "exitScene", scene )
 scene:addEventListener( "destroyScene", scene )
 
 
---Runtime:addEventListener( "collision", onCollision )
+Runtime:addEventListener( "collision", onCollision )
 -----------------------------------------------------------------------------------------
 
 return scene
