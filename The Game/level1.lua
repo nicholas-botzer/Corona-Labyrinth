@@ -127,7 +127,7 @@ end
 function attackPlayer(attacker)
 	
 	if (math.abs(attacker.model.x - rect.model.x) < 40 and math.abs(attacker.model.y - rect.model.y) < 40) then
-		rect.health = rect.heatlh - (attacker.damage - rect.armor)
+		rect.health = rect.health - (attacker.damage - rect.armor)
 		knockbackPlayer(attacker, rect, 30)
 	end
 	
