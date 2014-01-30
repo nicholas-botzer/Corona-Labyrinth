@@ -10,7 +10,8 @@ system.activate("multitouch")
 local widget = require "widget"
 local StickLib   = require("lib_analog_stick")
 local physics = require("physics")
-local CreatureClasses = require('CreatureClasses')
+require('CreatureClass')
+require('PlayerClass')
 local PerspectiveLib = require("perspective")
 local track = require ("track")
 local floorsDone = 0
@@ -34,29 +35,16 @@ local function onInvBtnRelease()
 	return true	-- indicates successful touch
 end
 
---Picks combat animation based on which way the player is facing
-local function pickAnimation() 
-	facing = rect.sequence 
-	if(facing == "forward") then 
-		rect:setSequence("attackForward")
-	elseif(facing == "right") then 
-		rect:setSequence("attackRight") 
-	elseif(facing == "back") then
-		rect:setSequence("attackBack") 
-	elseif(facing == "left") then
-		rect:setSequence("attackLeft") 
-	end
-end
 
 local function onSwordBtnRelease()
-	pickAnimation()
-	rect:play()
+	--rect:pickAnimation()
+	rect.model:play()
 	audio.play( swordClashSound ) 
 	
 	--Handle swinging at enemies here
 	if(enemyRect) then 
 		--Test to see if enemy is range of player character. This can be a variable later. 
-		if(math.abs(rect.x - enemyRect.x) < 30 and math.abs(rect.y - enemyRect.y) < 30) then
+		if(math.abs(rect.model.x - enemyRect.x) < 30 and math.abs(rect.model.y - enemyRect.y) < 30) then
 			enemyRect.health = enemyRect.health - 25 
 			--Remove enemy if 0 HP or lower
 			if (enemyRect.health <= 0) then 
@@ -66,10 +54,10 @@ local function onSwordBtnRelease()
 		end
 
 	--Handle chest opening here  
-	elseif(math.abs(rect.x - Chest:getX(chest1)) < 50 and math.abs(rect.y - Chest:getY(chest1)) < 50) then
+	elseif(math.abs(rect.model.x - Chest:getX(chest1)) < 50 and math.abs(rect.model.y - Chest:getY(chest1)) < 50) then
 		if(chest1.closed == true) then 
 			Chest:open(chest1) 
-			local treasure = display.newText("You found a "..Chest:getContents(chest1), rect.x-65, rect.y-30, native.systemFontBold, 20) 
+			local treasure = display.newText("You found a "..Chest:getContents(chest1), rect.model.x-65, rect.model.y-30, native.systemFontBold, 20) 
 			table.insert(holding, Chest:getContents(chest1)) 
 			g1:insert(treasure) 
 			timer.performWithDelay(1250, function() g1:remove(treasure) treasure = nil end)	
@@ -77,7 +65,7 @@ local function onSwordBtnRelease()
 	end
 	
 	if(floorsDone < levels)then
-		if(math.abs(rect.x - stairs.x) < 120 and math.abs(rect.y - stairs.y) < 120)then
+		if(math.abs(rect.model.x - stairs.x) < 120 and math.abs(rect.model.y - stairs.y) < 120)then
 			floorsDone = floorsDone + 1
 			storyboard.purgeScene("level1")
 			storyboard.reloadScene("level1")
@@ -97,10 +85,10 @@ local function onCollision( event )
 end
 
 local function updateHealth( event )
-	healthAmount.text = playerHealth .. "/100"
-	healthBar.width = playerHealth * 1.2			--decreases the red in the health bar by 1% of its width
-	healthBar.x = 10 - ((100 - playerHealth) * .6)	--shifts the healthBar so it decreases from the right only
-	if(playerHealth <= 0) then
+	healthAmount.text = rect.health .. "/" .. rect.maxHealth
+	healthBar.width = rect.health * 1.2			--decreases the red in the health bar by 1% of its width
+	healthBar.x = 10 - ((100 - rect.health) * .6)	--shifts the healthBar so it decreases from the right only
+	if(rect.health <= 0) then
 		storyboard.gotoScene("menu")
 		storyboard.purgeScene("level1")
 		--storyboard.removeScene("level1")
@@ -118,21 +106,23 @@ local function trackPlayer()
 	
 end	
 
-function knockback(attacker, victim, force)
-	local distanceX = attacker.x - victim.model.x
-	local distanceY = attacker.y - victim.model.y
+function knockbackPlayer(attacker, player, force)
+	local distanceX = player.model.x - attacker.model.x;
+	local distanceY = player.model.y - attacker.model.y;
 	local totalDistance = math.sqrt ( ( distanceX * distanceX ) + ( distanceY * distanceY ) )
-	local xForce = force * distanceX / totalDistance
-	local yForce = force * distanceY / totalDistance
-	victim.model.moveX = 0
-	victim.model.moveY = 0
+	local moveDistX = distanceX / totalDistance;
+	local moveDistY = distanceY / totalDistance;
+	player.moveX = force /totalDistance
+	player.moveY = force /totalDistance
+	player.model.x = player.model.x + player.moveX
+	player.model.y = player.model.y + player.moveY
 end
 
 function attackPlayer(attacker)
 	
-	if (math.abs(attacker.model.x - rect.x) < 40 and math.abs(attacker.model.y - rect.y) < 40) then
-		playerHealth = playerHealth -1
-		knockback (rect, attacker, 50)
+	if (math.abs(attacker.model.x - rect.model.x) < 40 and math.abs(attacker.model.y - rect.model.y) < 40) then
+		rect:takeDamage(attacker.damage)
+		knockbackPlayer(attacker, rect, 30)
 	end
 	
 end
@@ -446,8 +436,8 @@ end
 
 function scene:createScene (event)
 	local group = self.view
-	playerHealth = 100
 	boss = Creature(110, 110)
+	
 	camera=PerspectiveLib.createView()
 	physics.start()
 	physics.setGravity(0,0)
@@ -473,15 +463,12 @@ if(floorsDone >= levels)then
 	startCol = 5
 	
 else
-	--[[mask = display.newImageRect( "masked2.png", screenW, screenH )
+	--[[
+	mask = display.newImageRect( "masked2.png", screenW, screenH )
 	mask:setReferencePoint( display.TopLeftReferencePoint )
 	mask.x, mask.y = 0, 0
 	--Creates the intial starting room that the user will be placed into
-	ground = display.newRect(screenW*.25, 0, screenW*.4, 200 )
-	ground:setReferencePoint( display.TopLeftReferencePoint )
-	ground:setFillColor(255,0,0)
-	ground.x, ground.y = screenW*.25, 0
-	g1:insert(ground)]]
+	]]
 	
 	
 	--define use for coordinates of last positioned room
@@ -528,7 +515,7 @@ end--end if for map generation
     healthBar.y = 10
     
     healthAmount = display.newText {
-    	text = playerHealth .. "/100",
+    	text = "100/100", --defualt value, gets overwritten in updateHealth()
     	x = 70,
     	y = 17
     }
@@ -573,40 +560,20 @@ end--end if for map generation
 		} 
 	)
 	
-	sequenceData = {
-		{name = "forward", frames={1,2,3,3}, time = 1000, loopCount = 1},
-		{name = "right", frames={4,5,6,6}, time = 1000, loopCount = 1}, 
-		{name = "back", frames= {7,8,9,9}, time = 1000, loopCount = 1}, 
-		{name = "left", frames={10,11,12,12}, time = 1000, loopCount = 1},
-		{name = "attackForward", frames={3,1,3}, time = 200, loopCount = 1},
-		{name = "attackRight", frames={6,7,6}, time = 200, loopCount = 1},
-		{name = "attackLeft", frames={11,12,12}, time = 200, loopCount = 1},
-		{name = "attackBack", frames={8,10,8}, time = 200, loopCount = 1},
-
-	}
-
-	--Declare Image Sheet 
-	spriteOptions = {	
-		height = 32, 
-		width = 24, 
-		numFrames = 12, 
-		sheetContentWidth = 72, 
-		sheetContentHeight = 128 
-	}
  
-	mySheet = graphics.newImageSheet("knight3.png", spriteOptions) 
+	
 	
 	--Declare Sprite Object 
-	rect = display.newSprite(mySheet, sequenceData) 
-	rect.x = startRow * 50  
-	rect.y = startCol * 50 
+	rect = Player(startRow * 50, startCol * 50) 
+	--rect.x = startRow * 50  
+	--rect.y = startCol * 50 
 	
 	--Helps with collision, sprite doesn't detect right side boundary properly  
-	colRect = display.newRect(rect.x, rect.y-25, 65, 60)
-	colRect.isVisible = false
+	--colRect = display.newRect(rect.x, rect.y-25, 65, 60)
+	--colRect.isVisible = false
 
-	physics.addBody(colRect, "kinematic", {})
-	physics.addBody(rect, "static", {})
+	--physics.addBody(colRect, "kinematic", {})
+	physics.addBody(rect.model, "static", {})
 	
 	---Sample chest ----
 	
@@ -619,13 +586,13 @@ end--end if for map generation
 	-- all display objects must be inserted into group in layer order 
 	g1:insert(chest1.pic)
 	group:insert(g1)
-	group:insert( rect )
+	group:insert( rect.model )
 	--group:insert( mask )
 	
 	--camera set up
 	camera:add(g1,3,true)
-	camera:add(rect, 2, true)
-	camera:setFocus(rect)
+	camera:add(rect.model, 2, true)
+	camera:setFocus(rect.model)
 	camera:setBounds(false)
 	camera:track()
 	group:insert( camera )
@@ -635,7 +602,7 @@ end--end if for map generation
 	group:insert(healthBackground)
 	group:insert(healthBar)
 	group:insert(healthAmount)
-	group:insert(colRect)
+	--group:insert(colRect)
 	
 	g1:insert(boss.model)
 end
@@ -644,7 +611,7 @@ local function main( event )
         
 	-- MOVE THE EVERYTHING
 	
-	analogStick:slide(rect,-speed)
+	analogStick:slide(rect.model,-rect.speed)
 	angle = analogStick:getAngle() 
 	moving = analogStick:getMoving()
 	
@@ -661,12 +628,12 @@ local function main( event )
 	
 	--Change the sequence only if another sequence isn't still playing 
 	if(not (seq == rect.sequence) and moving) then
-		rect:setSequence(seq)
+		rect.model:setSequence(seq)
 	end
 	
 	--If the analog stick is moving, animate the sprite
 	if(moving) then 
-		rect:play() 
+		rect.model:play() 
 	end
 end
 
