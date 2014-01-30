@@ -15,7 +15,7 @@ require('PlayerClass')
 local PerspectiveLib = require("perspective")
 local track = require ("track")
 playerHeatlh = 100
-floorsDone = 3
+floorsDone = 0
 require("main") 
 require("options")
 require("ChestClass")
@@ -58,13 +58,16 @@ local function onSwordBtnRelease()
 	--check all chests and use a flag
 	flag = false
 	chestNum = 1
+	print("Player X:"..rect.model.x.."\nPlayerY:"..rect.model.y)
 	while(not flag and chestNum <= table.getn(chests)) do
-		print(chests[chestNum])
-		if(math.abs(rect.model.x - Chest:getX(chests[chestNum])) < 50 and math.abs(rect.model.y - Chest:getY(chests[chestNum])) < 50)then
+		--print(chests[chestNum])
+		print("\nChestX:"..chests[chestNum].pic.x.."\nChestY:"..chests[chestNum].pic.y)
+		if((math.abs(rect.model.x - chests[chestNum]:getX()) < 50) and (math.abs(rect.model.y - chests[chestNum]:getY()) < 50)) then
+			print("detected in range")
 			if(chests[chestNum].closed == true) then 
-				Chest:open(chests[chestNum]) 
-				local treasure = display.newText("You found a "..Chest:getContents(chests[chestNum]), rect.model.x-65, rect.model.y-30, native.systemFontBold, 20) 
-				table.insert(holding, Chest:getContents(chests[chestNum])) 
+				chests[chestNum]:open() 
+				local treasure = display.newText("You found a "..chests[chestNum]:getContents(), rect.model.x-65, rect.model.y-30, native.systemFontBold, 20) 
+				table.insert(holding, chests[chestNum]:getContents()) 
 				g1:insert(treasure) 
 				timer.performWithDelay(1250, function() g1:remove(treasure) treasure = nil end)
 				flag = true
@@ -101,7 +104,7 @@ local function updateHealth( event )
 	if(rect.health <= 0) then
 		storyboard.gotoScene("death")
 		storyboard.purgeScene("level1")
-
+		storyboard.purgeScene("inventory") 
 	end
 end					
 								-- = starting X - ((playerMaxHealth - playerCurrentHealth) * half of 1% of the healthBar.width)
@@ -410,7 +413,7 @@ local function generateMap(rows,cols)
 				g1:insert(room)
 				rand = math.random(1,100)
 				if(rand == 1)then
-					chest = Chest:new((i*50),(j*50))
+					chest = Chest.new((i*50),(j*50))
 					table.insert(chests,chest)
 					g1:insert(chest.pic)
 				end

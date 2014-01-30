@@ -1,4 +1,5 @@
 Chest = {} 
+Chest.__index = Chest
 
 -- CHEST SPRITE/IMAGE SHEET INFO --
 chestData = {
@@ -21,41 +22,34 @@ itemChoices = {"great sword","long sword","Master's sword","potion","strong poti
 
 -- END OF IMAGE SHEET DECLARATIONS/SETUP -- 
 
-function Chest:new (xpos, ypos)
+function Chest.new (xpos, ypos)
 	c = {}   -- create object if user does not provide one
-    setmetatable(c, self)
-    self.__index = self
-	self.pic = display.newSprite(chestSheet, chestData)
-	self.pic.x = xpos 
-	self.pic.y = ypos 
-	self.closed = true 
-	self.contents = nil
-	generateContents(self) 
+    setmetatable(c, Chest)
+	c.pic = display.newSprite(chestSheet, chestData)
+	c.pic.x = xpos 
+	c.pic.y = ypos 
+	c.closed = true 
+	rand = math.random(11) 
+	c.contents = itemChoices[rand] 
     return c
 end
 
-function Chest:open(box) 
-	if(box.pic.frame == 1) then
-		box.pic:setSequence("open") 
-		box.pic:play() 
-		box.closed = false 
+function Chest:open() 
+	if(self.pic.frame == 1) then
+		self.pic:setSequence("open") 
+		self.pic:play() 
+		self.closed = false 
 	end
 end
 
-function generateContents(box) 
-	--Generate random item for the box here
-	rand = math.random(11) 
-	box.contents = itemChoices[rand] 
+function Chest:getContents()
+	return self.contents
 end
 
-function Chest:getContents(box)
-	return box.contents
+function Chest:getX() 
+	return self.pic.x 
 end
 
-function Chest:getX(box) 
-	return box.pic.x 
-end
-
-function Chest:getY(box) 
-	return box.pic.y
+function Chest:getY() 
+	return self.pic.y
 end
