@@ -113,10 +113,19 @@ function NewStick( Props )
         ---------------------------------------------
         function Group:slide(Obj, maxSpeed)
 				if (not Group.collisionDetected) then
-					Obj.x = ( Obj.x + Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
-					Obj.y = ( Obj.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
+					Obj.model.x = ( Obj.model.x + Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
+					Obj.model.y = ( Obj.model.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 				else 
-					Obj.x = ( Obj.x + Cos( Rad((-Group.lockedAngle)-90) ) * (-maxSpeed * 1.0) )
+					Obj.model.x = ( Obj.model.x + Cos( Rad((-Group.lockedAngle)-90) ) * (-maxSpeed * 1.0) )
+				end
+				-- handle knockback on the player
+				if (math.abs(Obj.knockbackX) > 5) then
+					Obj.model.x = Obj.model.x + Obj.knockbackX
+					Obj.knockbackX = Obj.knockbackX * .8
+				end
+				if (math.abs(Obj.knockbackY) > 5) then
+					Obj.model.y = Obj.model.y + Obj.knockbackY
+					Obj.knockbackY = Obj.knockbackY * .8
 				end
         end
 		

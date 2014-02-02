@@ -41,15 +41,17 @@ local function onSwordBtnRelease()
 	rect.model:play()
 	audio.play( swordClashSound ) 
 	
-	--Handle swinging at enemies here
-	if(enemyRect) then 
-		--Test to see if enemy is range of player character. This can be a variable later. 
-		if(math.abs(rect.model.x - enemyRect.x) < 30 and math.abs(rect.model.y - enemyRect.y) < 30) then
-			enemyRect.health = enemyRect.health - 25 
+	--Handle swinging at enemies here 
+	--Test to see if enemy is range of player character. This can be a variable later. 
+	if (boss.model) then
+		if(math.abs(rect.model.x - boss.model.x) < 30 and math.abs(rect.model.y - boss.model.y) < 30) then
+			boss.health = boss.health - (rect.damage - boss.armor)
+			knockbackCreature(rect, boss, 500)
+			
 			--Remove enemy if 0 HP or lower
-			if (enemyRect.health <= 0) then 
-				enemyRect:removeSelf() 
-				enemyRect = nil 
+			if (boss.health <= 0) then
+				boss.model:removeSelf()
+				boss.model = nil
 			end
 		end
 	end
@@ -110,30 +112,26 @@ end
 								-- = starting X - ((playerMaxHealth - playerCurrentHealth) * half of 1% of the healthBar.width)
 					
 local function trackPlayer()
-	
-	track.doFollow (boss, rect, boss.speed)
-	
+	if (boss.model) then
+		track.doFollow (boss, rect, boss.speed)
+	end
 end	
 
-function knockbackPlayer(attacker, player, force)
-	local distanceX = player.model.x - attacker.model.x;
-	local distanceY = player.model.y - attacker.model.y;
+function knockbackCreature(attacker, creature, force)
+	local distanceX = creature.model.x - attacker.model.x;
+	local distanceY = creature.model.y - attacker.model.y;
 	local totalDistance = math.sqrt ( ( distanceX * distanceX ) + ( distanceY * distanceY ) )
 	local moveDistX = distanceX / totalDistance;
 	local moveDistY = distanceY / totalDistance;
-	player.moveX = force /totalDistance
-	player.moveY = force /totalDistance
-	player.model.x = player.model.x + player.moveX
-	player.model.y = player.model.y + player.moveY
+	creature.knockbackX = force * moveDistX /totalDistance
+	creature.knockbackY = force * moveDistY /totalDistance
 end
 
-function attackPlayer(attacker)
-	
-	if (math.abs(attacker.model.x - rect.model.x) < 40 and math.abs(attacker.model.y - rect.model.y) < 40) then
-		rect.health = rect.health - (attacker.damage - rect.armor)
-		knockbackPlayer(attacker, rect, 30)
+function attackPlayer(monster)
+	if (math.abs(monster.model.x - rect.model.x) < 40 and math.abs(monster.model.y - rect.model.y) < 40) then
+		rect.health = rect.health - (monster.damage - rect.armor)
+		knockbackCreature(monster, rect, 500)
 	end
-	
 end
 					
 local function checkValidDir(r,c,botRow,botCol,dir)
@@ -628,7 +626,7 @@ local function main( event )
         
 	-- MOVE THE EVERYTHING
 	
-	analogStick:slide(rect.model,-rect.speed)
+	analogStick:slide(rect,-rect.speed)
 	angle = analogStick:getAngle() 
 	moving = analogStick:getMoving()
 	

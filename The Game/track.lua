@@ -63,7 +63,7 @@ track.doFollow = function (follower, target, followSpeed)
 			-- move the follower
 			follower.model.x = follower.model.x + follower.moveX;
 			follower.model.y = follower.model.y + follower.moveY;
-			
+
 			--change sprite
 			track.changeSprite(follower, distanceX, distanceY)
 		else
@@ -71,6 +71,16 @@ track.doFollow = function (follower, target, followSpeed)
 			track.attackSprite(follower)
 			attackPlayer(follower)
 
+		end
+		
+		--handle knockback
+		if (math.abs(follower.knockbackX) > 5) then
+			follower.model.x = follower.model.x + follower.knockbackX
+			follower.knockbackX = follower.knockbackX * .75
+		end
+		if (math.abs(follower.knockbackY) > 5) then
+			follower.model.y = follower.model.y + follower.knockbackY
+			follower.knockbackY = follower.knockbackY * .75
 		end
 		
 		-- play the sprite animation
