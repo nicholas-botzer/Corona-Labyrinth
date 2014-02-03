@@ -37,7 +37,7 @@ function Creature:init(posX, posY)
 	self.model.y = posY
 
 
-	function takeDamage(dmg)
+	function Creature:takeDamage(dmg)
 		self.health = self.health - (dmg - self.armor)
 		if (self.health <= 0) then
 			self.model:setSequence("death")
@@ -46,7 +46,7 @@ function Creature:init(posX, posY)
 		return
 	end
 
-	function delete()
+	function Creature:delete()
 		model:removeSelf()
 		model = nil
 	end

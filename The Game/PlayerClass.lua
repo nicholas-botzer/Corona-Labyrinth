@@ -38,16 +38,16 @@ function Player:init(posX, posY)
 		
 		
 		
-	local function pickAnimation()
-		facing = self.rect.model.sequence 
+	function Player:pickAnimation()
+		facing = self.model.sequence 
 		if(facing == "forward") then 
-			self.rect.model:setSequence("attackForward")
+			self.model:setSequence("attackForward")
 		elseif(facing == "right") then 
-			self.rect.model:setSequence("attackRight") 
+			self.model:setSequence("attackRight") 
 		elseif(facing == "back") then
-			self.rect.model:setSequence("attackBack") 
+			self.model:setSequence("attackBack") 
 		elseif(facing == "left") then
-			self.rect.model:setSequence("attackLeft") 
+			self.model:setSequence("attackLeft") 
 		end
 	end
 	

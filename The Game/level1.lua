@@ -12,6 +12,8 @@ local StickLib   = require("lib_analog_stick")
 local physics = require("physics")
 require('CreatureClass')
 require('PlayerClass')
+require('SpiderClass')
+require('DemonClass')
 local PerspectiveLib = require("perspective")
 local track = require ("track")
 playerHeatlh = 100
@@ -31,21 +33,22 @@ local background, wall, ground, mask
 -- 'onRelease' event listener
 local function onInvBtnRelease()
 	-- go to inventory.lua scene
-	storyboard.gotoScene( "inventory", "fade", 500 )
+	storyboard.gotoScene( "inventory", "fade", 150 )
 	return true	-- indicates successful touch
 end
 
 
 local function onSwordBtnRelease()
-	--rect:pickAnimation()
+	rect:pickAnimation()
 	rect.model:play()
 	audio.play( swordClashSound ) 
 	
 	--Handle swinging at enemies here 
 	--Test to see if enemy is range of player character. This can be a variable later. 
 	if (boss.model) then
-		if(math.abs(rect.model.x - boss.model.x) < 30 and math.abs(rect.model.y - boss.model.y) < 30) then
-			boss.health = boss.health - (rect.damage - boss.armor)
+		if(math.abs(rect.model.x - boss.model.x) < 40 and math.abs(rect.model.y - boss.model.y) < 40) then
+			--boss.health = boss.health - (rect.damage - boss.armor)
+			boss:takeDamage(rect.damage)
 			knockbackCreature(rect, boss, 500)
 			
 			--Remove enemy if 0 HP or lower
@@ -92,7 +95,7 @@ end
 local function onCollision( event )
 	print("NO")
     if ( event.phase == "began" ) then
-		rect.health = rect.health - 1
+		rect:takeDamage(2)
 		analogStick:collided(true, analogStick:getAngle()) 
 	elseif ( event.phase == "ended" ) then
 		analogStick:collided(false, false)
@@ -128,8 +131,8 @@ function knockbackCreature(attacker, creature, force)
 end
 
 function attackPlayer(monster)
-	if (math.abs(monster.model.x - rect.model.x) < 40 and math.abs(monster.model.y - rect.model.y) < 40) then
-		rect.health = rect.health - (monster.damage - rect.armor)
+	if (math.abs(monster.model.x - rect.model.x) < 20 and math.abs(monster.model.y - rect.model.y) < 20) then
+		rect:takeDamage(monster.damage)
 		knockbackCreature(monster, rect, 500)
 	end
 end
@@ -200,7 +203,7 @@ local function makeWall(r,c)
     wall:setReferencePoint(display.TopLeftReferencePoint)
     wall.x,wall.y = r*50,c*50
 	if(floorsDone == levels)then
-		physics.addBody(wall,"dynamic",{})
+		physics.addBody(wall,"static",{})
 	end
 	
 	return wall
