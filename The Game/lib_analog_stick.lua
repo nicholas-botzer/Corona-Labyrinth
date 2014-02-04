@@ -116,7 +116,8 @@ function NewStick( Props )
 					Obj.model.x = ( Obj.model.x + Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 					Obj.model.y = ( Obj.model.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 				else 
-					Obj.model.x = ( Obj.model.x + Cos( Rad((-Group.lockedAngle)-90) ) * (-maxSpeed * 1.0) )
+					Obj.model.x = ( Obj.model.x + Cos( Rad((-Group.lockedAngle)-90) ) * (-maxSpeed) )
+					Obj.model.y = ( Obj.model.y - Sin( Rad((-Group.lockedAngle)-90) ) * (-maxSpeed) )
 				end
 				-- handle knockback on the player
 				if (math.abs(Obj.knockbackX) > 5) then
@@ -132,6 +133,10 @@ function NewStick( Props )
 		function Group:collided(happened, ang)
 			Group.collisionDetected = happened
 			Group.lockedAngle = ang
+		end
+		
+		function Group:inCollision() 
+			return Group.collisionDetected 
 		end
 		
 		---------------------------------------------

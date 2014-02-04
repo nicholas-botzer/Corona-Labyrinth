@@ -626,21 +626,27 @@ end--end if for map generation
 end
 
 local function main( event )
-        
-	-- MOVE THE EVERYTHING
+    --[[
+	-- MOVE THE EVERYTHING 
+	if(not analogStick:inCollision()) then
+		analogStick:slide(rect.model,-rect.speed)
+	else 
+		timer.performWithDelay(1, function () analogStick:slide(rect.model,-rect.speed) end) 
+	end
+	]]
 	
 	analogStick:slide(rect,-rect.speed)
 	angle = analogStick:getAngle() 
 	moving = analogStick:getMoving()
 	
-	--Determine which animation to play based on the direction of the analog stick
-	if(angle <= 70 or angle > 290) then
+	--Determine which animation to play based on the direction of the analog stick	
+	if(angle <= 55 or angle > 305) then
 		seq = "forward"
-	elseif(angle <= 110 and angle > 70) then
+	elseif(angle <= 110 and angle > 55) then
 		seq = "right"
-	elseif(angle <= 250 and angle > 160) then 
-		seq = "back"
-	elseif(angle <= 290 and angle > 250) then 
+	elseif(angle <= 230 and angle > 110) then 
+		seq = "back" 
+	elseif(angle <= 305 and angle > 230) then 
 		seq = "left" 
 	end
 	
