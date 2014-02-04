@@ -17,7 +17,7 @@ require('DemonClass')
 local PerspectiveLib = require("perspective")
 local track = require ("track")
 playerHeatlh = 100
-floorsDone = 0
+floorsDone = 3
 require("main") 
 require("options")
 require("ChestClass")
@@ -93,12 +93,17 @@ local function onSwordBtnRelease()
 end 
 
 local function onCollision( event )
-	print("NO")
-    if ( event.phase == "began" ) then
-		rect:takeDamage(2)
-		analogStick:collided(true, analogStick:getAngle()) 
+	if(knockedBack)then
+		rect.model.x = rect.markX 
+		rect.model.y = rect.markY
+		knockedBack = false
+    elseif ( event.phase == "began" ) then
+		rect.markX = rect.model.x 
+		rect.markY = rect.model.y
+		analogStick:collided(true, event.object1.x, event.object1.y, rect.model.sequence) 
 	elseif ( event.phase == "ended" ) then
-		analogStick:collided(false, false)
+		analogStick:collided(false)
+		knockedBack = false
     end
 end
 
@@ -126,6 +131,11 @@ function knockbackCreature(attacker, creature, force)
 	local totalDistance = math.sqrt ( ( distanceX * distanceX ) + ( distanceY * distanceY ) )
 	local moveDistX = distanceX / totalDistance;
 	local moveDistY = distanceY / totalDistance;
+	if(creature == rect) then 
+		knockedBack = true
+		creature.markX = creature.model.x 
+		creature.markY = creature.model.y
+	end
 	creature.knockbackX = force * moveDistX /totalDistance
 	creature.knockbackY = force * moveDistY /totalDistance
 end
