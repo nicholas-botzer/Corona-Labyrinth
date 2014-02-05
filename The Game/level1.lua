@@ -17,7 +17,7 @@ require('DemonClass')
 local PerspectiveLib = require("perspective")
 local track = require ("track")
 playerHeatlh = 100
-floorsDone = 3
+floorsDone = 0
 require("main") 
 require("options")
 require("ChestClass")
@@ -212,9 +212,7 @@ local function makeWall(r,c)
     wall = display.newImageRect("stone_wall.png",50,50)
     wall:setReferencePoint(display.TopLeftReferencePoint)
     wall.x,wall.y = r*50,c*50
-	if(floorsDone == levels)then
-		physics.addBody(wall,"static",{})
-	end
+	physics.addBody(wall,"static",{})
 	
 	return wall
 end
@@ -231,7 +229,7 @@ local function generateRoom(r,c,botRow,botCol,dir)
 	width = math.random(3,5)
 	height = math.random(3,5)
 	if(dir == 0)then
-		col = math.random((c+1)-width,c)
+		col = math.random((c-1)-width,c)
 		row = r -1
 		for i=0,height do
 			for j=0,width do
@@ -283,8 +281,8 @@ end
 local function generateEdge(r,c,botRow,botCol,dir)
 	
 	if(dir == 0 or dir == 2)then
-		height = math.random(2,5)
-		width = 1
+		height = math.random(3,6)
+		width = 2
 		col = math.random(c,(botCol-1))
 		for i=0,height do
 			for j=0,width do
@@ -307,8 +305,8 @@ local function generateEdge(r,c,botRow,botCol,dir)
 			currentCol = col
 		end
 	elseif(dir == 1 or dir == 3)then
-		height = 1
-		width = math.random(2,5)
+		height = 2
+		width = math.random(3,6)
 		row = math.random(r,(botRow-1))
 		for i =0, height do
 			for j=0, width do
@@ -369,6 +367,7 @@ local function randomWalk(nodes)
 				flag = checkValidDir(currentRow,currentCol,currentBotRow,currentBotCol,0)
 				if(flag)then
 					generateEdge(currentRow,currentCol,currentBotRow,currentBotCol,0)
+					--generateWall(currentRow,currentCol,currentBotRow,currentBotCol,0)
 					generateRoom(currentRow,currentCol,currentBotRow,currentBotCol,0)
 				end
 				counter = counter + 1
@@ -448,7 +447,7 @@ local function generateBossRoom(rows,cols)
 			if(bossRoom[j][i] == 1)then
 				room = makeRoom(i,j)
 				g1:insert(room)
-			elseif(bossRoom[j][i] == 0 or bossRoom[j][i] == 9)then
+			elseif(bossRoom[j][i] == 3 or bossRoom[j][i] == 9)then
 				wall = makeWall(i,j)
 				g1:insert(wall)
 			end

@@ -4,17 +4,19 @@
 -Remove any potential copy right stuff
 
 Zach: 
--Interactive inventory with drag and drop
--New items that spawn from chests
--Get chests to RNG the items
--New sprite for character and attacking
+-Make inventory work with stats
+-Tooltips
+-Smooth out collision so that you don't need 1337 game mechanics to get through the dungeon
 
 Will: 
--Finish combat between player and enemy
--Make player creature class
+-Tutorial Screen
+-Credits Screen
+-Music
+-Knockbacks
 
 Nick:
--Need to reset floors and anything else upon death
--Random chest spawn locations
--account for number of floors
--death screen for dieing
+-Make map generation finally work without bugs
+-Make health work
+-Make chests work
+-Make death screen
+-Spawn monsters in array
