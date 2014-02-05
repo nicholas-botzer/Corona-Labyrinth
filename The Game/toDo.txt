@@ -7,16 +7,20 @@ Zach:
 -Make inventory work with stats
 -Tooltips
 -Smooth out collision so that you don't need 1337 game mechanics to get through the dungeon
+-Look for tiles
+-Post sources for credit screen
 
 Will: 
 -Tutorial Screen
 -Credits Screen
 -Music
--Knockbacks
+-Knockbacks (should not push through walls)
+-Flashing mask for when hit
 
 Nick:
 -Make map generation finally work without bugs
 -Make health work
--Make chests work
--Make death screen
--Spawn monsters in array
+-Make chests work (chest & stairs)
+-Fix death screen (if its even broken)
+-Spawn monsters in array (this is important)
+-Post sources for credit screen

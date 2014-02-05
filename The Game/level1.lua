@@ -17,6 +17,7 @@ require('DemonClass')
 local PerspectiveLib = require("perspective")
 local track = require ("track")
 playerHeatlh = 100
+tileSize = 64
 floorsDone = 0
 require("main") 
 require("options")
@@ -63,10 +64,7 @@ local function onSwordBtnRelease()
 	--check all chests and use a flag
 	flag = false
 	chestNum = 1
-	print("Player X:"..rect.model.x.."\nPlayerY:"..rect.model.y)
 	while(not flag and chestNum <= table.getn(chests)) do
-		--print(chests[chestNum])
-		print("\nChestX:"..chests[chestNum].pic.x.."\nChestY:"..chests[chestNum].pic.y)
 		if((math.abs(rect.model.x - chests[chestNum]:getX()) < 50) and (math.abs(rect.model.y - chests[chestNum]:getY()) < 50)) then
 			print("detected in range")
 			if(chests[chestNum].closed == true) then 
@@ -202,16 +200,16 @@ local function checkValidDir(r,c,botRow,botCol,dir)
 end
 
 local function makeRoom(r,c)
-    room = display.newImageRect("flooring.JPG",50,50)
+    room = display.newImageRect("flooring.JPG",tileSize,tileSize)
     room:setReferencePoint(display.TopLeftReferencePoint)
-    room.x,room.y = r*50,c*50
+    room.x,room.y = r*tileSize,c*tileSize
 	
 	return room
 end
 local function makeWall(r,c)
-    wall = display.newImageRect("stone_wall.png",50,50)
+    wall = display.newImageRect("stone_wall.png",tileSize,tileSize)
     wall:setReferencePoint(display.TopLeftReferencePoint)
-    wall.x,wall.y = r*50,c*50
+    wall.x,wall.y = r*tileSize,c*tileSize
 	physics.addBody(wall,"static",{})
 	
 	return wall
@@ -219,7 +217,7 @@ end
 function makeStairs(r,c)
 	stairs = display.newImageRect("stairs.png",100,100)
 	stairs:setReferencePoint(display.TopLeftReferencePoint)
-	stairs.x,stairs.y = (r*50)-50,(c*50)-50
+	stairs.x,stairs.y = (r*tileSize)-50,(c*tileSize)-50
 	
 	return stairs
 
@@ -423,7 +421,7 @@ local function generateMap(rows,cols)
 				g1:insert(room)
 				rand = math.random(1,100)
 				if(rand == 1)then
-					chest = Chest.new((i*50),(j*50))
+					chest = Chest.new((i*tileSize),(j*tileSize))
 					table.insert(chests,chest)
 					g1:insert(chest.pic)
 				end
@@ -592,7 +590,7 @@ end--end if for map generation
 	
 	
 	--Declare Sprite Object 
-	rect = Player(startRow * 50, startCol * 50) 
+	rect = Player(startRow * tileSize, startCol * tileSize) 
 	--rect.x = startRow * 50  
 	--rect.y = startCol * 50 
 	
