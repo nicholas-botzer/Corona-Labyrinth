@@ -658,13 +658,14 @@ local function main( event )
 	end
 	
 	--Change the sequence only if another sequence isn't still playing 
+	--[[
 	if string.find(rect.model.sequence, "attack") then 
 		attacking = true 
 	else 
 		attacking = false 
 	end
-	
-	if(not (seq == rect.model.sequence) and moving and not attacking) then
+	]]
+	if(not (seq == rect.model.sequence) and moving) then -- and not attacking
 		rect.model:setSequence(seq)
 	end
 	
