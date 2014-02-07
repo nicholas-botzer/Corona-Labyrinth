@@ -7,9 +7,12 @@ Player = Creature:extends()
 function Player:init(posX, posY)
 	self.health = 100
 	self.maxHealth = 100
+	self.baseDamage = 10 
 	self.damage = 10
+	self.baseArmor = 1 
 	self.armor = 1
-	self.speed = 9
+	self.baseSpeed = 7
+	self.speed = 6
 	
 	sequenceData = {
 		{name = "forward", frames={105,106,107,108,109,110,111,112}, time = 500, loopCount = 1},

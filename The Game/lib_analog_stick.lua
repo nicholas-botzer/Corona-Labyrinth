@@ -152,7 +152,7 @@ function NewStick( Props )
 		function Group:collided(happened, x, y, direction)
 			Group.collisionDetected = happened
 			wallX = x
-			wallY = y 
+			wallY = y  
 			facing = direction
 		end
 		

@@ -11,7 +11,8 @@ display.setStatusBar( display.HiddenStatusBar )
 local storyboard = require "storyboard"
 
 -- load menu screen
-holding = {}
+holding = {"grand boots", "standard boots"}
+inUse = {}
 
 --Add standard armor, boots, and leather vest
  

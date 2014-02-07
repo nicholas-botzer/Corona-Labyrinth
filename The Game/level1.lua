@@ -23,7 +23,6 @@ require("main")
 require("options")
 require("ChestClass")
 
-
 -- declarations
 local rect, invBtn
 local screenW, screenH, halfW = display.contentWidth, display.contentHeight, display.contentWidth*0.5
@@ -38,6 +37,23 @@ local function onInvBtnRelease()
 	return true	-- indicates successful touch
 end
 
+local function handleConsumption() --Inventory items take effect here 
+	if(inUse["potion"]) then 
+		rect.health = rect.health + inUse["potion"]
+		if(rect.health > 100) then 
+			rect.health = 100 
+		end
+	end
+	if(inUse["sword"] and inUse["sword"].new) then
+		rect.damage = rect.baseDamage + inUse["sword"].modifier 
+	end
+	if(inUse["armor"] and inUse["armor"].new) then
+		rect.armor = rect.baseArmor + inUse["armor"].modifier
+	end
+	if(inUse["boots"] and inUse["boots"].new) then
+		rect.speed = rect.baseSpeed + inUse["boots"].modifier 
+	end
+end
 
 local function onSwordBtnRelease()
 	rect:pickAnimation()
@@ -91,17 +107,13 @@ local function onSwordBtnRelease()
 end 
 
 local function onCollision( event )
-	if(knockedBack)then
-		rect.model.x = rect.markX 
-		rect.model.y = rect.markY
-		knockedBack = false
-    elseif ( event.phase == "began" ) then
+    if ( event.phase == "began" ) then
 		rect.markX = rect.model.x 
 		rect.markY = rect.model.y
-		analogStick:collided(true, event.object1.x, event.object1.y, rect.model.sequence) 
+		seq = rect.model.sequence
+		analogStick:collided(true, event.object1.x, event.object1.y, seq)
 	elseif ( event.phase == "ended" ) then
 		analogStick:collided(false)
-		knockedBack = false
     end
 end
 
@@ -129,11 +141,6 @@ function knockbackCreature(attacker, creature, force)
 	local totalDistance = math.sqrt ( ( distanceX * distanceX ) + ( distanceY * distanceY ) )
 	local moveDistX = distanceX / totalDistance;
 	local moveDistY = distanceY / totalDistance;
-	if(creature == rect) then 
-		knockedBack = true
-		creature.markX = creature.model.x 
-		creature.markY = creature.model.y
-	end
 	creature.knockbackX = force * moveDistX /totalDistance
 	creature.knockbackY = force * moveDistY /totalDistance
 end
@@ -585,30 +592,14 @@ end--end if for map generation
 			B = 255
 		} 
 	)
-	
- 
-	
-	
+
 	--Declare Sprite Object 
 	rect = Player(startRow * tileSize, startCol * tileSize) 
-	--rect.x = startRow * 50  
-	--rect.y = startCol * 50 
-	
-	--Helps with collision, sprite doesn't detect right side boundary properly  
-	--colRect = display.newRect(rect.x, rect.y-25, 65, 60)
-	--colRect.isVisible = false
 
 	--physics.addBody(colRect, "kinematic", {})
 	physics.addBody(rect.model, "dynamic", {})
 	rect.model.isSensor = true
-	
-	---Sample chest ----
-	
-
-	--physics.addBody(chest1, "dynamic", {radius=20})
-	---End of sample chest ----
-	
-	
+		
 	-- all display objects must be inserted into group in layer order 
 	group:insert(g1)
 	group:insert( rect.model )
@@ -627,21 +618,11 @@ end--end if for map generation
 	group:insert(healthBackground)
 	group:insert(healthBar)
 	group:insert(healthAmount)
-	--group:insert(colRect)
 	
 	g1:insert(boss.model)
 end
 
 local function main( event )
-    --[[
-	-- MOVE THE EVERYTHING 
-	if(not analogStick:inCollision()) then
-		analogStick:slide(rect.model,-rect.speed)
-	else 
-		timer.performWithDelay(1, function () analogStick:slide(rect.model,-rect.speed) end) 
-	end
-	]]
-	
 	analogStick:slide(rect,-rect.speed)
 	angle = analogStick:getAngle() 
 	moving = analogStick:getMoving()
@@ -682,6 +663,7 @@ function scene:enterScene( event )
 	Runtime:addEventListener( "enterFrame", updateHealth )
 	Runtime:addEventListener( "enterFrame", trackPlayer)
 	storyboard.returnTo = "menu" 
+	handleConsumption() 
 end
 
 -- Called when scene is about to move offscreen:

@@ -40,9 +40,19 @@ local function snapTo() --Function to implement "snapping" in the drag and drop 
 				inBag[inUse["sword"].num].equipped = false 
 				inUse["sword"] = item
 				inUse["sword"].equipped = true
+				inUse["sword"].new = true 
 			else
 				inUse["sword"] = item
 				inUse["sword"].equipped = true
+			end
+			if string.find(itemName, "standard") then 
+				inUse["sword"].modifier = 5
+			elseif string.find(itemName, "long") then
+				inUse["sword"].modifier = 8
+			elseif string.find(itemName, "great") then 
+				inUse["sword"].modifier = 13 
+			elseif string.find(itemName, "Master") then 
+				inUse["sword"].modifier = 18 
 			end
 		else
 			item.x = item.origX 
@@ -61,9 +71,17 @@ local function snapTo() --Function to implement "snapping" in the drag and drop 
 				inBag[inUse["armor"].num].equipped = false 
 				inUse["armor"] = item
 				inUse["armor"].equipped = true
+				inUse["armor"].new = true
 			else
 				inUse["armor"] = item
 				inUse["armor"].equipped = true
+			end
+			if string.find(itemName, "vest") then
+				inUse["armor"].modifier = 5
+			elseif string.find(itemName, "standard") then 
+				inUse["armor"].modifier = 10 
+			elseif string.find(itemName, "Master") then 
+				inUse["armor"].modifier = 15 
 			end
 		else
 			item.x = item.origX 
@@ -82,9 +100,15 @@ local function snapTo() --Function to implement "snapping" in the drag and drop 
 				inBag[inUse["boots"].num].equipped = false 
 				inUse["boots"] = item
 				inUse["boots"].equipped = true
+				inUse["boots"].new = true
 			else
 				inUse["boots"] = item
 				inUse["boots"].equipped = true
+			end
+			if string.find(itemName, "standard") then
+				inUse["boots"].modifier = 2
+			elseif string.find(itemName, "grand") then 
+				inUse["boots"].modifier = 3
 			end
 		else
 			item.x = item.origX 
@@ -95,9 +119,9 @@ local function snapTo() --Function to implement "snapping" in the drag and drop 
 	---POTION SNAP--- 
 	if string.find(itemName, "potion") then 
 		if(math.abs(item.x - potionSlot.x) < 50 and math.abs(item.y - potionSlot.y) < 50) then 
-			inUse["potion"] = inUse["potion"]+1
+			inUse["potion"] = inUse["potion"]+10
 			if(string.find(itemName, "strong")) then --Add another to counter for a strong potion (strong potion = 2 normal potions)
-				inUse["potion"] = inUse["potion"]+1 
+				inUse["potion"] = inUse["potion"]+10 
 			end
 			inBag[currentSelection].equipped = true
 			item:removeSelf()
@@ -176,7 +200,8 @@ function scene:createScene (event)
 	inUse = {}  --Items currently equipped 
 	inUse["sword"] = nil 
 	inUse["armor"] = nil 
-	inUse["boots"] = nil 	
+	inUse["boots"] = nil 
+		
 	--Declaration of Inventory Images 
 	weaponSettings =  {
 		height = 32, 
@@ -266,7 +291,7 @@ function scene:createScene (event)
 	selectedArmor.strokeWidth = 3 
 	selectedArmor:setStrokeColor( 0, 204, 153)
 	
-	potionLabel = display.newText("  Place Potion\n  To Consume", selectedSword.x-96, selectedBoots.y)
+	potionLabel = display.newText("  Place Potion\n  To Consume", selectedSword.x-96, selectedBoots.y, native.systemFont, 10)
 	potionLabel:setTextColor(0,0,0)
 	
 	potionSlot = display.newRect(potionLabel.x, potionLabel.y, potionLabel.width, potionLabel.height) 
@@ -293,6 +318,16 @@ end
 function scene:enterScene( event )
 	group = self.view
 	inUse["potion"] = 0 
+	if(inUse["boots"]) then
+		inUse["boots"].new = false 
+	end
+	if(inUse["sword"]) then
+		inUse["sword"].new = false 
+	end
+	if(inUse["armor"]) then
+		inUse["armor"].new = false 
+	end
+	
 	inventoried = table.getn(inBag) 
 	
 	for i=table.getn(inBag), table.getn(holding)-1, 1 do 
