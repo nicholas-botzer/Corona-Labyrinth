@@ -234,7 +234,7 @@ local function generateRoom(r,c,botRow,botCol,dir)
 	width = math.random(3,5)
 	height = math.random(3,5)
 	if(dir == 0)then
-		col = math.random((c-1)-width,c)
+		col = math.random((c+2)-width,c)
 		row = r -1
 		for i=0,height do
 			for j=0,width do
@@ -245,7 +245,7 @@ local function generateRoom(r,c,botRow,botCol,dir)
 		currentCol = col
 		currentBotRow = r - 1
 		currentBotCol =  col + width
-	elseif(dir == 1)then	
+	elseif(dir == 1)then
 		col = c + 1
 		row = math.random((r-height + 1),r)
 		for i=0,height do
@@ -259,7 +259,7 @@ local function generateRoom(r,c,botRow,botCol,dir)
 		currentBotCol = col + width	
 	elseif(dir == 2)then
 		row = r + 1
-		col = math.random((c+1)-width,c)
+		col = math.random((c+2)-width,c)
 		for i=0,height do
 			for j=0,width do
 			    adjMatrix[col+j][row+i] = 1
@@ -270,7 +270,8 @@ local function generateRoom(r,c,botRow,botCol,dir)
 		currentBotRow = row + height
 		currentBotCol = col + width	
 	elseif(dir == 3)then
-		col = c - 1
+		print(c)
+		col = c + 1
 		row = math.random(r,(r+height))
 		for i=0,height do
 			for j=0,width do
@@ -289,12 +290,12 @@ local function generateEdge(r,c,botRow,botCol,dir)
 		height = math.random(3,6)
 		width = 2
 		col = math.random(c,(botCol-1))
-		for i=0,height do
-			for j=0,width do
+		for i=0,width do
+			for j=0,height do
 				if(dir == 0)then
-					adjMatrix[col+j][r-i] = 1
+					adjMatrix[col+i][r-j] = 1
 				elseif(dir == 2)then
-					adjMatrix[col+j][botRow+i] = 1
+					adjMatrix[col+i][botRow+j] = 1
 				end
 			end
 		end
@@ -309,6 +310,7 @@ local function generateEdge(r,c,botRow,botCol,dir)
 			currentBotCol = col + 1
 			currentCol = col
 		end
+	--dir 1 goes downward and 3 goes upward
 	elseif(dir == 1 or dir == 3)then
 		height = 2
 		width = math.random(3,6)
@@ -358,7 +360,7 @@ local function randomWalk(nodes)
 	generateStartRoom(currentRow,currentCol)
 	nodesPlaced = 0
 	flag = false
-	while nodesPlaced < 12 do
+	while nodesPlaced < 10 do
 		--create the room at the start location
 		--chooseRandom location and check if it is valid
 		--if it's valid go that direction and change adjMatrix
@@ -366,36 +368,40 @@ local function randomWalk(nodes)
 		rand = math.random(0,3)
 		flag = false
 		counter = 0
+		print("---begining to check for a room---")
 		while not flag and counter < 4 do
 			if(rand == 0)then
-				--check upward
+				--check left
 				flag = checkValidDir(currentRow,currentCol,currentBotRow,currentBotCol,0)
 				if(flag)then
+					print("spawn left")
 					generateEdge(currentRow,currentCol,currentBotRow,currentBotCol,0)
-					--generateWall(currentRow,currentCol,currentBotRow,currentBotCol,0)
 					generateRoom(currentRow,currentCol,currentBotRow,currentBotCol,0)
 				end
 				counter = counter + 1
-			--creates edge going to the right
+			--creates edge going down
 			elseif(rand == 1)then
 				flag = checkValidDir(currentRow,currentCol,currentBotRow,currentBotCol,1)
 				if(flag)then
+					print("spawn down");
 					generateEdge(currentRow,currentCol,currentBotRow,currentBotCol,1)
 					generateRoom(currentRow,currentCol,currentBotRow,currentBotCol,1)
 				end
 				counter = counter + 1
-			--creates edge going downward
+			--creates edge going to the right
 			elseif(rand == 2)then
 				flag = checkValidDir(currentRow,currentCol,currentBotRow,currentBotCol,2)
 				if(flag)then
+					print("spawn right")
 					generateEdge(currentRow,currentCol,currentBotRow,currentBotCol,2)
 					generateRoom(currentRow,currentCol,currentBotRow,currentBotCol,2)
 				end
 				counter = counter + 1
-			--creates edge going to the left
+			--creates edge going up
 			elseif(rand == 3)then
 				flag = checkValidDir(currentRow,currentCol,currentBotRow,currentBotCol,3)
 				if(flag)then
+					print("spawn up")
 					generateEdge(currentRow,currentCol,currentBotRow,currentBotCol,3)
 					generateRoom(currentRow,currentCol,currentBotRow,currentBotCol,3)
 				end
