@@ -18,9 +18,9 @@ Will:
 -Flashing mask for when hit
 
 Nick:
--Make map generation finally work without bugs
--Make health work
+-Make map generation finally work without bugs(done)
+-Make health work(Done)
 -Make chests work (chest & stairs)
--Fix death screen (if its even broken)
--Spawn monsters in array (this is important)
+-Fix death screen (if its even broken)(Done)
+-Spawn monsters in array (this is important)(Done)
 -Post sources for credit screen

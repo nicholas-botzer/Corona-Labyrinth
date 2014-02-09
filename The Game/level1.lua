@@ -16,7 +16,7 @@ require('SpiderClass')
 require('DemonClass')
 local PerspectiveLib = require("perspective")
 local track = require ("track")
-playerHeatlh = 100
+playerHealth = 100
 tileSize = 64
 floorsDone = 0
 require("main") 
@@ -62,18 +62,22 @@ local function onSwordBtnRelease()
 	
 	--Handle swinging at enemies here 
 	--Test to see if enemy is range of player character. This can be a variable later. 
-	if (boss.model) then
-		if(math.abs(rect.model.x - boss.model.x) < 40 and math.abs(rect.model.y - boss.model.y) < 40) then
-			--boss.health = boss.health - (rect.damage - boss.armor)
-			boss:takeDamage(rect.damage)
-			knockbackCreature(rect, boss, 500)
+	monsterNum = 1
+	while(monsterNum <= table.getn(creatures))do
+		if(creatures[monsterNum].model)then
+			if(math.abs(rect.model.x - creatures[monsterNum].model.x) < 40 and math.abs(rect.model.y - creatures[monsterNum].model.y) < 40) then
+				--boss.health = boss.health - (rect.damage - boss.armor)
+				creatures[monsterNum]:takeDamage(rect.damage)
+				knockbackCreature(rect, creatures[monsterNum], 500)
 			
-			--Remove enemy if 0 HP or lower
-			if (boss.health <= 0) then
-				boss.model:removeSelf()
-				boss.model = nil
-			end
+				--Remove enemy if 0 HP or lower
+				if (creatures[monsterNum].health <= 0) then
+					creatures[monsterNum].model:removeSelf()
+					creatures[monsterNum].model = nil
+				end--end if
+			end--end if
 		end
+		monsterNum = monsterNum + 1
 	end
 
 	--Handle chest opening here  
@@ -82,21 +86,20 @@ local function onSwordBtnRelease()
 	chestNum = 1
 	while(not flag and chestNum <= table.getn(chests)) do
 		if((math.abs(rect.model.x - chests[chestNum]:getX()) < 50) and (math.abs(rect.model.y - chests[chestNum]:getY()) < 50)) then
-			print("detected in range")
 			if(chests[chestNum].closed == true) then 
+				flag = true
 				chests[chestNum]:open() 
 				local treasure = display.newText("You found a "..chests[chestNum]:getContents(), rect.model.x-65, rect.model.y-30, native.systemFontBold, 20) 
 				table.insert(holding, chests[chestNum]:getContents()) 
 				g1:insert(treasure) 
 				timer.performWithDelay(1250, function() g1:remove(treasure) treasure = nil end)
-				flag = true
 			end--end if the chest is closed
 		end--end checking if player is near chest
 		chestNum = chestNum + 1
 	end--end while
 	
-	if(floorsDone < levels)then
-		if(math.abs(rect.model.x - stairs.x) < 120 and math.abs(rect.model.y - stairs.y) < 120)then
+	if(floorsDone < levels and not flag)then
+		if(math.abs(rect.model.x - (stairs.x+50)) < 50 and math.abs(rect.model.y - (stairs.y+50)) < 50)then
 			floorsDone = floorsDone + 1
 			storyboard.purgeScene("level1")
 			storyboard.reloadScene("level1")
@@ -130,8 +133,10 @@ end
 								-- = starting X - ((playerMaxHealth - playerCurrentHealth) * half of 1% of the healthBar.width)
 					
 local function trackPlayer()
-	if (boss.model) then
-		track.doFollow (boss, rect, boss.speed)
+	for num=1,table.getn(creatures) do
+		if (creatures[num].model) then
+			track.doFollow (creatures[num], rect, creatures[num].speed)
+		end
 	end
 end	
 
@@ -154,51 +159,54 @@ end
 					
 local function checkValidDir(r,c,botRow,botCol,dir)
 	--subtract row 11 times making sure whole area is valid over 6 columns
-	flag = true
 	count = 0
 	if(dir == 0)then
-		for i=1,11 do
-			for j=1,7 do
-				if(adjMatrix[c+j][r-i] == 9 or count > 6)then
+		local column = c - 5
+		for i=1,12 do
+			for j=1,9 do
+				if(adjMatrix[column+j][r-i] == 9 or count > 10)then
 					return false
-				elseif(adjMatrix[c+j][r-i] == 1)then
+				elseif(adjMatrix[column+j][r-i] == 1)then
 					count = count + 1
 				end
 			end
 		end
 	elseif(dir == 1)then
-		for i=1,7 do
-			for j=1,11 do
-				if(adjMatrix[botCol+j][r+i] == 9 or count > 6)then
+		row = r - 5
+		for i=1,9 do
+			for j=1,12 do
+				if(adjMatrix[botCol+j][row+i] == 9 or count > 10)then
 					return false
-				elseif(adjMatrix[botCol+j][r+i] == 1)then
+				elseif(adjMatrix[botCol+j][row+i] == 1)then
 					count = count + 1
 				end
 			end
 		end
 	elseif(dir == 2)then
-		for i=1,11 do
-			for j=1,7 do
-				if(adjMatrix[botCol+j][botRow+i] == 9 or count > 6)then
+		column = c - 5
+		for i=1,9 do
+			for j=1,12 do
+				if(adjMatrix[column+j][botRow+i] == 9 or count > 10)then
 					return false
-				elseif(adjMatrix[botCol+j][botRow+i] == 1)then
+				elseif(adjMatrix[column+j][botRow+i] == 1)then
 					count = count + 1
 				end
 			end
 		end	
 	elseif(dir == 3)then
-		for i=1,7 do
-			for j=1,11 do
-				if(adjMatrix[c-j][r+i] == 9 or count > 6)then
+		row = r - 5
+		for i=1,9 do
+			for j=1,12 do
+				if(adjMatrix[c-j][row+i] == 9 or count > 10)then
 					return false
-				elseif(adjMatrix[c-j][r+i] == 1)then
+				elseif(adjMatrix[c-j][row+i] == 1)then
 					count = count + 1
 				end
 			end
 		end	
 	end--end if for direction
 	
-	if(count > 6)then
+	if(count > 10)then
 		return false
 	else
 		return true
@@ -217,7 +225,7 @@ local function makeWall(r,c)
     wall = display.newImageRect("stone_wall.png",tileSize,tileSize)
     wall:setReferencePoint(display.TopLeftReferencePoint)
     wall.x,wall.y = r*tileSize,c*tileSize
-	physics.addBody(wall,"static",{})
+	--physics.addBody(wall,"static",{})
 	
 	return wall
 end
@@ -270,7 +278,6 @@ local function generateRoom(r,c,botRow,botCol,dir)
 		currentBotRow = row + height
 		currentBotCol = col + width	
 	elseif(dir == 3)then
-		print(c)
 		col = c + 1
 		row = math.random(r,(r+height))
 		for i=0,height do
@@ -350,9 +357,8 @@ local function randomWalk(nodes)
 --use the adj matrix and begin a random walk through the grid
 
 	--check open locations in matrix
-	print(levels) 
-	currentRow = math.random(7,35)
-	currentCol = math.random(7,35)
+	currentRow = math.random(15,45)
+	currentCol = math.random(15,45)
 	startRow = currentRow + 1
 	startCol = currentCol + 1
 	currentBotRow = currentRow + 3
@@ -360,7 +366,7 @@ local function randomWalk(nodes)
 	generateStartRoom(currentRow,currentCol)
 	nodesPlaced = 0
 	flag = false
-	while nodesPlaced < 10 do
+	while nodesPlaced < nodes do
 		--create the room at the start location
 		--chooseRandom location and check if it is valid
 		--if it's valid go that direction and change adjMatrix
@@ -368,7 +374,6 @@ local function randomWalk(nodes)
 		rand = math.random(0,3)
 		flag = false
 		counter = 0
-		print("---begining to check for a room---")
 		while not flag and counter < 4 do
 			if(rand == 0)then
 				--check left
@@ -412,7 +417,6 @@ local function randomWalk(nodes)
 				rand = 0
 			end
 		end	--end inner while
-		--print(counter)
 		if(counter >= 4 and not flag)then
 			adjMatrix[currentCol + 2][currentRow + 2] = 2
 			adjMatrix[2][2] = 1
@@ -432,11 +436,17 @@ local function generateMap(rows,cols)
 			if(adjMatrix[j][i] == 1)then
 				room = makeRoom(i,j)
 				g1:insert(room)
-				rand = math.random(1,100)
-				if(rand == 1)then
+				randChest = math.random(1,150)
+				if(randChest == 1)then
 					chest = Chest.new((i*tileSize),(j*tileSize))
 					table.insert(chests,chest)
 					g1:insert(chest.pic)
+				end
+				randMonster = math.random(1,100)
+				if(randMonster == 1)then
+					creature = Creature((i*tileSize),(j*tileSize))
+					table.insert(creatures,creature)
+					monsterGroup:insert(creature.model)
 				end
 			elseif(adjMatrix[j][i] == 0 or adjMatrix[j][i] == 9)then
 				wall = makeWall(i,j)
@@ -475,14 +485,18 @@ end
 
 function scene:createScene (event)
 	local group = self.view
-	boss = Creature(110, 110)
+	if(playerHealth <= 0)then
+		playerHealth = 100
+	end
 	chests = {}
+	creatures = {}
 	camera=PerspectiveLib.createView()
 	physics.start()
 	physics.setGravity(0,0)
 	
 	--g1 is the display group for the map that the user will be placed into
 	g1 = display.newGroup()
+	monsterGroup = display.newGroup()
 if(floorsDone >= levels)then
 	bossRoom = {}
 	for x=0,9 do
@@ -511,16 +525,15 @@ else
 	
 	
 	--define use for coordinates of last positioned room
-	--sets it to create a 5x5 grid of nodes with edges connecting the nodes
 	adjMatrix = {}
-	rows = 42
-	cols = 42
+	rows = 62
+	cols = 62
 	for i=0,rows do
 		adjMatrix[i] = {}
 		for j=0,cols do
-			if(i == 0 or i == 42)then
+			if(i == 0 or i == 62)then
 				adjMatrix[i][j] = 9
-			elseif(j == 0 or j == 42)then 
+			elseif(j == 0 or j == 62)then 
 				adjMatrix[i][j] = 9
 			else
 				adjMatrix[i][j] = 0
@@ -528,7 +541,7 @@ else
 		end
 	end
 	
-	local nodes = math.random(10,20)
+	local nodes = math.random(7,13)
 	startRow = 0 --used for Rect's start position
 	startCol = 0
 	currentRow = 0
@@ -601,18 +614,20 @@ end--end if for map generation
 
 	--Declare Sprite Object 
 	rect = Player(startRow * tileSize, startCol * tileSize) 
-
+	rect.health = playerHealth
 	--physics.addBody(colRect, "kinematic", {})
 	physics.addBody(rect.model, "dynamic", {})
 	rect.model.isSensor = true
 		
 	-- all display objects must be inserted into group in layer order 
 	group:insert(g1)
+	group:insert(monsterGroup)
 	group:insert( rect.model )
 	--group:insert( mask )
 	
 	--camera set up
-	camera:add(g1,3,true)
+	camera:add(g1,4,true)
+	camera:add(monsterGroup,3,true)
 	camera:add(rect.model, 2, true)
 	camera:setFocus(rect.model)
 	camera:setBounds(false)
@@ -625,7 +640,6 @@ end--end if for map generation
 	group:insert(healthBar)
 	group:insert(healthAmount)
 	
-	g1:insert(boss.model)
 end
 
 local function main( event )
@@ -678,6 +692,7 @@ function scene:exitScene( event )
 	Runtime:removeEventListener( "enterFrame", main )
 	Runtime:removeEventListener( "enterFrame", updateHealth )
 	Runtime:removeEventListener( "enterFrame", trackPlayer)
+	playerHealth = rect.health
 end
 
 -- If scene's view is removed, scene:destroyScene() will be called just prior to:
