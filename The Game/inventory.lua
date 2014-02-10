@@ -132,6 +132,52 @@ local function snapTo() --Function to implement "snapping" in the drag and drop 
 	end
 end
 
+local function displayModifier(item)
+	modifyText = display.newText("", modifierLabel.x-(modifierLabel.width*.25), modifierLabel.y+modifierLabel.height, native.systemFont, 15)
+	---SWORD SNAP---
+	if string.find(item, "sword") then 
+		if string.find(item, "standard") then 
+			modifyText.text = "Damage + 5"
+		elseif string.find(item, "long") then
+			modifyText.text = "Damage + 8"
+		elseif string.find(item, "great") then 
+			modifyText.text = "Damage + 13"
+		elseif string.find(item, "Master") then 
+			modifyText.text = "Damage + 18"
+		end
+	end
+	
+	---ARMOR SNAP---
+	if string.find(item, "armor") or string.find(item, "vest") then 
+		if string.find(item, "vest") then
+			modifyText.text = "Armor + 5"
+		elseif string.find(item, "standard") then 
+			modifyText.text = "Armor + 10"
+		elseif string.find(item, "Master") then 
+			modifyText.text = "Armor + 15"
+		end
+	end
+	
+	---BOOT SNAP---
+	if string.find(item, "boots") then 
+		if string.find(item, "standard") then
+			modifyText.text = "Speed + 2"
+		elseif string.find(item, "grand") then 
+			modifyText.text = "Speed + 3"
+		end
+	end
+	
+	---POTION SNAP--- 
+	if string.find(item, "potion") then 
+		if string.find(item, "strong") then
+			modifyText.text = "Heals 20 HP"
+		else
+			modifyText.text = "Heals 10 HP"
+		end
+	end
+	modifyText:setTextColor(255,223,0) 
+end 
+
 local function touchHandler(event) 
 	if(not event.target.equipped) then
 		num = event.target.num
@@ -144,7 +190,8 @@ local function touchHandler(event)
 					inBag[i]:removeEventListener("touch")
 				end
 			end
-			
+		displayModifier(inBag[currentSelection].sequence)
+		
 		elseif event.phase == "moved" then	
 			inBag[currentSelection].x = (event.x - event.xStart) + inBag[currentSelection].origX
 			inBag[currentSelection].y = (event.y - event.yStart) + inBag[currentSelection].origY
@@ -157,6 +204,8 @@ local function touchHandler(event)
 				end
 			end
 			display.currentStage:setFocus(nil) 
+			modifyText:removeSelf() 
+			modifyText = nil 
 		end
     end
     return true
@@ -276,7 +325,7 @@ function scene:createScene (event)
 	
 	local sword = display.newImageRect("swordWhite.png", display.contentWidth*.2, display.contentHeight-(menuBtn.height*4)) 
 	sword:setReferencePoint(display.TopLeftReferencePoint) 
-	sword.x = display.contentWidth*.3 
+	sword.x = display.contentWidth*.2
 	sword.y = menuBtn.y + menuBtn.height 
 	
 	selectedSword = display.newRect(sword.x+(sword.width*.5), sword.y+(sword.height*.5), 30, 30)
@@ -291,8 +340,11 @@ function scene:createScene (event)
 	selectedArmor.strokeWidth = 3 
 	selectedArmor:setStrokeColor( 0, 204, 153)
 	
-	potionLabel = display.newText("  Place Potion\n  To Consume", selectedSword.x-96, selectedBoots.y, native.systemFont, 10)
+	potionLabel = display.newText("  Place Potion\n  To Consume", sword.x, selectedBoots.y, native.systemFont, 12)
 	potionLabel:setTextColor(0,0,0)
+	
+	modifierLabel = display.newText("Selected \nItem's \nModifier:", display.contentWidth*.45, menuBtn.y+menuBtn.height, native.systemFont, 12)
+	modifierLabel:setTextColor(0,0,0)
 	
 	potionSlot = display.newRect(potionLabel.x, potionLabel.y, potionLabel.width, potionLabel.height) 
 	potionSlot:setReferencePoint(display.CenterReferencePoint)
@@ -312,6 +364,7 @@ function scene:createScene (event)
 	group:insert ( selectedArmor ) 
 	group:insert ( potionSlot ) 
 	group:insert ( potionLabel ) 
+	group:insert ( modifierLabel ) 
 end
 
 -- Called immediately after scene has moved onscreen:
