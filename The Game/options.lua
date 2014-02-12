@@ -16,11 +16,17 @@ local widget = require "widget"
 local screenW, screenH, halfW = display.contentWidth, display.contentHeight, display.contentWidth*0.5
 
 -- 'onRelease' event listener
+local function onCreditsBtnRelease()
+	-- go to credits.lua scene
+	storyboard.gotoScene( "credits", "fade", 500 )
+	return true	-- indicates successful touch
+end
 local function onMenuBtnRelease()
 	-- go to menu.lua scene
 	storyboard.gotoScene( "menu", "fade", 500 )
 	return true	-- indicates successful touch
 end
+
 
 local function onRelease(btnName)    
     if(btnName == "easy") then 
@@ -80,6 +86,18 @@ function scene:createScene (event)
 	menuBtn:setReferencePoint( display.CenterReferencePoint )
 	menuBtn.x = menuBtn.width * .5
 	menuBtn.y = menuBtn.height * .5
+	
+	creditsBtn = widget.newButton{
+		label="Credits",
+		labelColor = { default = {255}, over= {128} },
+		defaultFile="button.png",
+		overFile="button-over.png",
+		width=154, height=30,
+		onRelease = onCreditsBtnRelease	-- event listener function
+	}
+	creditsBtn:setReferencePoint( display.CenterReferencePoint )
+	creditsBtn.x = display.contentWidth - creditsBtn.width * .5
+	creditsBtn.y = creditsBtn.height * .5
 
     selected = display.newRect(200, 290, 158, 45) 
     selected:setReferencePoint(display.CenterReferencePoint) 
@@ -197,6 +215,7 @@ function scene:createScene (event)
 	group:insert( midLevels)
 	group:insert( highLevels)
 	group:insert( menuBtn )
+	group:insert( creditsBtn )
 	group:insert( titleText )
 	group:insert( difficultyText )
 	group:insert( levelsText )
@@ -244,6 +263,10 @@ function scene:destroyScene( event )
 	if highLevels then
 		highLevels:removeSelf()
 		highLevels = nil
+	end
+	if creditsBtn then
+		creditsBtn:removeSelf()
+		creditsBtn = nil
 	end
 end
 

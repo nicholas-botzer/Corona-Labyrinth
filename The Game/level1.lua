@@ -215,14 +215,14 @@ local function checkValidDir(r,c,botRow,botCol,dir)
 end
 
 local function makeRoom(r,c)
-    room = display.newImageRect("flooring.JPG",tileSize,tileSize)
+    room = display.newImageRect("floors.png",tileSize,tileSize)
     room:setReferencePoint(display.TopLeftReferencePoint)
     room.x,room.y = r*tileSize,c*tileSize
 	
 	return room
 end
 local function makeWall(r,c)
-    wall = display.newImageRect("stone_wall.png",tileSize,tileSize)
+    wall = display.newImageRect("walls.png",tileSize,tileSize)
     wall:setReferencePoint(display.TopLeftReferencePoint)
     wall.x,wall.y = r*tileSize,c*tileSize
 	--physics.addBody(wall,"static",{})
