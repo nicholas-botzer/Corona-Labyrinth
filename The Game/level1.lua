@@ -109,15 +109,40 @@ local function onSwordBtnRelease()
 	return true
 end 
 
+local function determineWallPosition() 
+	local pos = ""
+	if(upRect.collided) then 
+		pos = pos.."u"
+	end
+	if(rightRect.collided) then 
+		pos = pos.."r"
+	end
+	if(leftRect.collided) then 
+		pos = pos.."l"
+	end
+	if(downRect.collided) then
+		pos = pos.."d"
+	end
+	return pos
+end
 local function onCollision( event )
-    if ( event.phase == "began" ) then
-		rect.markX = rect.model.x 
-		rect.markY = rect.model.y
-		seq = rect.model.sequence
-		analogStick:collided(true, event.object1.x, event.object1.y, seq)
-	elseif ( event.phase == "ended" ) then
-		analogStick:collided(false)
-    end
+	if(not event.object2.id) then  
+		if ( event.phase == "began" ) then
+			if(not analogStick:inCollision()) then
+				rect.markX = rect.model.x 
+				rect.markY = rect.model.y
+			end
+			seq = rect.model.sequence
+			wallPos = determineWallPosition()
+			print(wallPos)
+			analogStick:collided(true, event.object1.x, event.object1.y, seq, analogStick:getAngle(), wallPos)
+	else 
+		if (event.phase == "began") then 
+			event.object2.collided = true
+		elseif(event.phase == "ended") then 
+			event.object2.collided = false 
+		end
+	end
 end
 
 local function updateHealth( event )
@@ -225,7 +250,7 @@ local function makeWall(r,c)
     wall = display.newImageRect("walls.png",tileSize,tileSize)
     wall:setReferencePoint(display.TopLeftReferencePoint)
     wall.x,wall.y = r*tileSize,c*tileSize
-	--physics.addBody(wall,"static",{})
+	physics.addBody(wall,"static",{})
 	
 	return wall
 end
@@ -442,12 +467,14 @@ local function generateMap(rows,cols)
 					table.insert(chests,chest)
 					g1:insert(chest.pic)
 				end
+				--[[
 				randMonster = math.random(1,100)
 				if(randMonster == 1)then
 					creature = Creature((i*tileSize),(j*tileSize))
 					table.insert(creatures,creature)
 					monsterGroup:insert(creature.model)
 				end
+				]]
 			elseif(adjMatrix[j][i] == 0 or adjMatrix[j][i] == 9)then
 				wall = makeWall(i,j)
 				g1:insert(wall)
@@ -615,10 +642,41 @@ end--end if for map generation
 	--Declare Sprite Object 
 	rect = Player(startRow * tileSize, startCol * tileSize) 
 	rect.health = playerHealth
-	--physics.addBody(colRect, "kinematic", {})
 	physics.addBody(rect.model, "dynamic", {})
 	rect.model.isSensor = true
-		
+	
+	upRect = display.newRect(rect.model.x , rect.model.y, 20,40)
+	upRect:setReferencePoint(display.BottomCenterReferencePoint)
+	upRect.x = rect.model.x 
+	upRect.y = rect.model.y
+	upRect.id = "upRect"
+	physics.addBody(upRect, "dynamic",{}) 
+	upRect.isSensor = true
+	
+	downRect = display.newRect(rect.model.x , rect.model.y, 20,40)
+	downRect:setReferencePoint(display.TopCenterReferencePoint)
+	downRect.x = rect.model.x 
+	downRect.y = rect.model.y
+	downRect.id = "downRect"
+	physics.addBody(downRect, "dynamic",{}) 
+	downRect.isSensor = true
+	
+	rightRect = display.newRect(rect.model.x , rect.model.y, 40,20)
+	rightRect:setReferencePoint(display.CenterLeftReferencePoint)
+	rightRect.x = rect.model.x 
+	rightRect.y = rect.model.y
+	rightRect.id = "rightRect"
+	physics.addBody(rightRect, "dynamic",{}) 
+	rightRect.isSensor = true
+	
+	leftRect = display.newRect(rect.model.x , rect.model.y, 40,20)
+	leftRect:setReferencePoint(display.CenterRightReferencePoint)
+	leftRect.x = rect.model.x 
+	leftRect.y = rect.model.y
+	leftRect.id = "leftRect"
+	physics.addBody(leftRect, "dynamic",{}) 
+	leftRect.isSensor = true
+	
 	-- all display objects must be inserted into group in layer order 
 	group:insert(g1)
 	group:insert(monsterGroup)
@@ -643,18 +701,28 @@ end--end if for map generation
 end
 
 local function main( event )
-	analogStick:slide(rect,-rect.speed)
+	analogStick:slide(rect,-rect.speed, true)
+	
+	upRect.x = rect.model.x 
+	upRect.y = rect.model.y
+	leftRect.x = rect.model.x 
+	leftRect.y = rect.model.y
+	downRect.x = rect.model.x 
+	downRect.y = rect.model.y
+	rightRect.x = rect.model.x 
+	rightRect.y = rect.model.y
+	
 	angle = analogStick:getAngle() 
 	moving = analogStick:getMoving()
 	
 	--Determine which animation to play based on the direction of the analog stick	
-	if(angle <= 55 or angle > 305) then
+	if(angle <= 45 or angle > 315) then
 		seq = "forward"
-	elseif(angle <= 110 and angle > 55) then
+	elseif(angle <= 135 and angle > 45) then
 		seq = "right"
-	elseif(angle <= 230 and angle > 110) then 
+	elseif(angle <= 225 and angle > 135) then 
 		seq = "back" 
-	elseif(angle <= 305 and angle > 230) then 
+	elseif(angle <= 315 and angle > 225) then 
 		seq = "left" 
 	end
 	
@@ -684,6 +752,10 @@ function scene:enterScene( event )
 	Runtime:addEventListener( "enterFrame", trackPlayer)
 	storyboard.returnTo = "menu" 
 	handleConsumption() 
+	upRect.collided = false 
+	downRect.collided = false 
+	leftRect.collided = false 
+	rightRect.collided = false 
 end
 
 -- Called when scene is about to move offscreen:
