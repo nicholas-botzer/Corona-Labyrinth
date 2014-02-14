@@ -136,6 +136,7 @@ local function onCollision( event )
 			wallPos = determineWallPosition()
 			print(wallPos)
 			analogStick:collided(true, event.object1.x, event.object1.y, seq, analogStick:getAngle(), wallPos)
+		end
 	else 
 		if (event.phase == "began") then 
 			event.object2.collided = true
