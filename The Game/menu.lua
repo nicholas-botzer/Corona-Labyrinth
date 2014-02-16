@@ -12,8 +12,9 @@ local scene = storyboard.newScene()
 local widget = require "widget"
 
 -- forward declarations and other locals
-local playBtn, optionsBtn
-
+local playBtn, optionsBtn, tutorialBtn
+	
+	
 ------------ Function List ------------
 local function onPlayBtnRelease()
 	
@@ -26,6 +27,13 @@ local function onOptionsBtnRelease()
 	
 	-- go to options.lua scene
 	storyboard.gotoScene( "options", "fade", 200 )
+	
+	return true	-- indicates successful touch
+end
+local function onTutorialBtnRelease()
+	
+	-- go to options.lua scene
+	storyboard.gotoScene( "tutorial", "fade", 200 )
 	
 	return true	-- indicates successful touch
 end
@@ -62,8 +70,21 @@ function scene:createScene ( event )
 		onRelease = onPlayBtnRelease
 	}
 	playBtn:setReferencePoint( display.CenterReferencePoint )
-	playBtn.x = display.contentWidth*.75
-	playBtn.y = display.contentHeight * .85
+	playBtn.x = display.contentWidth*.8
+	playBtn.y = display.contentHeight * .80
+	
+	
+	tutorialBtn = widget.newButton{
+		label="Tutorial",
+		labelColor = { default={255}, over={128} },
+		defaultFile="button.png",
+		overFile="button-over.png",
+		width=150, height=35,
+		onRelease = onTutorialBtnRelease
+	}
+	tutorialBtn:setReferencePoint( display.CenterReferencePoint )
+	tutorialBtn.x = display.contentWidth*.50
+	tutorialBtn.y = display.contentHeight * .90
 	
 	-- create a widget button which will load options.lua
 	optionsBtn = widget.newButton{
@@ -75,12 +96,13 @@ function scene:createScene ( event )
 		onRelease = onOptionsBtnRelease
 	}
 	optionsBtn:setReferencePoint( display.CenterReferencePoint )
-	optionsBtn.x = display.contentWidth * .25
-	optionsBtn.y = display.contentHeight * .85
+	optionsBtn.x = display.contentWidth * .20
+	optionsBtn.y = display.contentHeight * .80
 	
 	-- all display objects must be inserted into group
 	group:insert(background)
 	group:insert(playBtn)
+	group:insert(tutorialBtn)
 	group:insert(titleText)
 	group:insert(optionsBtn)
 end
@@ -110,6 +132,10 @@ function scene:destroyScene( event )
 	if optionsBtn then
 		optionsBtn:removeSelf()
 		optionsBtn = nil
+	end
+	if tutorialBtn then
+		tutorialBtn:removeSelf()
+		tutorialBtn = nil
 	end
 end
 

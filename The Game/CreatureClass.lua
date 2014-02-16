@@ -6,8 +6,8 @@ Creature = LCS.class({health, maxHealth, damage, armor, speed, spriteOptions, my
 function Creature:init(posX, posY)
 	self.health = 30 + 10 * floorsDone
 	self.maxHealth = 30 + 10 * floorsDone
-	self.damage = 3 + difficulty * 3
-	self.armor = 1 * difficulty
+	self.damage = 3 + difficulty * 5 + floorsDone
+	self.armor = 1 * difficulty + floorsDone
 	self.speed = 2 + difficulty
 	self.isDead = false
 
@@ -39,7 +39,12 @@ function Creature:init(posX, posY)
 
 
 	function Creature:takeDamage(dmg)
-		self.health = self.health - (dmg - self.armor)
+		if (dmg > self.armor) then 
+			self.health = self.health - (dmg - self.armor)
+		else
+			self.health = self.health - 1
+		end
+		
 		if (self.health <= 0) then
 			self.model:setSequence("death")
 			self.model:play()

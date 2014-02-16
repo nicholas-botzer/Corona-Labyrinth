@@ -13,11 +13,11 @@ function Spider:init(posX, posY)
 	
 		--Declare Image Sheet 
 		spriteOptions = {	
-			height = 320, 
-			width = 640, 
+			height = 64, 
+			width = 64, 
 			numFrames = 50, 
-			sheetContentWidth = 64, 
-			sheetContentHeight = 64 
+			sheetContentWidth = 640, 
+			sheetContentHeight = 320 
 		}
 		mySheet = graphics.newImageSheet("Spider-Sprite.png", spriteOptions) 
 		sequenceData = {

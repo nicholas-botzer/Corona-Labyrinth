@@ -97,12 +97,10 @@ local function onSwordBtnRelease()
 		chestNum = chestNum + 1
 	end--end while
 	
-	if(floorsDone < levels and not flag)then
+	if( not flag)then
 		if(math.abs(rect.model.x - (stairs.x+50)) < 50 and math.abs(rect.model.y - (stairs.y+50)) < 50)then
-			floorsDone = floorsDone + 1
-			tempHealth = rect.health
-			storyboard.purgeScene("level1")
-			storyboard.reloadScene("level1")
+			storyboard.purgeScene("tutorial")
+			storyboard.gotoScene( "menu", "fade", 500 )			
 		end
 	end
 	
@@ -183,62 +181,6 @@ function attackPlayer(monster)
 	end
 end
 					
-local function checkValidDir(r,c,botRow,botCol,dir)
-	--subtract row 11 times making sure whole area is valid over 6 columns
-	count = 0
-	if(dir == 0)then
-		local column = c - 5
-		for i=1,12 do
-			for j=1,9 do
-				if(adjMatrix[column+j][r-i] == 9 or count > 10)then
-					return false
-				elseif(adjMatrix[column+j][r-i] == 1)then
-					count = count + 1
-				end
-			end
-		end
-	elseif(dir == 1)then
-		row = r - 5
-		for i=1,9 do
-			for j=1,12 do
-				if(adjMatrix[botCol+j][row+i] == 9 or count > 10)then
-					return false
-				elseif(adjMatrix[botCol+j][row+i] == 1)then
-					count = count + 1
-				end
-			end
-		end
-	elseif(dir == 2)then
-		column = c - 5
-		for i=1,9 do
-			for j=1,12 do
-				if(adjMatrix[column+j][botRow+i] == 9 or count > 10)then
-					return false
-				elseif(adjMatrix[column+j][botRow+i] == 1)then
-					count = count + 1
-				end
-			end
-		end	
-	elseif(dir == 3)then
-		row = r - 5
-		for i=1,9 do
-			for j=1,12 do
-				if(adjMatrix[c-j][row+i] == 9 or count > 10)then
-					return false
-				elseif(adjMatrix[c-j][row+i] == 1)then
-					count = count + 1
-				end
-			end
-		end	
-	end--end if for direction
-	
-	if(count > 10)then
-		return false
-	else
-		return true
-	end
-
-end
 
 local function makeRoom(r,c)
     room = display.newImageRect("floors.png",tileSize,tileSize)
@@ -261,236 +203,9 @@ function makeStairs(r,c)
 	stairs.x,stairs.y = (r*tileSize)-50,(c*tileSize)-50
 	
 	return stairs
-
-end
-local function generateRoom(r,c,botRow,botCol,dir)
-	
-	width = math.random(3,5)
-	height = math.random(3,5)
-	if(dir == 0)then
-		col = math.random((c+2)-width,c)
-		row = r -1
-		for i=0,height do
-			for j=0,width do
-			    adjMatrix[col + j][row - i] = 1
-			end
-		end
-		currentRow = r - height
-		currentCol = col
-		currentBotRow = r - 1
-		currentBotCol =  col + width
-	elseif(dir == 1)then
-		col = c + 1
-		row = math.random((r-height + 1),r)
-		for i=0,height do
-			for j=0,width do
-			    adjMatrix[col+j][row+i] = 1
-			end
-		end
-		currentRow = row
-		currentCol = col
-		currentBotRow = row + height
-		currentBotCol = col + width	
-	elseif(dir == 2)then
-		row = r + 1
-		col = math.random((c+2)-width,c)
-		for i=0,height do
-			for j=0,width do
-			    adjMatrix[col+j][row+i] = 1
-			end
-		end
-		currentRow = row
-		currentCol = col
-		currentBotRow = row + height
-		currentBotCol = col + width	
-	elseif(dir == 3)then
-		col = c + 1
-		row = math.random(r,(r+height))
-		for i=0,height do
-			for j=0,width do
-			    adjMatrix[col-j][row-i] = 1
-			end
-		end
-		currentRow = row - height
-		currentCol = col - width
-		currentBotRow = row
-		currentBotCol = col	
-	end
-end
-local function generateEdge(r,c,botRow,botCol,dir)
-	
-	if(dir == 0 or dir == 2)then
-		height = math.random(3,6)
-		width = 2
-		col = math.random(c,(botCol-1))
-		for i=0,width do
-			for j=0,height do
-				if(dir == 0)then
-					adjMatrix[col+i][r-j] = 1
-				elseif(dir == 2)then
-					adjMatrix[col+i][botRow+j] = 1
-				end
-			end
-		end
-		if(dir == 0)then
-			currentRow = r - height
-			currentBotRow = r - 1
-			currentBotCol = col + 1
-			currentCol = col
-		elseif(dir == 2)then
-			currentRow = botRow + height
-			currentBotRow = botRow + 1
-			currentBotCol = col + 1
-			currentCol = col
-		end
-	--dir 1 goes downward and 3 goes upward
-	elseif(dir == 1 or dir == 3)then
-		height = 2
-		width = math.random(3,6)
-		row = math.random(r,(botRow-1))
-		for i =0, height do
-			for j=0, width do
-				if(dir == 1)then
-					adjMatrix[botCol+j][row+i] = 1
-				elseif(dir == 3)then
-					adjMatrix[c-j][row+i] = 1
-				end
-			end
-		end
-		if(dir == 1)then
-			currentBotRow = row + 1
-			currentRow = row
-			currentCol = botCol + width
-			currentBotCol = botCol
-		elseif(dir == 3)then
-			currentCol = c - width
-			currentBotCol = c - 1
-			currentBotRow = row + 1
-			currentRow = row
-		end
-	end -- end outer if
-
-end
-local function generateStartRoom(r,c)
-
-	for i=0,3 do
-		for j=0,3 do
-			adjMatrix[c+j][r+i] = 1
-		end
-	end
-end
-local function randomWalk(nodes)
---use the adj matrix and begin a random walk through the grid
-
-	--check open locations in matrix
-	currentRow = math.random(15,45)
-	currentCol = math.random(15,45)
-	startRow = currentRow + 1
-	startCol = currentCol + 1
-	currentBotRow = currentRow + 3
-	currentBotCol = currentCol + 3
-	generateStartRoom(currentRow,currentCol)
-	nodesPlaced = 0
-	flag = false
-	while nodesPlaced < nodes do
-		--create the room at the start location
-		--chooseRandom location and check if it is valid
-		--if it's valid go that direction and change adjMatrix
-		--if not check a new direction
-		rand = math.random(0,3)
-		flag = false
-		counter = 0
-		while not flag and counter < 4 do
-			if(rand == 0)then
-				--check left
-				flag = checkValidDir(currentRow,currentCol,currentBotRow,currentBotCol,0)
-				if(flag)then
-					print("spawn left")
-					generateEdge(currentRow,currentCol,currentBotRow,currentBotCol,0)
-					generateRoom(currentRow,currentCol,currentBotRow,currentBotCol,0)
-				end
-				counter = counter + 1
-			--creates edge going down
-			elseif(rand == 1)then
-				flag = checkValidDir(currentRow,currentCol,currentBotRow,currentBotCol,1)
-				if(flag)then
-					print("spawn down");
-					generateEdge(currentRow,currentCol,currentBotRow,currentBotCol,1)
-					generateRoom(currentRow,currentCol,currentBotRow,currentBotCol,1)
-				end
-				counter = counter + 1
-			--creates edge going to the right
-			elseif(rand == 2)then
-				flag = checkValidDir(currentRow,currentCol,currentBotRow,currentBotCol,2)
-				if(flag)then
-					print("spawn right")
-					generateEdge(currentRow,currentCol,currentBotRow,currentBotCol,2)
-					generateRoom(currentRow,currentCol,currentBotRow,currentBotCol,2)
-				end
-				counter = counter + 1
-			--creates edge going up
-			elseif(rand == 3)then
-				flag = checkValidDir(currentRow,currentCol,currentBotRow,currentBotCol,3)
-				if(flag)then
-					print("spawn up")
-					generateEdge(currentRow,currentCol,currentBotRow,currentBotCol,3)
-					generateRoom(currentRow,currentCol,currentBotRow,currentBotCol,3)
-				end
-				counter = counter + 1
-			end
-			rand = rand + 1
-			if(rand > 3)then
-				rand = 0
-			end
-		end	--end inner while
-		if(counter >= 4 and not flag)then
-			adjMatrix[currentCol + 2][currentRow + 2] = 2
-			adjMatrix[2][2] = 1
-			nodesPlaced = 50
-		else
-			nodesPlaced = nodesPlaced + 1
-		end
-	end--end outer while signaling all nodes and edges have been placed
-	adjMatrix[currentCol + 2][currentRow + 2] = 2
-
 end
 
-local function generateMap(rows,cols)
-	
-	for i=0,rows do
-		for j=0,cols do
-			if(adjMatrix[j][i] == 1)then
-				room = makeRoom(i,j)
-				g1:insert(room)
-				randChest = math.random(1,150)
-				if(randChest == 1)then
-					chest = Chest.new((i*tileSize),(j*tileSize))
-					table.insert(chests,chest)
-					g1:insert(chest.pic)
-				end
-				
-				randMonster = math.random(1,100)
-				if(randMonster == 1)then
-					creature = Creature((i*tileSize),(j*tileSize))
-					table.insert(creatures,creature)
-					monsterGroup:insert(creature.model)
-				end
-				
-			elseif(adjMatrix[j][i] == 0 or adjMatrix[j][i] == 9)then
-				wall = makeWall(i,j)
-				g1:insert(wall)
-			elseif(adjMatrix[j][i] == 2)then
-				room = makeRoom(i,j)
-				g1:insert(room)
-				stairs = makeStairs(i,j)
-				g1:insert(stairs)
-			end-- end if
-		end -- end inner for
-	end--end outer for
-
-end
 local function generateBossRoom(rows,cols)
-
 	for i=0,rows do
 		for j=0,cols do
 			if(bossRoom[j][i] == 1)then
@@ -502,6 +217,14 @@ local function generateBossRoom(rows,cols)
 			end
 		end
 	end
+	for i=1,6 do
+		for j=4,5 do
+			wall = makeWall(i,j)
+			g1:insert(wall)
+		end
+	end
+	stairs = makeStairs(2,2)
+	g1:insert( stairs )
 end
 -----------------------------------------------------------------------------------------
 -- BEGINNING OF YOUR IMPLEMENTATION
@@ -518,14 +241,17 @@ function scene:createScene (event)
 	end
 	chests = {}
 	creatures = {}
+	monsterGroup = display.newGroup()
 	camera=PerspectiveLib.createView()
 	physics.start()
 	physics.setGravity(0,0)
 	
+	mask = display.newImageRect( "masked3.png", screenW, screenH )
+	mask:setReferencePoint( display.TopLeftReferencePoint )
+	mask.x, mask.y = 0, 0
+	
 	--g1 is the display group for the map that the user will be placed into
 	g1 = display.newGroup()
-	monsterGroup = display.newGroup()
-if(floorsDone >= levels)then
 	bossRoom = {}
 	for x=0,9 do
 		bossRoom[x] = {}
@@ -540,45 +266,15 @@ if(floorsDone >= levels)then
 		end -- end for y
 	end--end for x
 	generateBossRoom(9,9)
-	startRow = 5
-	startCol = 5
+	startRow = 2
+	startCol = 8
 	
-else
-	--[[
-	mask = display.newImageRect( "masked2.png", screenW, screenH )
-	mask:setReferencePoint( display.TopLeftReferencePoint )
-	mask.x, mask.y = 0, 0
-	--Creates the intial starting room that the user will be placed into
-	]]
-	
-	
-	--define use for coordinates of last positioned room
-	adjMatrix = {}
-	rows = 62
-	cols = 62
-	for i=0,rows do
-		adjMatrix[i] = {}
-		for j=0,cols do
-			if(i == 0 or i == 62)then
-				adjMatrix[i][j] = 9
-			elseif(j == 0 or j == 62)then 
-				adjMatrix[i][j] = 9
-			else
-				adjMatrix[i][j] = 0
-			end--end if
-		end
-	end
-	
-	local nodes = math.random(7,13)
-	startRow = 0 --used for Rect's start position
-	startCol = 0
-	currentRow = 0
-	currentCol = 0
-	currentBotRow = 0
-	currentBotCol = 0
-	randomWalk(nodes)
-	generateMap(rows,cols)
-end--end if for map generation
+	chest = Chest.new(3.5 * tileSize, 7 * tileSize)
+	table.insert(chests,chest)
+	g1:insert(chest.pic)
+	creature = Demon((7*tileSize),(2*tileSize))
+	table.insert(creatures,creature)
+	monsterGroup:insert(creature.model)
 	
 
 	--generate the health bar for the player
@@ -682,7 +378,7 @@ end--end if for map generation
 	group:insert(g1)
 	group:insert(monsterGroup)
 	group:insert( rect.model )
-	--group:insert( mask )
+	
 	
 	--camera set up
 	camera:add(g1,4,true)
@@ -692,6 +388,7 @@ end--end if for map generation
 	camera:setBounds(false)
 	camera:track()
 	group:insert( camera )
+	group:insert( mask )
 	group:insert( analogStick )
 	group:insert( invBtn )
 	group:insert( swordBtn )

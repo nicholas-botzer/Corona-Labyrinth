@@ -13,11 +13,11 @@ function Demon:init(posX, posY)
 	
 		--Declare Image Sheet 
 		spriteOptions = {	
-			height = 576, 
-			width = 448, 
+			height = 64, 
+			width = 64, 
 			numFrames = 63, 
-			sheetContentWidth = 64, 
-			sheetContentHeight = 64 
+			sheetContentWidth = 448, 
+			sheetContentHeight = 576 
 		}
 		mySheet = graphics.newImageSheet("Imp-Sprite.png", spriteOptions) 
 		sequenceData = {

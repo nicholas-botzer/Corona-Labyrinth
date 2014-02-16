@@ -21,7 +21,8 @@ local function onMenuBtnRelease()
 end
 
 local function onBackBtnRelease()
-	storyboard.gotoScene( "level1", "fade", 250 )
+	local previousScene = storyboard.getPrevious()
+	storyboard.gotoScene( previousScene, "fade", 250 )
 	return true	-- indicates successful touch
 end
 
@@ -175,7 +176,7 @@ local function displayModifier(item)
 			modifyText.text = "Heals 10 HP"
 		end
 	end
-	modifyText:setTextColor(255,223,0) 
+	modifyText:setTextColor(200,180,0) 
 end 
 
 local function touchHandler(event) 
