@@ -68,7 +68,6 @@ local function onSwordBtnRelease()
 			if(math.abs(rect.model.x - creatures[monsterNum].model.x) < 40 and math.abs(rect.model.y - creatures[monsterNum].model.y) < 40) then
 				creatures[monsterNum]:takeDamage(rect.damage)
 				knockbackCreature(rect, creatures[monsterNum], 500)
-				print (creatures[monsterNum].isDead)
 			
 				--Remove enemy if 0 HP or lower
 				if (creatures[monsterNum].health <= 0) then
@@ -151,7 +150,7 @@ local function updateHealth( event )
 	if(rect.health <= 0) then
 		storyboard.gotoScene("death")
 		storyboard.purgeScene("inventory")
-		storyboard.purgeScene("level1") 
+		storyboard.purgeScene("tutorial") 
 	end
 end					
 								-- = starting X - ((playerMaxHealth - playerCurrentHealth) * half of 1% of the healthBar.width)

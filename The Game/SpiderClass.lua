@@ -37,4 +37,18 @@ function Spider:init(posX, posY)
 		self.model.x = posX
 		self.model.y = posY
 	
+	function Spider:takeDamage(dmg)
+		if (dmg > self.armor) then 
+			self.health = self.health - (dmg - self.armor)
+		else
+			self.health = self.health - 1
+		end
+		
+		if (self.health <= 0) then
+			self.model:setSequence("death")
+			self.model:play()
+		end
+		return
+	end
+	
 end

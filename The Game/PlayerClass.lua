@@ -55,4 +55,18 @@ function Player:init(posX, posY)
 		end
 	end
 	
+	function Player:takeDamage(dmg)
+		if (dmg > self.armor) then 
+			self.health = self.health - (dmg - self.armor)
+		else
+			self.health = self.health - 1
+		end
+		
+		if (self.health <= 0) then
+			self.model:setSequence("death")
+			self.model:play()
+		end
+		return
+	end
+	
 end
