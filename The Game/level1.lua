@@ -21,6 +21,7 @@ floorsDone = 0
 require("main") 
 require("options")
 require("ChestClass")
+require("RoomClass")
 
 -- declarations
 local rect, invBtn
@@ -316,6 +317,8 @@ local function generateRoom(r,c,botRow,botCol,dir)
 		currentBotRow = row
 		currentBotCol = col	
 	end
+	room = Room.new(currentRow,currentCol,currentBotRow,currentBotCol)
+	table.insert(rooms,room)
 end
 local function generateEdge(r,c,botRow,botCol,dir)
 	
@@ -454,7 +457,14 @@ local function randomWalk(nodes)
 	adjMatrix[currentCol + 2][currentRow + 2] = 2
 
 end
-
+local function tunnels()
+	
+	numRooms = table.getn(rooms)
+	for i=0,3 do
+		randRoom = math.random(1,numRooms-1)
+		rooms[randRoom]:connectRooms(rooms[math.random(1,numRooms-1)])
+	end
+end
 local function generateMap(rows,cols)
 	
 	for i=0,rows do
@@ -474,6 +484,11 @@ local function generateMap(rows,cols)
 					creature = Creature((i*tileSize),(j*tileSize))
 					table.insert(creatures,creature)
 					monsterGroup:insert(creature.model)
+				elseif(rand == 2)then
+					print("made a spider")
+					spider = Spider((i*tileSize),(j*tileSize))
+					table.insert(creatures,spider)
+					monsterGroup:insert(spider.model)
 				end
 				
 			elseif(adjMatrix[j][i] == 0 or adjMatrix[j][i] == 9)then
@@ -518,6 +533,7 @@ function scene:createScene (event)
 	end
 	chests = {}
 	creatures = {}
+	rooms = {}
 	camera=PerspectiveLib.createView()
 	physics.start()
 	physics.setGravity(0,0)
@@ -577,6 +593,7 @@ else
 	currentBotRow = 0
 	currentBotCol = 0
 	randomWalk(nodes)
+	tunnels()
 	generateMap(rows,cols)
 end--end if for map generation
 	
