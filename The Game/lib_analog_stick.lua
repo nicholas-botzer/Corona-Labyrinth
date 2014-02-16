@@ -105,7 +105,8 @@ function NewStick( Props )
         function Group:move(Obj, maxSpeed, rotate)
                 if rotate == true then Obj.rotation = self.angle end
                 Obj.x = Obj.x + Cos( Rad(self.angle-90) ) * (maxSpeed * self.percent) 
-                Obj.y = Obj.y + Sin( Rad(self.angle-90) ) * (maxSpeed * self.percent) 
+                Obj.y = Obj.y + Sin( Rad(self.angle-90) ) * (maxSpeed * self.percent)
+				
         end
 		
 		---------------------------------------------
@@ -115,41 +116,46 @@ function NewStick( Props )
 			if (not Group.collisionDetected) then
 				Obj.model.x = ( Obj.model.x + Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 				Obj.model.y = ( Obj.model.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
+				-- handle knockback on the player
+				if (math.abs(Obj.knockbackX) > 2) then
+					Obj.model.x = Obj.model.x + Obj.knockbackX
+					Obj.knockbackX = Obj.knockbackX * .85
+				end
+				if (math.abs(Obj.knockbackY) > 2) then
+					Obj.model.y = Obj.model.y + Obj.knockbackY
+					Obj.knockbackY = Obj.knockbackY * .85
+				end
 			else 
 				if(wallLoc == "r") then
+					Obj.model.y = ( Obj.model.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 					if(self.angle >= 180) then 
 						Obj.model.x = ( Obj.model.x + Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
-						Obj.model.y = ( Obj.model.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 						Group.collisionDetected = false 
 					else
-						Obj.model.x = Obj.markX-5
-						Obj.model.y = ( Obj.model.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
+						--Obj.model.x = Obj.markX-5
 					end
 				elseif(wallLoc == "l") then
+					Obj.model.y = ( Obj.model.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 					if(self.angle < 180) then 
 						Obj.model.x = ( Obj.model.x + Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
-						Obj.model.y = ( Obj.model.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 						Group.collisionDetected = false 
 					else
 						Obj.model.x = Obj.markX+5
-						Obj.model.y = ( Obj.model.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 					end
 				elseif(wallLoc == "u") then 
+					Obj.model.x = ( Obj.model.x + Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 					if(self.angle > 90 and self.angle < 270) then
-						Obj.model.x = ( Obj.model.x + Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 						Obj.model.y = ( Obj.model.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 						Group.collisionDetected = false 
 					else 
-						Obj.model.x = ( Obj.model.x + Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 						Obj.model.y = Obj.markY + 5
 					end
 				elseif(wallLoc == "d") then 
+					Obj.model.x = ( Obj.model.x + Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 					if(self.angle <= 90 or self.angle >= 270) then
-						Obj.model.x = ( Obj.model.x + Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 						Obj.model.y = ( Obj.model.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 						Group.collisionDetected = false 
 					else 
-						Obj.model.x = ( Obj.model.x + Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 						Obj.model.y = Obj.markY - 5
 					end
 				elseif(wallLoc == "dl" or wallLoc == "ld") then 
@@ -180,15 +186,7 @@ function NewStick( Props )
 					--Group.collisionDetected = false 
 				end
 			end
-				-- handle knockback on the player
-				if (math.abs(Obj.knockbackX) > 5) then
-					Obj.model.x = Obj.model.x + Obj.knockbackX
-					Obj.knockbackX = Obj.knockbackX * .8
-				end
-				if (math.abs(Obj.knockbackY) > 5) then
-					Obj.model.y = Obj.model.y + Obj.knockbackY
-					Obj.knockbackY = Obj.knockbackY * .8
-				end
+				
         end
 		
 		function Group:collided(happened, x, y, direction, ang, loc)

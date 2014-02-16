@@ -16,7 +16,6 @@ require('SpiderClass')
 require('DemonClass')
 local PerspectiveLib = require("perspective")
 local track = require ("track")
-playerHealth = 100
 tileSize = 64
 floorsDone = 0
 require("main") 
@@ -61,19 +60,18 @@ local function onSwordBtnRelease()
 	audio.play( swordClashSound ) 
 	
 	--Handle swinging at enemies here 
-	--Test to see if enemy is range of player character. This can be a variable later. 
+	--Test to see if enemy is range of player character.
 	monsterNum = 1
 	while(monsterNum <= table.getn(creatures))do
-		if(creatures[monsterNum].model)then
+		if( not creatures[monsterNum].isDead)then
 			if(math.abs(rect.model.x - creatures[monsterNum].model.x) < 40 and math.abs(rect.model.y - creatures[monsterNum].model.y) < 40) then
-				--boss.health = boss.health - (rect.damage - boss.armor)
 				creatures[monsterNum]:takeDamage(rect.damage)
 				knockbackCreature(rect, creatures[monsterNum], 500)
+				print (creatures[monsterNum].isDead)
 			
 				--Remove enemy if 0 HP or lower
 				if (creatures[monsterNum].health <= 0) then
-					creatures[monsterNum].model:removeSelf()
-					creatures[monsterNum].model = nil
+					creatures[monsterNum].isDead = true
 				end--end if
 			end--end if
 		end
@@ -177,9 +175,9 @@ function knockbackCreature(attacker, creature, force)
 end
 
 function attackPlayer(monster)
-	if (math.abs(monster.model.x - rect.model.x) < 20 and math.abs(monster.model.y - rect.model.y) < 20) then
+	if (math.abs(monster.model.x - rect.model.x) < 20 and math.abs(monster.model.y - rect.model.y) < 25) then
 		rect:takeDamage(monster.damage)
-		knockbackCreature(monster, rect, 500)
+		knockbackCreature(monster, rect, 300)
 	end
 end
 					
@@ -468,14 +466,14 @@ local function generateMap(rows,cols)
 					table.insert(chests,chest)
 					g1:insert(chest.pic)
 				end
-				--[[
+				
 				randMonster = math.random(1,100)
 				if(randMonster == 1)then
 					creature = Creature((i*tileSize),(j*tileSize))
 					table.insert(creatures,creature)
 					monsterGroup:insert(creature.model)
 				end
-				]]
+				
 			elseif(adjMatrix[j][i] == 0 or adjMatrix[j][i] == 9)then
 				wall = makeWall(i,j)
 				g1:insert(wall)
@@ -513,9 +511,6 @@ end
 
 function scene:createScene (event)
 	local group = self.view
-	if(playerHealth <= 0)then
-		playerHealth = 100
-	end
 	chests = {}
 	creatures = {}
 	camera=PerspectiveLib.createView()
@@ -642,7 +637,6 @@ end--end if for map generation
 
 	--Declare Sprite Object 
 	rect = Player(startRow * tileSize, startCol * tileSize) 
-	rect.health = playerHealth
 	physics.addBody(rect.model, "dynamic", {})
 	rect.model.isSensor = true
 	
@@ -728,13 +722,6 @@ local function main( event )
 	end
 	
 	--Change the sequence only if another sequence isn't still playing 
-	--[[
-	if string.find(rect.model.sequence, "attack") then 
-		attacking = true 
-	else 
-		attacking = false 
-	end
-	]]
 	if(not (seq == rect.model.sequence) and moving) then -- and not attacking
 		rect.model:setSequence(seq)
 	end
@@ -765,7 +752,6 @@ function scene:exitScene( event )
 	Runtime:removeEventListener( "enterFrame", main )
 	Runtime:removeEventListener( "enterFrame", updateHealth )
 	Runtime:removeEventListener( "enterFrame", trackPlayer)
-	playerHealth = rect.health
 end
 
 -- If scene's view is removed, scene:destroyScene() will be called just prior to:

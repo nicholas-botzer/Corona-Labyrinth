@@ -1,7 +1,7 @@
 local LCS = require 'LCS'
 require "options"
 
-Creature = LCS.class({health, maxHealth, damage, armor, speed, spriteOptions, mySheet ,model, moveX = 0, moveY = 0, knockbackX = 0, knockbackY = 0})
+Creature = LCS.class({health, maxHealth, damage, armor, speed, spriteOptions, mySheet ,model, moveX = 0, moveY = 0, knockbackX = 0, knockbackY = 0, isDead})
 
 function Creature:init(posX, posY)
 	self.health = 30 + 10 * floorsDone
@@ -9,6 +9,7 @@ function Creature:init(posX, posY)
 	self.damage = 3 + difficulty * 3
 	self.armor = 1 * difficulty
 	self.speed = 2 + difficulty
+	self.isDead = false
 
 	--Declare Image Sheet 
 	spriteOptions = {	
@@ -47,8 +48,8 @@ function Creature:init(posX, posY)
 	end
 
 	function Creature:delete()
-		model:removeSelf()
-		model = nil
+		self.model:removeSelf()
+		self.model = nil
 	end
 		
 end

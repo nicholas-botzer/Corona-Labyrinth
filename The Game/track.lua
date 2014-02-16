@@ -34,7 +34,7 @@ end
  
  
 track.doFollow = function (follower, target, followSpeed)
- 
+	if ( not follower.isDead) then
         local followSpeed = follower.speed
       
         -- get distance between follower and target for X and Y
@@ -44,7 +44,7 @@ track.doFollow = function (follower, target, followSpeed)
         -- get total distance
         local distanceTotal = math.sqrt ( ( distanceX * distanceX ) + ( distanceY * distanceY ) )
         
-		if (distanceTotal < 2500 and distanceTotal > 30) then 
+		if (distanceTotal < 250 and distanceTotal > 20) then 
 			-- calculate how much to move
 			local moveDistanceX = distanceX / distanceTotal;
 			local moveDistanceY = distanceY / distanceTotal;
@@ -66,11 +66,12 @@ track.doFollow = function (follower, target, followSpeed)
 
 			--change sprite
 			track.changeSprite(follower, distanceX, distanceY)
-		else
+			follower.model:play()
+		elseif (distanceTotal < 50) then
 			--attacking stuff
 			track.attackSprite(follower)
 			attackPlayer(follower)
-
+			follower.model:play()
 		end
 		
 		--handle knockback
@@ -84,7 +85,7 @@ track.doFollow = function (follower, target, followSpeed)
 		end
 		
 		-- play the sprite animation
-		follower.model:play()
- 
+		
+	end
 end
 return track
