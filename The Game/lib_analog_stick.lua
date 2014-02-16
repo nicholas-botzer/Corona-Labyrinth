@@ -132,7 +132,7 @@ function NewStick( Props )
 						Obj.model.x = ( Obj.model.x + Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 						Group.collisionDetected = false 
 					else
-						--Obj.model.x = Obj.markX-5
+						Obj.model.x = Obj.markX-5
 					end
 				elseif(wallLoc == "l") then
 					Obj.model.y = ( Obj.model.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
