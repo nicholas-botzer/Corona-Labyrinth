@@ -15,6 +15,10 @@ local backBtn, screenW, screenH, halfW = display.contentWidth, display.contentHe
 
 -- 'onRelease' event listener
 local function onMenuBtnRelease()
+	local previousScene = storyboard.getPrevious()
+	if (previousScene == "tutorial") then
+		
+	end
 	-- go to menu.lua scene
 	storyboard.gotoScene( "menu", "fade", 500 )
 	return true	-- indicates successful touch

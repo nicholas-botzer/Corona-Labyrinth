@@ -95,7 +95,7 @@ function scene:createScene (event)
 	-- ********************************************
 	-- ***              Credits                 ***
 	-- ********************************************
-	local creditsText = "Sprites - Author (Licenses):\n"
+	local creditsText = "     Sprites - Author (Licenses):\n"
 	creditsText = creditsText .. "Player - Author (Licenses)\n"
 	creditsText = creditsText .. "Spider - William.Thompsonj at OpenGameArt.org (CC-BY 3.0, GPL 3.0, GPL 2.0)\n"
 	creditsText = creditsText .. "Skeleton - Wulax at OpenGameArt.org (CC-BY-SA 3.0, GPL 3.0)\n"
@@ -108,20 +108,25 @@ function scene:createScene (event)
 	creditsText = creditsText .. "Inventory Knight Armor - Author (licenses)\n"
 	creditsText = creditsText .. "Inventory Sword - Author (licenses)\n"
 	
-	creditsText = creditsText .. "License Links\n"
+	creditsText = creditsText .. "\n\n     Music - Author (Licenses)\n"
+	creditsText = creditsText .. "Mystical Caverns (Menu Music) - MichaelTheCrow on OpenGameArt.org (CC-BY 3.0)\n"
+	creditsText = creditsText .. "Battle Escape (Labyrinth Music) - bf5man on OpenGameArt.org (CC-BY 3.0)\n"
+	creditsText = creditsText .. "Battle Theme A (Boss Music) - CynicMusic.com (CC-BY 3.0)\n"
+	
+	creditsText = creditsText .. "\n\n     License Links\n"
 	creditsText = creditsText .. "CC-BY 3.0 - http://creativecommons.org/licenses/by/3.0/legalcode \n"
 	creditsText = creditsText .. "CC-BY-SA 3.0 - http://creativecommons.org/licenses/by-sa/3.0/legalcode \n"
 	creditsText = creditsText .. "LGPL 2.1 - http://www.gnu.org/licenses/lgpl-2.1.html \n"
 	creditsText = creditsText .. "LGPL 3.0 - http://www.gnu.org/licenses/lgpl-3.0.html \n"
 	creditsText = creditsText .. "GPL 2.0 - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html \n"
 	creditsText = creditsText .. "GPL 3.0 - http://www.gnu.org/licenses/gpl-3.0.html \n"
-	creditsText = creditsText .. " \n"
+	creditsText = creditsText .. "\n"
 	-- ********************************************
 	-- ***           End of Credits             ***
 	-- ********************************************
 	
-	local creditsTextObject = display.newText(creditsText, 0,0, 400,0, "Arial", 18)
-	creditsTextObject:setTextColor(128)
+	local creditsTextObject = display.newText(creditsText, 0,0, 800,0, "Arial", 14)
+	creditsTextObject:setTextColor(75)
 	scrollableCredits:insert(creditsTextObject)
 	
 	--add to display group

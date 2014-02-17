@@ -30,6 +30,8 @@ local screenW, screenH, halfW = display.contentWidth, display.contentHeight, dis
 local swordBtn
 local swordClashSound = audio.loadSound("Sword clash sound effect.mp3")
 local background, wall, ground, mask
+local labyrinthMusic = audio.loadStream("Battle Escape.mp3")
+local bossMusic = audio.loadStream("battleThemeA.mp3")
 
 -- 'onRelease' event listener
 local function onInvBtnRelease()
@@ -528,6 +530,12 @@ end
 
 function scene:createScene (event)
 	local group = self.view
+	
+	--set up music
+	audio.pause(menuMusicChannel)
+	audio.pause(bossMusicChannel)
+	labyrinthMusicChannel = audio.play( labyrinthMusic, {channel=2, loops=-1, fadein=1000})
+	
 	if (tempHealth <= 0) then
 		tempHealth = 100
 	end
@@ -541,6 +549,7 @@ function scene:createScene (event)
 	--g1 is the display group for the map that the user will be placed into
 	g1 = display.newGroup()
 	monsterGroup = display.newGroup()
+	
 if(floorsDone >= levels)then
 	bossRoom = {}
 	for x=0,9 do
@@ -558,7 +567,9 @@ if(floorsDone >= levels)then
 	generateBossRoom(9,9)
 	startRow = 5
 	startCol = 5
-	
+	audio.pause(menuMusicChannel)
+	audio.pause(labyrinthMusicChannel)
+	bossMusicChannel = audio.play( bossMusic, {channel=3, loops=-1, fadein=1000})
 else
 	--[[
 	mask = display.newImageRect( "masked2.png", screenW, screenH )
@@ -767,6 +778,14 @@ function scene:enterScene( event )
 	downRect.collided = false 
 	leftRect.collided = false 
 	rightRect.collided = false 
+	audio.pause(menuMusicChannel)
+	if (floorsDone < levels) then
+		audio.pause(bossMusicChannel)
+		audio.resume(labyrinthMusicChannel)
+	else
+		audio.pause(labyrinthMusicChannel)
+		audio.resume(bossMusicChannel)
+	end
 end
 
 -- Called when scene is about to move offscreen:
