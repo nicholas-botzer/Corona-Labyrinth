@@ -18,7 +18,7 @@ local screenW, screenH, halfW = display.contentWidth, display.contentHeight, dis
 -- 'onRelease' event listener
 local function onCreditsBtnRelease()
 	-- go to credits.lua scene
-	storyboard.gotoScene( "credits", "fade", 500 )
+	storyboard.gotoScene( "gamecredits", "fade", 500 )
 	return true	-- indicates successful touch
 end
 local function onMenuBtnRelease()
@@ -239,6 +239,10 @@ function scene:destroyScene( event )
 	if menuBtn then
 		menuBtn:removeSelf()
 		menuBtn = nil
+	end
+	if creditsBtn then
+		creditsBtn:removeSelf()
+		creditsBtn = nil
 	end
 	if easyMode then
 		easyMode:removeSelf()

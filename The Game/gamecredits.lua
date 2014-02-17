@@ -3,7 +3,6 @@
 -- credits.lua
 --
 -----------------------------------------------------------------------------------------
-
 require("main") 
 local storyboard = require( "storyboard" )
 local scene = storyboard.newScene()
@@ -49,10 +48,10 @@ end
 
 function scene:createScene (event)
 	local group = self.view
-	
+
 	-- create a grey rectangle as the backdrop
-	--local background = display.newImageRect( "optionsScreen.png", display.contentWidth, display.contentHeight )
-	local background:setFillColor(0,0,0)
+	local background = display.newImageRect( "optionsScreen.png", display.contentWidth, display.contentHeight )
+	background:setFillColor(0,0,0)
 	background:setReferencePoint( display.TopLeftReferencePoint )
 	background.x, background.y = 0, 0
 
@@ -86,8 +85,8 @@ function scene:createScene (event)
 		left = 0, top = 0,
 		width = display.contentWidth,
 		height = display.contentHeight,
-		topPadding = height * .1,
-		bottomPadding = height * .1,
+		topPadding = screenH * .1,
+		bottomPadding = screenH * .1,
 		horizontalScrollDisabled = true,
 		verticalScrollDisabled = false
 		--listener = scrollListener,
@@ -129,11 +128,13 @@ function scene:createScene (event)
 	group:insert(menuBtn)
 	group:insert(backBtn)
 	group:insert(scrollableCredits)
+
 end
 
 -- Called immediately after scene has moved onscreen:
 function scene:enterScene( event )
 	local group = self.view
+	print("inside credits")
 	storyboard.returnTo = "options" 
 end
 
