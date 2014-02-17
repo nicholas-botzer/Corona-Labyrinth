@@ -127,36 +127,40 @@ function NewStick( Props )
 				end
 			else 
 				if(wallLoc == "r") then
-					Obj.model.y = ( Obj.model.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 					if(self.angle >= 180) then 
 						Obj.model.x = ( Obj.model.x + Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
+						Obj.model.y = ( Obj.model.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 						Group.collisionDetected = false 
 					else
-						Obj.model.x = Obj.markX-5
+						Obj.model.x = Obj.markX
+						Obj.model.y = ( Obj.model.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 					end
 				elseif(wallLoc == "l") then
-					Obj.model.y = ( Obj.model.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 					if(self.angle < 180) then 
 						Obj.model.x = ( Obj.model.x + Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
+						Obj.model.y = ( Obj.model.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 						Group.collisionDetected = false 
 					else
-						Obj.model.x = Obj.markX+5
+						Obj.model.x = Obj.markX
+						Obj.model.y = ( Obj.model.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 					end
 				elseif(wallLoc == "u") then 
-					Obj.model.x = ( Obj.model.x + Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 					if(self.angle > 90 and self.angle < 270) then
+						Obj.model.x = ( Obj.model.x + Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 						Obj.model.y = ( Obj.model.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 						Group.collisionDetected = false 
 					else 
-						Obj.model.y = Obj.markY + 5
+						Obj.model.x = ( Obj.model.x + Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
+						Obj.model.y = Obj.markY 
 					end
 				elseif(wallLoc == "d") then 
-					Obj.model.x = ( Obj.model.x + Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 					if(self.angle <= 90 or self.angle >= 270) then
+						Obj.model.x = ( Obj.model.x + Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 						Obj.model.y = ( Obj.model.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 						Group.collisionDetected = false 
 					else 
-						Obj.model.y = Obj.markY - 5
+						Obj.model.x = ( Obj.model.x + Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
+						Obj.model.y = Obj.markY 
 					end
 				elseif(wallLoc == "dl" or wallLoc == "ld") then 
 					if(self.angle <= 90) then
@@ -171,33 +175,54 @@ function NewStick( Props )
 						Group.collisionDetected = false 
 					end			
 				elseif(wallLoc == "ru" or wallLoc == "ur") then 
-					if(self.angle >= 180 or self.angle < 270) then
+					if(self.angle >= 180 and self.angle <= 270) then
 						Obj.model.x = ( Obj.model.x + Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 						Obj.model.y = ( Obj.model.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 						Group.collisionDetected = false 
 					end	
 				elseif(wallLoc == "ul" or wallLoc == "lu") then 
-					if(self.angle > 90 or self.angle < 180) then
+					if(self.angle > 90 and self.angle < 180) then
 						Obj.model.x = ( Obj.model.x + Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 						Obj.model.y = ( Obj.model.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 						Group.collisionDetected = false 
 					end		
-				--elseif(wallLoc == "") then
-					--Group.collisionDetected = false 
+				elseif(wallLoc == "TRD") then
+					if(self.angle > 90) then
+						Obj.model.x = ( Obj.model.x + Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
+						Obj.model.y = ( Obj.model.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
+						Group.collisionDetected = false 
+					end		
+				elseif(wallLoc == "TLD") then
+					if(self.angle < 270) then
+						Obj.model.x = ( Obj.model.x + Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
+						Obj.model.y = ( Obj.model.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
+						Group.collisionDetected = false 
+					end	
+				elseif(wallLoc == "BLD") then
+					if(self.angle < 180 or self.angle > 270) then
+						Obj.model.x = ( Obj.model.x + Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
+						Obj.model.y = ( Obj.model.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
+						Group.collisionDetected = false 
+					end	
+				elseif(wallLoc == "BRD") then
+					if(self.angle < 90 or self.angle > 180) then
+						Obj.model.x = ( Obj.model.x + Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
+						Obj.model.y = ( Obj.model.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
+						Group.collisionDetected = false 
+					end	
+				elseif(wallLoc == "noWall") then
+					Group.collisionDetected = false 
 				end
 			end
-				
         end
 		
-		function Group:collided(happened, x, y, direction, ang, loc)
+		function Group:collided(happened, x, y, loc)
 			Group.collisionDetected = happened
 			wallX = x
 			wallY = y  
-			facing = direction
-			colAngle = ang
 			wallLoc = loc
 		end
-		
+
 		function Group:inCollision() 
 			return Group.collisionDetected 
 		end

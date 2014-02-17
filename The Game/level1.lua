@@ -91,7 +91,7 @@ local function onSwordBtnRelease()
 			if(chests[chestNum].closed == true) then 
 				flag = true
 				chests[chestNum]:open() 
-				local treasure = display.newText("You found a "..chests[chestNum]:getContents(), rect.model.x-65, rect.model.y-30, native.systemFontBold, 20) 
+				local treasure = display.newText("You found a "..chests[chestNum]:getContents(), rect.model.x-70, rect.model.y-40, native.systemFontBold, 20) 
 				table.insert(holding, chests[chestNum]:getContents()) 
 				g1:insert(treasure) 
 				timer.performWithDelay(1250, function() g1:remove(treasure) treasure = nil end)
@@ -112,42 +112,113 @@ local function onSwordBtnRelease()
 	return true
 end 
 
+pos = "" 
 local function determineWallPosition() 
-	local pos = ""
-	if(upRect.collided) then 
+	pos = "" 
+	if(upRect.detected) then
 		pos = pos.."u"
 	end
-	if(rightRect.collided) then 
-		pos = pos.."r"
-	end
-	if(leftRect.collided) then 
+	if(leftRect.detected) then
 		pos = pos.."l"
 	end
-	if(downRect.collided) then
+	if(rightRect.detected) then
+		pos = pos.."r"
+	end
+	if(downRect.detected) then
 		pos = pos.."d"
+	end
+	if(pos == "") then 
+		pos = "noWall" 
 	end
 	return pos
 end
+
+local function detectDiagonal() 
+	pos = "" 
+	if(TRD.detected) then
+		pos = pos.."TRD" 
+	elseif(TLD.detected) then 
+		pos = pos.."TLD"
+	elseif(BLD.detected) then 
+		pos = pos.."BLD"
+	elseif(BRD.detected) then 
+		pos = pos.."BRD"
+	end
+	return pos 
+end
+
 local function onCollision( event )
 	if(not event.object2.id) then  
 		if ( event.phase == "began" ) then
+			print("Sprite collided with wall") 
 			if(not analogStick:inCollision()) then
 				rect.markX = rect.model.x 
 				rect.markY = rect.model.y
 			end
-			seq = rect.model.sequence
 			wallPos = determineWallPosition()
+			if(wallPos == "noWall") then
+				wallPos = detectDiagonal()
+			end
 			print(wallPos)
-			analogStick:collided(true, event.object1.x, event.object1.y, seq, analogStick:getAngle(), wallPos)
+			analogStick:collided(true, event.object1.x, event.object1.y, wallPos)
 		end
 	else 
 		if (event.phase == "began") then 
-			event.object2.collided = true
-		elseif(event.phase == "ended") then 
-			event.object2.collided = false 
+			event.object2.count = 0 
+			event.object2.detected = true
+			event.object2.markX = event.object2.x 
+			event.object2.markY = event.object2.y 
+		elseif(event.phase == "ended") then   
+			event.object2.count = event.object2.count + 1
+			if(event.object2 == upRect) then 	
+				if(event.object2.y > upRect.markY) then
+					print("clearing top collision")
+					upRect.detected = false
+				end
+			end
+			if(event.object2 == leftRect) then 	
+				if(event.object2.x > leftRect.markX) then
+					print("clearing left collision")
+					leftRect.detected = false
+				end
+			end
+			if(event.object2 == rightRect) then 	
+				if(event.object2.x < rightRect.markX) then
+					print("clearing right collision")
+					rightRect.detected = false
+				end
+			end
+			if(event.object2 == downRect) then 	
+				if(event.object2.y < downRect.markY) then
+					print("clearing bottom collision")
+					downRect.detected = false
+				end
+			end
+			if(event.object2 == TRD) then 
+				TRD.detected = false
+				print("clearing bottom diagonal")
+			end
+			if(event.object2 == TLD) then 
+				TLD.detected = false 
+				print("clearing bottom diagonal")
+			end
+			if(event.object2 == BRD) then 
+				BRD.detected = false
+				print("clearing bottom diagonal")
+			end
+			if(event.object2 == BLD) then 
+				BLD.detected = false
+				print("clearing bottom diagonal")
+			end
+			if(event.object2.count >= 2) then
+				print("Slid past") 
+				analogStick:collided(false) 
+				event.object2.detected = false 
+			end
 		end
 	end
 end
+
 
 local function updateHealth( event )
 	healthAmount.text = rect.health .. "/" .. rect.maxHealth
@@ -254,7 +325,7 @@ local function makeWall(r,c)
     wall = display.newImageRect("walls.png",tileSize,tileSize)
     wall:setReferencePoint(display.TopLeftReferencePoint)
     wall.x,wall.y = r*tileSize,c*tileSize
-	--physics.addBody(wall,"static",{})
+	physics.addBody(wall,"static",{})
 	
 	return wall
 end
@@ -706,6 +777,38 @@ end--end if for map generation
 	physics.addBody(leftRect, "dynamic",{}) 
 	leftRect.isSensor = true
 	
+	TRD = display.newRect(rect.model.x, rect.model.y, 20,40) 
+	TRD:setReferencePoint(display.BottomCenterReferencePoint)
+	TRD.x = rect.model.x + rect.model.width*.5
+	TRD.y = rect.model.y - rect.model.height*.1
+	TRD.id = "TRD"
+	physics.addBody(TRD, "dynamic",{}) 
+	TRD.isSensor = true
+	
+	TLD = display.newRect(rect.model.x, rect.model.y, 20,40) 
+	TLD:setReferencePoint(display.BottomCenterReferencePoint)
+	TLD.x = rect.model.x - rect.model.width*.5
+	TLD.y = rect.model.y - rect.model.height*.1
+	TLD.id = "TLD"
+	physics.addBody(TLD, "dynamic",{}) 
+	TLD.isSensor = true
+	
+	BLD = display.newRect(rect.model.x, rect.model.y, 20,40) 
+	BLD:setReferencePoint(display.TopCenterReferencePoint)
+	BLD.x = rect.model.x - rect.model.width*.5
+	BLD.y = rect.model.y + rect.model.height*.1
+	BLD.id = "BLD"
+	physics.addBody(BLD, "dynamic",{}) 
+	BLD.isSensor = true
+
+	BRD = display.newRect(rect.model.x, rect.model.y, 20,40) 
+	BRD:setReferencePoint(display.TopCenterReferencePoint)
+	BRD.x = rect.model.x + rect.model.width*.5
+	BRD.y = rect.model.y + rect.model.height*.1
+	BRD.id = "BRD"
+	physics.addBody(BRD, "dynamic",{}) 
+	BRD.isSensor = true
+	
 	-- all display objects must be inserted into group in layer order 
 	group:insert(g1)
 	group:insert(monsterGroup)
@@ -740,6 +843,14 @@ local function main( event )
 	downRect.y = rect.model.y
 	rightRect.x = rect.model.x 
 	rightRect.y = rect.model.y
+	TRD.x = rect.model.x + rect.model.width*.5
+	TRD.y = rect.model.y - rect.model.height*.1
+	TLD.x = rect.model.x - rect.model.width*.5
+	TLD.y = rect.model.y - rect.model.height*.1
+	BLD.x = rect.model.x - rect.model.width*.5
+	BLD.y = rect.model.y + rect.model.height*.1
+	BRD.x = rect.model.x + rect.model.width*.5
+	BRD.y = rect.model.y + rect.model.height*.1
 	
 	angle = analogStick:getAngle() 
 	moving = analogStick:getMoving()
@@ -774,10 +885,14 @@ function scene:enterScene( event )
 	Runtime:addEventListener( "enterFrame", trackPlayer)
 	storyboard.returnTo = "menu" 
 	handleConsumption() 
-	upRect.collided = false 
-	downRect.collided = false 
-	leftRect.collided = false 
-	rightRect.collided = false 
+	upRect.detected = false 
+	downRect.detected = false 
+	leftRect.detected = false 
+	rightRect.detected = false 
+	TLD.detected = false 
+	TRD.detected = false 
+	BLD.detected = false 
+	BRD.detected = false  
 	audio.pause(menuMusicChannel)
 	if (floorsDone < levels) then
 		audio.pause(bossMusicChannel)
