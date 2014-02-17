@@ -50,8 +50,8 @@ end
 function scene:createScene ( event )
 	local group = self.view
 	
-	--play the music
-	menuMusicChannel = audio.play(menuMusic, {channel=1, loops=-1, fadein=5000})
+	--play menuMusic
+	menuMusicChannel = audio.play(menuMusic, {channel=1, loops=-1, fadein=1000})
 	
 	-- set the background to a gray color
 	local background = display.newImageRect( "title.png", display.contentWidth, display.contentHeight )
@@ -116,8 +116,6 @@ function scene:enterScene (event)
 	local group = self.view
 	storyboard.returnTo = "menu" 
 	audio.resume(menuMusicChannel)
-	audio.pause(labyrinthMusicChannel)
-	audio.pause(bossMusicChannel)
 	--insert code here (e.g. stop timers, remove listenets, unload sounds etc)
 end
 
