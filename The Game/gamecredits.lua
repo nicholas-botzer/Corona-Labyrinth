@@ -69,7 +69,7 @@ function scene:createScene (event)
 	menuBtn.y = menuBtn.height * .5
 	
 	backBtn = widget.newButton{
-		label="Credits",
+		label="Options",
 		labelColor = { default = {255}, over= {128} },
 		defaultFile="button.png",
 		overFile="button-over.png",

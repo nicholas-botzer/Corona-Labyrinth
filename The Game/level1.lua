@@ -252,7 +252,7 @@ local function makeWall(r,c)
     wall = display.newImageRect("walls.png",tileSize,tileSize)
     wall:setReferencePoint(display.TopLeftReferencePoint)
     wall.x,wall.y = r*tileSize,c*tileSize
-	physics.addBody(wall,"static",{})
+	--physics.addBody(wall,"static",{})
 	
 	return wall
 end
@@ -575,9 +575,9 @@ else
 	for i=0,rows do
 		adjMatrix[i] = {}
 		for j=0,cols do
-			if(i == 0 or i == 62)then
+			if(i == 0 or i == 62 or i == 1 or i == 2 or i == 3 or i == 4 or i == 59 or i ==60 or i == 61 or i ==62)then
 				adjMatrix[i][j] = 9
-			elseif(j == 0 or j == 62)then 
+			elseif(j == 0 or j == 62 or j == 1 or j == 2 or j == 3 or j == 4 or j == 59 or j ==60 or j == 61 or j ==62)then 
 				adjMatrix[i][j] = 9
 			else
 				adjMatrix[i][j] = 0
