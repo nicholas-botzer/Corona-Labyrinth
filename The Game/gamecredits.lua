@@ -125,9 +125,11 @@ function scene:createScene (event)
 	scrollableCredits:insert(creditsTextObject)
 	
 	--add to display group
+	group:insert(background)
+	group:insert(scrollableCredits)
 	group:insert(menuBtn)
 	group:insert(backBtn)
-	group:insert(scrollableCredits)
+
 
 end
 
