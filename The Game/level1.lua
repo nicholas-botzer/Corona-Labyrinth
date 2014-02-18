@@ -112,7 +112,6 @@ local function onSwordBtnRelease()
 	return true
 end 
 
-pos = "" 
 local function determineWallPosition() 
 	pos = "" 
 	if(upRect.detected) then
@@ -150,7 +149,6 @@ end
 local function onCollision( event )
 	if(not event.object2.id) then  
 		if ( event.phase == "began" ) then
-			print("Sprite collided with wall") 
 			if(not analogStick:inCollision()) then
 				rect.markX = rect.model.x 
 				rect.markY = rect.model.y
@@ -196,25 +194,28 @@ local function onCollision( event )
 			end
 			if(event.object2 == TRD) then 
 				TRD.detected = false
-				print("clearing bottom diagonal")
+				print("clearing top-right diagonal")
 			end
 			if(event.object2 == TLD) then 
 				TLD.detected = false 
-				print("clearing bottom diagonal")
+				print("clearing top-left diagonal")
 			end
 			if(event.object2 == BRD) then 
 				BRD.detected = false
-				print("clearing bottom diagonal")
+				print("clearing bottom-R diagonal")
 			end
 			if(event.object2 == BLD) then 
 				BLD.detected = false
-				print("clearing bottom diagonal")
+				print("clearing bottom-L diagonal")
 			end
 			if(event.object2.count >= 2) then
 				print("Slid past") 
 				analogStick:collided(false) 
 				event.object2.detected = false 
-			end
+			end--[[
+			if(upRect.detected == false and downRect.detected == false and rightRect.detected == false and leftRect.detected == false) then
+				analogStick:collided(false) 
+			end]]
 		end
 	end
 end
@@ -253,7 +254,7 @@ end
 function attackPlayer(monster)
 	if (math.abs(monster.model.x - rect.model.x) < 20 and math.abs(monster.model.y - rect.model.y) < 25) then
 		rect:takeDamage(monster.damage)
-		knockbackCreature(monster, rect, 300)
+		--knockbackCreature(monster, rect, 300)
 	end
 end
 					
@@ -551,7 +552,6 @@ local function generateMap(rows,cols)
 					table.insert(chests,chest)
 					g1:insert(chest.pic)
 				end
-				
 				randMonster = math.random(1,100)
 				if(randMonster == 1)then
 					creature = Creature((i*tileSize),(j*tileSize))
@@ -563,7 +563,6 @@ local function generateMap(rows,cols)
 					table.insert(creatures,spider)
 					monsterGroup:insert(spider.model)
 				end
-				
 			elseif(adjMatrix[j][i] == 0 or adjMatrix[j][i] == 9)then
 				wall = makeWall(i,j)
 				g1:insert(wall)
@@ -814,7 +813,7 @@ end--end if for map generation
 	group:insert(monsterGroup)
 	group:insert( rect.model )
 	--group:insert( mask )
-	
+
 	--camera set up
 	camera:add(g1,4,true)
 	camera:add(monsterGroup,3,true)
@@ -851,7 +850,7 @@ local function main( event )
 	BLD.y = rect.model.y + rect.model.height*.1
 	BRD.x = rect.model.x + rect.model.width*.5
 	BRD.y = rect.model.y + rect.model.height*.1
-	
+
 	angle = analogStick:getAngle() 
 	moving = analogStick:getMoving()
 	

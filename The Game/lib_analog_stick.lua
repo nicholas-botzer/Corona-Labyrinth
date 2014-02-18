@@ -186,6 +186,45 @@ function NewStick( Props )
 						Obj.model.y = ( Obj.model.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 						Group.collisionDetected = false 
 					end		
+				elseif(wallLoc == "ud" or wallLoc == "du") then 
+					Obj.model.x = ( Obj.model.x + Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
+					Obj.model.y = Obj.markY
+					Group.collisionDetected = false 
+				elseif(wallLoc == "rl" or wallLoc == "lr") then 
+					Obj.model.x = Obj.markX 
+					Obj.model.y = ( Obj.model.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
+					Group.collisionDetected = false 
+				elseif(wallLoc == "ulr") then 
+					if(self.angle > 90 and self.angle < 270) then 
+						Obj.model.x = Obj.markX 
+						Obj.model.y = ( Obj.model.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
+						Group.collisionDetected = false
+					end
+				elseif(wallLoc == "lr") then 
+					Obj.model.x = Obj.markX 
+					Obj.model.y = ( Obj.model.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
+					Group.collisionDetected = false
+				elseif(wallLoc == "uld") then 
+					if(self.angle > 0 and self.angle < 180) then
+						Obj.model.x = ( Obj.model.x + Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
+						Obj.model.y = Obj.markY
+						Group.collisionDetected = false 
+					end
+				elseif(wallLoc == "urd") then 
+					if(self.angle > 180) then 
+						Obj.model.x = ( Obj.model.x + Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
+						Obj.model.y = Obj.markY
+						Group.collisionDetected = false 
+					end
+				elseif(wallLoc == "lrd") then 
+					if(self.angle < 90 or self.angle > 270) then 
+						Obj.model.x = Obj.markX 
+						Obj.model.y = ( Obj.model.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
+						Group.collisionDetected = false
+					end
+				elseif(wallLoc == "ulrd") then 
+					Obj.model.x = Obj.markX 
+					Obj.model.y = Obj.markY
 				elseif(wallLoc == "TRD") then
 					if(self.angle > 90) then
 						Obj.model.x = ( Obj.model.x + Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
