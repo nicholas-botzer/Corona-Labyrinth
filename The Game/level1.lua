@@ -930,6 +930,9 @@ function scene:destroyScene( event )
 		analogStick:delete()
 		analogStick = nil
 	end
+	if treasure then
+		g1:remove(treasure)
+	end
 	display.remove(g1)
 	
 end

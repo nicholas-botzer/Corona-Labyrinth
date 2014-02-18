@@ -34,7 +34,7 @@ function Room:connectRooms(secondRoom)
 		elseif(column > targetCol)then
 			column = column - 1
 			adjMatrix[column][row] = 1
-			adjMatrix[column][row-1] = 1
+			adjMatrix[column][row+1] = 1
 		end
 		adjMatrix[column][row] = 1
 	end
