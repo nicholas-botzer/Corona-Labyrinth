@@ -149,6 +149,7 @@ end
 local function onCollision( event )
 	if(not event.object2.id) then  
 		if ( event.phase == "began" ) then
+			rect:takeDamage(5)
 			if(not analogStick:inCollision()) then
 				rect.markX = rect.model.x 
 				rect.markY = rect.model.y
@@ -212,10 +213,7 @@ local function onCollision( event )
 				print("Slid past") 
 				analogStick:collided(false) 
 				event.object2.detected = false 
-			end--[[
-			if(upRect.detected == false and downRect.detected == false and rightRect.detected == false and leftRect.detected == false) then
-				analogStick:collided(false) 
-			end]]
+			end
 		end
 	end
 end
