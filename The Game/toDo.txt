@@ -1,26 +1,23 @@
--Generation of later levels (all within same level1.lua file?) 
--Inventory objects 
--Handling saving progress on app exit 
--Remove any potential copy right stuff
+-Take out prints and comment code
 
 Zach: 
--Make inventory work with stats
--Tooltips
--Smooth out collision so that you don't need 1337 game mechanics to get through the dungeon
--Look for tiles
+-Collision Bugs 
 -Post sources for credit screen
+-Randomize items better
+-Test for bugs  
 
 Will: 
--Tutorial Screen
 -Credits Screen
--Music
--Knockbacks (should not push through walls)
+-Lower sword sound
+-New splash for menu 
+-Knockbacks
+	- Wall knock back player slightly 
+	- Enemies knock themselves back after attack
 -Flashing mask for when hit
 
 Nick:
--Make map generation finally work without bugs(done)
--Make health work(Done)
--Make chests work (chest & stairs)
--Fix death screen (if its even broken)(Done)
--Spawn monsters in array (this is important)(Done)
 -Post sources for credit screen
+-Boss floor/tuturial
+-Death bug (maybe make timing based instead of btn)
+-Diagonal fix 
+
