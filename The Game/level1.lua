@@ -62,6 +62,16 @@ local function handleConsumption() --Inventory items take effect here
 	end
 end
 
+local function alreadyHolding(name) 
+	containedFlag = false
+	for i=1,table.getn(holding),1 do 
+		if(holding[i] == name) then
+			containedFlag = true
+		end
+	end
+	return containedFlag 
+end
+
 local function onSwordBtnRelease()
 	rect:pickAnimation()
 	rect.model:play()
@@ -96,7 +106,9 @@ local function onSwordBtnRelease()
 				flag = true
 				chests[chestNum]:open() 
 				local treasure = display.newText("You found a "..chests[chestNum]:getContents(), rect.model.x-70, rect.model.y-40, native.systemFontBold, 20) 
-				table.insert(holding, chests[chestNum]:getContents()) 
+				if(not alreadyHolding(chests[chestNum]:getContents()) or string.find(chests[chestNum]:getContents(), "potion")) then
+					table.insert(holding, chests[chestNum]:getContents()) 
+				end
 				g1:insert(treasure) 
 				timer.performWithDelay(1250, function() if (treasure) then g1:remove(treasure) treasure = nil end end)
 			end--end if the chest is closed

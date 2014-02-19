@@ -31,7 +31,7 @@ function Chest.new (xpos, ypos)
 	c.closed = true 
 	rand = math.random(11) 
 	c.contents = fill()
-    return c
+	return c
 end
 
 function fill() 
@@ -54,11 +54,11 @@ function fill()
 			item = itemChoices[4]
 		end
 	elseif(rand >= 50 and rand < 75) then 
-		--Armor percentages: (vest - 35% standard - 35% master's - 30%) 
+		--Armor percentages: (vest - 45% standard - 35% master's - 20%) 
 		rand = math.random()*100 
-		if(rand >= 70) then 
+		if(rand >= 80) then 
 			item = itemChoices[6]
-		elseif(rand < 70 and rand >= 35) then 
+		elseif(rand < 80 and rand >= 45) then 
 			item = itemChoices[11] 
 		else 
 			item = itemChoices[8]
