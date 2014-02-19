@@ -94,7 +94,7 @@ local function onSwordBtnRelease()
 				local treasure = display.newText("You found a "..chests[chestNum]:getContents(), rect.model.x-70, rect.model.y-40, native.systemFontBold, 20) 
 				table.insert(holding, chests[chestNum]:getContents()) 
 				g1:insert(treasure) 
-				timer.performWithDelay(1250, function() g1:remove(treasure) treasure = nil end)
+				timer.performWithDelay(1250, function() if (treasure) then g1:remove(treasure) treasure = nil end end)
 			end--end if the chest is closed
 		end--end checking if player is near chest
 		chestNum = chestNum + 1
@@ -639,13 +639,11 @@ if(floorsDone >= levels)then
 	audio.pause(labyrinthMusicChannel)
 	bossMusicChannel = audio.play( bossMusic, {channel=3, loops=-1, fadein=1000})
 else
-	--[[
-	mask = display.newImageRect( "masked2.png", screenW, screenH )
+	
+	mask = display.newImageRect( "masked3.png", screenW, screenH )
 	mask:setReferencePoint( display.TopLeftReferencePoint )
 	mask.x, mask.y = 0, 0
 	--Creates the intial starting room that the user will be placed into
-	]]
-	
 	
 	--define use for coordinates of last positioned room
 	adjMatrix = {}
@@ -693,7 +691,9 @@ end--end if for map generation
     healthAmount = display.newText {
     	text = "100/100", --defualt value, gets overwritten in updateHealth()
     	x = 70,
-    	y = 17
+    	y = 17,
+		native.systemFont,
+		12
     }
 	
 	-- add an inventory button
@@ -810,7 +810,6 @@ end--end if for map generation
 	group:insert(g1)
 	group:insert(monsterGroup)
 	group:insert( rect.model )
-	--group:insert( mask )
 
 	--camera set up
 	camera:add(g1,4,true)
@@ -820,6 +819,7 @@ end--end if for map generation
 	camera:setBounds(false)
 	camera:track()
 	group:insert( camera )
+	group:insert( mask )
 	group:insert( analogStick )
 	group:insert( invBtn )
 	group:insert( swordBtn )

@@ -399,6 +399,10 @@ end
 
 -- Called when scene is about to move offscreen:
 function scene:exitScene( event )
+	if(modifyText) then 
+		modifyText:removeSelf() 
+		modifyText = nil 
+	end
 	local group = self.view
 	
 end
