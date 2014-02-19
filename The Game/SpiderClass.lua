@@ -29,7 +29,7 @@ function Spider:init(posX, posY)
 			{name = "attackRight", frames={21,22,23,24}, time = 200, loopCount = 1},
 			{name = "attackLeft", frames={11,12,13,14}, time = 200, loopCount = 1},
 			{name = "attackBack", frames={31,32,33,34}, time = 200, loopCount = 1},
-			{name = "death", frames={41,42,43,44,45}, time = 200, loopCount = 1}
+			{name = "death", frames={41,42,43,44}, time = 200, loopCount = 1}
 		}	
 	
 		self.model = display.newSprite(mySheet, sequenceData)

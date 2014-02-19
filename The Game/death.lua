@@ -20,7 +20,6 @@ function scene:createScene( event )
 	
 	local deathText = display.newText( "You have died", display.contentWidth*.38, display.contentHeight *.3, native.systemFont, 28 )
 	deathText:setTextColor( 255, 0, 0 )
-	--text doesn't want to get set to the correct color right now
 	menuBtn = widget.newButton{
 		label="Menu",
 		labelColor = { default = {255}, over= {128} },
@@ -57,7 +56,6 @@ end
 -- Called prior to the removal of scene's "view" (display group)
 function scene:destroyScene( event )
         
-        print( "((destroying scene 1's view))" )
 end
 
 ---------------------------------------------------------------------------------
