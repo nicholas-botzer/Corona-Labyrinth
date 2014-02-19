@@ -19,27 +19,31 @@ function Room:connectRooms(secondRoom)
 	targetCol = secondRoom:getCol()
 	while(column ~= targetColumn and row ~= targetRow)do
 		if(row < targetRow)then
+			--shift the point to the right and make a tile there and at the spot above it to the right
 			row = row + 1
 			adjMatrix[column][row] = 1
 			adjMatrix[column+1][row] = 1
 		elseif(row > targetRow)then
+			--shift the room point to the left and make a tile there and at the spot below it
 			row = row - 1
 			adjMatrix[column][row] = 1
 			adjMatrix[column+1][row] = 1
 		end
 		if(column < targetCol)then
+			--shift the room down a row and then make a tile there and to the right
 			column = column + 1
 			adjMatrix[column][row] = 1
 			adjMatrix[column][row+1] = 1
 		elseif(column > targetCol)then
+			--shift the room up a row and then make it and a column to the right
 			column = column - 1
 			adjMatrix[column][row] = 1
 			adjMatrix[column][row+1] = 1
 		end
 		adjMatrix[column][row] = 1
-	end
+	end--end of while loop
 	
-end
+end--end of function Room:connectRooms(secondRoom)
 
 function Room:getRow()
 	return self.row
