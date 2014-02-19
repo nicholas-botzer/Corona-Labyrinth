@@ -149,7 +149,7 @@ end
 local function onCollision( event )
 	if(not event.object2.id) then  
 		if ( event.phase == "began" ) then
-			rect:takeDamage(5)
+			rect:takeDamage(2)
 			if(not analogStick:inCollision()) then
 				rect.markX = rect.model.x 
 				rect.markY = rect.model.y
@@ -693,7 +693,7 @@ end--end if for map generation
     	x = 70,
     	y = 17,
 		native.systemFont,
-		12
+		10
     }
 	
 	-- add an inventory button
