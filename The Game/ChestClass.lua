@@ -30,10 +30,54 @@ function Chest.new (xpos, ypos)
 	c.pic.y = ypos 
 	c.closed = true 
 	rand = math.random(11) 
-	c.contents = itemChoices[rand] 
+	c.contents = fill()
     return c
 end
 
+function fill() 
+	rand = math.random()*100 --Random number between 0-100. Determines which class of item will be in chest (sword, armor, boot, or potion) 
+	--25% chance of each class being chosen 
+	if(rand >=0 and rand < 25) then 
+		--70% chance of standard boots, 30% for grand boots 
+		rand = math.random()*100 
+		if(rand >= 30) then 
+			item = itemChoices[9] 
+		else 
+			item = itemChoices[7]
+		end
+	elseif(rand >= 25 and rand < 50) then 
+		--75% chance normal potion is given, 25% for strong potion 
+		rand = math.random()*100 
+		if(rand >= 75) then 
+			item = itemChoices[5]
+		else 
+			item = itemChoices[4]
+		end
+	elseif(rand >= 50 and rand < 75) then 
+		--Armor percentages: (vest - 35% standard - 35% master's - 30%) 
+		rand = math.random()*100 
+		if(rand >= 70) then 
+			item = itemChoices[6]
+		elseif(rand < 70 and rand >= 35) then 
+			item = itemChoices[11] 
+		else 
+			item = itemChoices[8]
+		end
+	elseif(rand >=75) then 
+		--Sword percentages: (standard- 33% , long- 28%, great- 24%, masters- 15%
+		rand = math.random()*100
+		if(rand >= 85) then 
+			item = itemChoices[3] 
+		elseif(rand < 85 and rand >= 61) then 
+			item = itemChoices[1]
+		elseif(rand < 61 and rand >= 33) then 
+			item = itemChoices[2]
+		else
+			item = itemChoices[10]
+		end
+	end
+	return item 
+end
 function Chest:open() 
 	if(self.pic.frame == 1) then
 		self.pic:setSequence("open") 

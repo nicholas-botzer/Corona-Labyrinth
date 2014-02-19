@@ -41,7 +41,7 @@ local function onInvBtnRelease()
 end
 
 local function handleConsumption() --Inventory items take effect here 
-	if(inUse["potion"] > 0) then 
+	if(inUse["potion"]) then 
 		rect.health = rect.health + inUse["potion"]
 		if(rect.health > 100) then 
 			rect.health = 100 
