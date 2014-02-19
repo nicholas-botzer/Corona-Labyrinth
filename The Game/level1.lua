@@ -41,20 +41,24 @@ local function onInvBtnRelease()
 end
 
 local function handleConsumption() --Inventory items take effect here 
-	if(inUse["potion"]) then 
+	if(inUse["potion"] > 0) then 
 		rect.health = rect.health + inUse["potion"]
 		if(rect.health > 100) then 
 			rect.health = 100 
 		end
+		inUse["potion"] = 0 
 	end
 	if(inUse["sword"] and inUse["sword"].new) then
 		rect.damage = rect.baseDamage + inUse["sword"].modifier 
+		inUse["sword"].new = false 
 	end
 	if(inUse["armor"] and inUse["armor"].new) then
 		rect.armor = rect.baseArmor + inUse["armor"].modifier
+		inUse["armor"] = false 
 	end
 	if(inUse["boots"] and inUse["boots"].new) then
 		rect.speed = rect.baseSpeed + inUse["boots"].modifier 
+		inUse["boots"] = false 
 	end
 end
 

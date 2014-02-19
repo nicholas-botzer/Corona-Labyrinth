@@ -125,9 +125,9 @@ local function snapTo() --Function to implement "snapping" in the drag and drop 
 	---POTION SNAP--- 
 	if string.find(itemName, "potion") then 
 		if(math.abs(item.x - potionSlot.x) < 50 and math.abs(item.y - potionSlot.y) < 50) then 
-			inUse["potion"] = inUse["potion"]+10
+			inUse["potion"] = inUse["potion"]+20
 			if(string.find(itemName, "strong")) then --Add another to counter for a strong potion (strong potion = 2 normal potions)
-				inUse["potion"] = inUse["potion"]+10 
+				inUse["potion"] = inUse["potion"]+20 
 			end
 			inBag[currentSelection].equipped = true
 			item:removeSelf()
@@ -176,9 +176,9 @@ local function displayModifier(item)
 	---POTION SNAP--- 
 	if string.find(item, "potion") then 
 		if string.find(item, "strong") then
-			modifyText.text = "Heals 20 HP"
+			modifyText.text = "Heals 40 HP"
 		else
-			modifyText.text = "Heals 10 HP"
+			modifyText.text = "Heals 20 HP"
 		end
 	end
 	modifyText:setTextColor(200,180,0) 
@@ -256,6 +256,7 @@ function scene:createScene (event)
 	inUse["sword"] = nil 
 	inUse["armor"] = nil 
 	inUse["boots"] = nil 
+	inUse["potion"] = 0 
 		
 	--Declaration of Inventory Images 
 	weaponSettings =  {
@@ -376,17 +377,6 @@ end
 -- Called immediately after scene has moved onscreen:
 function scene:enterScene( event )
 	group = self.view
-	inUse["potion"] = 0 
-	if(inUse["boots"]) then
-		inUse["boots"].new = false 
-	end
-	if(inUse["sword"]) then
-		inUse["sword"].new = false 
-	end
-	if(inUse["armor"]) then
-		inUse["armor"].new = false 
-	end
-	
 	inventoried = table.getn(inBag) 
 	
 	for i=table.getn(inBag), table.getn(holding)-1, 1 do 
