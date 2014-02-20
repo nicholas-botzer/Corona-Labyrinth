@@ -53,11 +53,11 @@ function scene:createScene ( event )
 	--play menuMusic
 	menuMusicChannel = audio.play(menuMusic, {channel=1, loops=-1, fadein=1000})
 	
-	-- set the background to a gray color
+	-- set the background to the menu image
 	local background = display.newImageRect( "Capture.png", display.contentWidth, display.contentHeight )
 	background:setReferencePoint( display.TopLeftReferencePoint )
 	background.x, background.y = 0, 0
-	
+	--create the title text for the start menu screen
 	local titleText = display.newImageRect("titleText.png", display.contentWidth*.85, display.contentHeight*.5)
 	titleText:setReferencePoint(display.TopLeftReferencePoint)
 	--titleText.x , titleText.y = 50, -50
@@ -77,7 +77,7 @@ function scene:createScene ( event )
 	playBtn.x = display.contentWidth*.8
 	playBtn.y = display.contentHeight * .70
 	
-	
+	--create a button to allow the user to access the tutorial
 	tutorialBtn = widget.newButton{
 		label="Tutorial",
 		labelColor = { default={255}, over={128} },
