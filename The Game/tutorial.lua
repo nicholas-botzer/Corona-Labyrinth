@@ -340,7 +340,7 @@ function scene:createScene (event)
 	chest = Chest.new(3.5 * tileSize, 7 * tileSize)
 	table.insert(chests,chest)
 	g1:insert(chest.pic)
-	creature = Demon((7*tileSize),(2*tileSize))
+	creature = Creature((7*tileSize),(2*tileSize))
 	table.insert(creatures,creature)
 	monsterGroup:insert(creature.model)
 	
