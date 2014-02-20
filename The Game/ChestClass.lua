@@ -44,14 +44,13 @@ end
 
 --[[
 Function fill() places one item at random into the chest.
-To do so first a "class" of item is chose (sword, armor, potion, or boot). Each class has an equal (25%) chance of being chosen. 
+To do so first a "class" of item is chose (sword, armor, potion, or boot). Boots have a 16% chance of being chosen, everything else (swords, armor, potions) have a 28%
 Within each class there is a different probability for each item. The better the item the less chance that it is placed in a chest.
 All probabilities are documented below
 ]]
 function fill() 
 	rand = math.random()*100 --Random number between 0-100. Determines which class of item will be in chest (sword, armor, boot, or potion) 
-	--25% chance of each class being chosen 
-	if(rand >=0 and rand < 25) then 
+	if(rand >=0 and rand < 16) then 
 		--70% chance of standard boots, 30% for grand boots 
 		rand = math.random()*100 
 		if(rand >= 30) then 
@@ -59,7 +58,7 @@ function fill()
 		else 
 			item = itemChoices[7]
 		end
-	elseif(rand >= 25 and rand < 50) then 
+	elseif(rand >= 16 and rand < 44) then 
 		--75% chance normal potion is given, 25% for strong potion 
 		rand = math.random()*100 
 		if(rand >= 75) then 
@@ -67,7 +66,7 @@ function fill()
 		else 
 			item = itemChoices[4]
 		end
-	elseif(rand >= 50 and rand < 75) then 
+	elseif(rand >= 44 and rand < 72) then 
 		--Armor percentages: (vest - 45% standard - 35% master's - 20%) 
 		rand = math.random()*100 
 		if(rand >= 80) then 
@@ -77,7 +76,7 @@ function fill()
 		else 
 			item = itemChoices[8]
 		end
-	elseif(rand >=75) then 
+	elseif(rand >=72) then 
 		--Sword percentages: (standard- 33% , long- 28%, great- 24%, masters- 15%
 		rand = math.random()*100
 		if(rand >= 85) then 
