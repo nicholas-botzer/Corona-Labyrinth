@@ -572,7 +572,6 @@ local function generateMap(rows,cols)
 					table.insert(creatures,creature)
 					monsterGroup:insert(creature.model)
 				elseif(randMonster == 2)then
-					print("made a spider")
 					spider = Spider((i*tileSize),(j*tileSize))
 					table.insert(creatures,spider)
 					monsterGroup:insert(spider.model)
