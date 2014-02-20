@@ -12,7 +12,7 @@ function Player:init(posX, posY)
 	self.baseArmor = 1 
 	self.armor = 1
 	self.baseSpeed = 6
-	self.speed = 10
+	self.speed = 6
 	
 	sequenceData = {
 		{name = "forward", frames={105,106,107,108,109,110,111,112}, time = 500, loopCount = 1},
