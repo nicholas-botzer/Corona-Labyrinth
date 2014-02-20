@@ -11,7 +11,6 @@ local function onMenuBtnRelease( event )
 	audio.pause(2)
 	audio.pause(3)
 	storyboard.gotoScene( "menu", "fade", 500 )
-	storyboard.purgeScene("death")
 	return true	-- indicates successful touch
 
 end

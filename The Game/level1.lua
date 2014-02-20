@@ -496,7 +496,6 @@ local function randomWalk(nodes)
 				--check left
 				flag = checkValidDir(currentRow,currentCol,currentBotRow,currentBotCol,0)
 				if(flag)then
-					print("spawn left")
 					generateEdge(currentRow,currentCol,currentBotRow,currentBotCol,0)
 					generateRoom(currentRow,currentCol,currentBotRow,currentBotCol,0)
 				end
@@ -505,7 +504,6 @@ local function randomWalk(nodes)
 			elseif(rand == 1)then
 				flag = checkValidDir(currentRow,currentCol,currentBotRow,currentBotCol,1)
 				if(flag)then
-					print("spawn down");
 					generateEdge(currentRow,currentCol,currentBotRow,currentBotCol,1)
 					generateRoom(currentRow,currentCol,currentBotRow,currentBotCol,1)
 				end
@@ -514,7 +512,6 @@ local function randomWalk(nodes)
 			elseif(rand == 2)then
 				flag = checkValidDir(currentRow,currentCol,currentBotRow,currentBotCol,2)
 				if(flag)then
-					print("spawn right")
 					generateEdge(currentRow,currentCol,currentBotRow,currentBotCol,2)
 					generateRoom(currentRow,currentCol,currentBotRow,currentBotCol,2)
 				end
@@ -523,7 +520,6 @@ local function randomWalk(nodes)
 			elseif(rand == 3)then
 				flag = checkValidDir(currentRow,currentCol,currentBotRow,currentBotCol,3)
 				if(flag)then
-					print("spawn up")
 					generateEdge(currentRow,currentCol,currentBotRow,currentBotCol,3)
 					generateRoom(currentRow,currentCol,currentBotRow,currentBotCol,3)
 				end
