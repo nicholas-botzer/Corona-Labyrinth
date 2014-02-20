@@ -549,7 +549,7 @@ local function tunnels()
 	
 	numRooms = table.getn(rooms)
 	for i=0,3 do
-		randRoom = math.random(1,numRooms-1)
+		randRoom = math.random(1,numRooms)
 		rooms[randRoom]:connectRooms(rooms[math.random(1,numRooms-1)])
 	end
 end
@@ -632,6 +632,9 @@ function scene:createScene (event)
 	--g1 is the display group for the map that the user will be placed into
 	g1 = display.newGroup()
 	monsterGroup = display.newGroup()
+	mask = display.newImageRect( "masked3.png", screenW, screenH )
+	mask:setReferencePoint( display.TopLeftReferencePoint )
+	mask.x, mask.y = 0, 0
 	
 if(floorsDone >= levels)then
 	bossRoom = {}
@@ -645,6 +648,9 @@ if(floorsDone >= levels)then
 			else
 				bossRoom[x][y] = 1
 			end -- end if
+			creature = Demon((7*tileSize),(7*tileSize))
+			table.insert(creatures, creature)
+			monsterGroup:insert(creature.model)
 		end -- end for y
 	end--end for x
 	generateBossRoom(9,9)
@@ -655,9 +661,6 @@ if(floorsDone >= levels)then
 	bossMusicChannel = audio.play( bossMusic, {channel=3, loops=-1, fadein=1000})
 else
 	
-	mask = display.newImageRect( "masked3.png", screenW, screenH )
-	mask:setReferencePoint( display.TopLeftReferencePoint )
-	mask.x, mask.y = 0, 0
 	--Creates the intial starting room that the user will be placed into
 	
 	--define use for coordinates of last positioned room
@@ -734,8 +737,8 @@ end--end if for map generation
 		onRelease = onSwordBtnRelease
 	}
 	swordBtn:setReferencePoint( display.CenterReferencePoint )
-	swordBtn.x = screenW - swordBtn.width*.5 
-	swordBtn.y = screenH - swordBtn.height 
+	swordBtn.x = screenW - swordBtn.width*.7 
+	swordBtn.y = screenH - swordBtn.height
 	
 	-- adds an analog stick
 	analogStick = StickLib.NewStick(
