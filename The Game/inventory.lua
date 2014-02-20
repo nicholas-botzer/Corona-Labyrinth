@@ -3,17 +3,26 @@
 -- inventory.lua
 --
 -----------------------------------------------------------------------------------------
+--[[
+This file handles the interaction of chests, items, and player stats. 
+Items that are recovered from chests are displayed onto the screen in the inventory screen. 
+The user then may place items from the inventory onto the player in order to improve the player's stats.
+Most code here is handled through arrays that can be accessed in both level1.lua and inventory (via main.lua) 
+]]
 
+--Necessary requirements
 require("main")
 local storyboard = require( "storyboard" )
 local scene = storyboard.newScene()
 local widget = require "widget"
 currentSelection = ""
+--End of requires 
 
 -- declarations
 local backBtn, screenW, screenH, halfW = display.contentWidth, display.contentHeight, display.contentWidth*0.5
 
 -- 'onRelease' event listener
+--Takes the user to the menu screen
 local function onMenuBtnRelease()
 	local previousScene = storyboard.getPrevious()
 	if (previousScene == "level1") then
@@ -24,14 +33,20 @@ local function onMenuBtnRelease()
 	storyboard.gotoScene( "menu", "fade", 500 )
 	return true	-- indicates successful touch
 end
+--End menu button function
 
+--Handles back button event
 local function onBackBtnRelease()
 	local previousScene = storyboard.getPrevious()
 	storyboard.gotoScene( previousScene, "fade", 250 )
 	return true	-- indicates successful touch
 end
+--End of back button code
 
-local function snapTo() --Function to implement "snapping" in the drag and drop interface 
+--Code to handle the snap into functionality for placing an item image onto the player model/sword layout
+--Code detects if an image is close to its appropriate slot or not. 
+--If the item is close enough it snaps into the square, if not it goes back into the the players unused inventory
+local function snapTo() 
 	itemName = inBag[currentSelection].sequence 
 	item = inBag[currentSelection]
 
@@ -137,10 +152,20 @@ local function snapTo() --Function to implement "snapping" in the drag and drop 
 		end
 	end
 end
+-------------------------------------
+----End of snap to function----------
+-------------------------------------
 
+--Display Modifier displays how the currently clicked item will effect the player's stats 
+--The text stays up as long as the player is touching the item's image. When released the text should be destroyed
 local function displayModifier(item)
+	--Location and attributes for the text are declared first
 	modifyText = display.newText("", modifierLabel.x-(modifierLabel.width*.25), modifierLabel.y+modifierLabel.height, native.systemFont, 15)
-	---SWORD SNAP---
+	
+	--Determine which item is selected out of the possible items 
+	--Each item's modification text is hard coded 
+	
+	---SWORD Text---
 	if string.find(item, "sword") then 
 		if string.find(item, "standard") then 
 			modifyText.text = "Damage + 5"
@@ -153,7 +178,7 @@ local function displayModifier(item)
 		end
 	end
 	
-	---ARMOR SNAP---
+	---ARMOR Text---
 	if string.find(item, "armor") or string.find(item, "vest") then 
 		if string.find(item, "vest") then
 			modifyText.text = "Armor + 5"
@@ -164,7 +189,7 @@ local function displayModifier(item)
 		end
 	end
 	
-	---BOOT SNAP---
+	---BOOT Text---
 	if string.find(item, "boots") then 
 		if string.find(item, "standard") then
 			modifyText.text = "Speed + 2"
@@ -173,67 +198,92 @@ local function displayModifier(item)
 		end
 	end
 	
-	---POTION SNAP--- 
+	---POTION Text--- 
 	if string.find(item, "potion") then 
 		if string.find(item, "strong") then
 			modifyText.text = "Heals 40 HP"
 		else
 			modifyText.text = "Heals 20 HP"
 		end
-	end
-	modifyText:setTextColor(200,180,0) 
+	end 
+	modifyText:setTextColor(200,180,0) 	--Sets the text color to gold
 end 
+-----------------------------------------
+---End of modification text function-----
+-----------------------------------------
 
+
+
+--Handles the drag and drop functionality of item images--
 local function touchHandler(event) 
-	if(not event.target.equipped) then
-		num = event.target.num
-		display.currentStage:setFocus(event.target) 
+	if(not event.target.equipped) then  --Only allows non-equipped items to be dragged 
+		num = event.target.num			--Gets the id of the item (ids are given when items are first displayed in the inventory screen)
+		display.currentStage:setFocus(event.target) --Ensures that no other item's touch handler will be activated during the handling of this item
+													--Without setFocus it would be possible to "lose" the dragging item by moving your finger too fast
+													--Set focus makes this object the focus for all future touch events (until focus is released) 
 
-		if event.phase == "began" then
-			currentSelection = num
-			for i=1,table.getn(inBag),1 do 
+		if event.phase == "began" then  
+			currentSelection = num			--Current Selection refers to the item that is currently being moved -> it is set to the item's id (num)
+			--Cycles through every item currently displayed in the inventory screen and removes their touch
+			--Handlers so that they aren't accidentally fired off during the handling of the current items touch event
+			--This combined with the focus being set on the item clicked will insure that no other item is moved or even detects a touch during the course of 
+			--the selected items dragging. 
+			for i=1,table.getn(inBag),1 do  
 				if(not i == num) then
 					inBag[i]:removeEventListener("touch")
 				end
 			end
-		displayModifier(inBag[currentSelection].sequence)
+		displayModifier(inBag[currentSelection].sequence) --Calls displayModifier() to show the user what the currently selected items stats are 
 		
+		--Moves the item across the screen following the user's finger (drag) whose coordinate position comes in as event.x and event.y
 		elseif event.phase == "moved" then	
 			inBag[currentSelection].x = (event.x - event.xStart) + inBag[currentSelection].origX
 			inBag[currentSelection].y = (event.y - event.yStart) + inBag[currentSelection].origY
 			
-		elseif event.phase == "ended" then 
-			snapTo() 
-			for i=1,table.getn(inBag),1 do 
+		elseif event.phase == "ended" then  --Dragging event has ended (user lifted finger from screen)
+			snapTo() 	--Snap the item to where it should go based on snapTo() -Either onto the player or bag into the inventory "bag" 
+			for i=1,table.getn(inBag),1 do  --For loop restores the touch listeners back to all the items
 				if(not i == currentSelection) then
 					inBag[i]:addEventListener("touch", touchHandler)
 				end
 			end
-			display.currentStage:setFocus(nil) 
-			modifyText:removeSelf() 
+			display.currentStage:setFocus(nil)  --Frees the scene's focus 
+			modifyText:removeSelf() --Removes the text displaying the previous items modification stats 
 			modifyText = nil 
 		end
     end
     return true
 end
+----------------------------------------------------
+----End of drag and drop handler (touch handler)----
+----------------------------------------------------
 
+--The following function handles the display of items into the inventory "bag"--
+--Items are placed in the center a background image that is tiled - that is where the increments for x and y come from-- 
+--Each item is then given a touch handler so that it can be dragged and dropped, in order to be equipped--
 yVal = 5
 local function displayInventory()
+	--Inventoried is the count of items that have already been displayed, holding is the array that holds all items the player owns--
+	--The for loop goes through newly acquired items (through chests since the last time the user entered the inventory screen) and displays the--
+	--new items
 	for i=inventoried,table.getn(holding)-1,1 do
 		if(not inBag[i+1].equipped) then
-			multiplier = .08 * (i%5)
-			if(i%5 == 0) then 
-				yVal = yVal + 51.5 
+			multiplier = .08 * (i%5)  --Works to place each item roughly in the middle of a tile of the background image
+			if(i%5 == 0) then 	--Loops back to the first column when the last column has been passed 
+				yVal = yVal + 51.5 		--Roughly gets each items y-axis aligned to the center of a tile
 			end
-			inBag[i+1].x = display.contentWidth* (.64 + multiplier) 
-			inBag[i+1].y = yVal   -- Start at 85
-			inBag[i+1].origX = inBag[i+1].x 
-			inBag[i+1].origY = inBag[i+1].y
-			inBag[i+1]:addEventListener( "touch", touchHandler )
-			group:insert(inBag[i+1]) 
+			inBag[i+1].x = display.contentWidth* (.64 + multiplier)  --Determines the x value for the item
+			inBag[i+1].y = yVal   --Determines the y-value for the item (starts at 85)
+			inBag[i+1].origX = inBag[i+1].x 	--Original x position of the item (used in snapTo())
+			inBag[i+1].origY = inBag[i+1].y		--Original Y position of the item (used in snapTo())
+			inBag[i+1]:addEventListener( "touch", touchHandler ) --Adds a touch handler to the image (allows it to be interacted with by user)
+			group:insert(inBag[i+1]) 	--Inserts the image into the display group (on the very top so it appears on top of the background tiles)
 		end
 	end
 end
+---------------------------------------
+------End of display function----------
+---------------------------------------
 	
 local function matchItem(item) 		
 	table.insert(inBag, display.newSprite(weaponImage, weapons))
