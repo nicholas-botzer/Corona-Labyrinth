@@ -105,8 +105,10 @@ function scene:createScene (event)
 	creditsText = creditsText .. "Items - Author (licenses)\n"
 	creditsText = creditsText .. "Floors - Tiziana at OpenGameArt.org (CC-BY 3.0, LGPL 3.0, LGPL 2.1)\n"
 	creditsText = creditsText .. "Walls - Georges Grondin at OpenGameArt.org (CC-BY-SA 3.0, GPL 3.0, GPL 2.0)\n"
-	creditsText = creditsText .. "Inventory Knight Armor - Author (licenses)\n"
-	creditsText = creditsText .. "Inventory Sword - Author (licenses)\n"
+	creditsText = creditsText .. "Inventory Knight Armor - n-pigeons at Deviant Art (Creative Commons Non-Commercial Share Alike)\n"
+	creditsText = creditsText .. "Inventory Sword - Clint Bellanger (CC-BY-SA 3.0)\n"
+	creditsText = creditsText .. "Inventory Tiles - yd at OpenGameArt.org (CC0 Oublic Domain)\n"
+	creditsText = creditsText .. "Title Screen - Alex Murphy(CC-BY 2.0)\n"
 	
 	creditsText = creditsText .. "\n\n     Music - Author (Licenses)\n"
 	creditsText = creditsText .. "Mystical Caverns (Menu Music) - MichaelTheCrow on OpenGameArt.org (CC-BY 3.0)\n"
@@ -114,6 +116,7 @@ function scene:createScene (event)
 	creditsText = creditsText .. "Battle Theme A (Boss Music) - CynicMusic.com (CC-BY 3.0)\n"
 	
 	creditsText = creditsText .. "\n\n     License Links\n"
+	creditsText = creditsText .. "CC-BY 2.0 - http://creativecommons.org/licenses/by/2.0/legalcode \n"
 	creditsText = creditsText .. "CC-BY 3.0 - http://creativecommons.org/licenses/by/3.0/legalcode \n"
 	creditsText = creditsText .. "CC-BY-SA 3.0 - http://creativecommons.org/licenses/by-sa/3.0/legalcode \n"
 	creditsText = creditsText .. "LGPL 2.1 - http://www.gnu.org/licenses/lgpl-2.1.html \n"
@@ -126,7 +129,7 @@ function scene:createScene (event)
 	-- ********************************************
 	
 	local creditsTextObject = display.newText(creditsText, 0,0, 800,0, "Arial", 14)
-	creditsTextObject:setTextColor(75)
+	creditsTextObject:setTextColor(50)
 	scrollableCredits:insert(creditsTextObject)
 	
 	--add to display group

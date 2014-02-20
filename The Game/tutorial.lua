@@ -98,8 +98,9 @@ local function onSwordBtnRelease()
 	
 	if( not flag)then
 		if(math.abs(rect.model.x - (stairs.x+50)) < 50 and math.abs(rect.model.y - (stairs.y+50)) < 50)then
+			storyboard.gotoScene( "menu", "fade", 500 )	
 			storyboard.purgeScene("tutorial")
-			storyboard.gotoScene( "menu", "fade", 500 )			
+			storyboard.purgeScene("inventory")
 		end
 	end
 	
@@ -348,6 +349,7 @@ function scene:createScene (event)
 	upRect.id = "upRect"
 	physics.addBody(upRect, "dynamic",{}) 
 	upRect.isSensor = true
+	upRect.isVisible = false
 	
 	downRect = display.newRect(rect.model.x , rect.model.y, 20,40)
 	downRect:setReferencePoint(display.TopCenterReferencePoint)
@@ -356,6 +358,7 @@ function scene:createScene (event)
 	downRect.id = "downRect"
 	physics.addBody(downRect, "dynamic",{}) 
 	downRect.isSensor = true
+	downRect.isVisible = false
 	
 	rightRect = display.newRect(rect.model.x , rect.model.y, 40,20)
 	rightRect:setReferencePoint(display.CenterLeftReferencePoint)
@@ -364,6 +367,7 @@ function scene:createScene (event)
 	rightRect.id = "rightRect"
 	physics.addBody(rightRect, "dynamic",{}) 
 	rightRect.isSensor = true
+	rightRect.isVisible = false
 	
 	leftRect = display.newRect(rect.model.x , rect.model.y, 40,20)
 	leftRect:setReferencePoint(display.CenterRightReferencePoint)
@@ -372,6 +376,7 @@ function scene:createScene (event)
 	leftRect.id = "leftRect"
 	physics.addBody(leftRect, "dynamic",{}) 
 	leftRect.isSensor = true
+	leftRect.isVisible = false
 	
 	-- all display objects must be inserted into group in layer order 
 	group:insert(g1)

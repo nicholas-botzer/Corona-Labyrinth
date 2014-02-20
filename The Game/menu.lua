@@ -54,11 +54,11 @@ function scene:createScene ( event )
 	menuMusicChannel = audio.play(menuMusic, {channel=1, loops=-1, fadein=1000})
 	
 	-- set the background to a gray color
-	local background = display.newImageRect( "title.png", display.contentWidth, display.contentHeight )
+	local background = display.newImageRect( "Capture.png", display.contentWidth, display.contentHeight )
 	background:setReferencePoint( display.TopLeftReferencePoint )
 	background.x, background.y = 0, 0
 	
-	local titleText = display.newImageRect("titleText.png", display.contentWidth*.85, display.contentHeight*.7)
+	local titleText = display.newImageRect("titleText.png", display.contentWidth*.85, display.contentHeight*.5)
 	titleText:setReferencePoint(display.TopLeftReferencePoint)
 	--titleText.x , titleText.y = 50, -50
 	titleText.x = display.contentWidth*.07
@@ -75,7 +75,7 @@ function scene:createScene ( event )
 	}
 	playBtn:setReferencePoint( display.CenterReferencePoint )
 	playBtn.x = display.contentWidth*.8
-	playBtn.y = display.contentHeight * .80
+	playBtn.y = display.contentHeight * .70
 	
 	
 	tutorialBtn = widget.newButton{
@@ -88,7 +88,7 @@ function scene:createScene ( event )
 	}
 	tutorialBtn:setReferencePoint( display.CenterReferencePoint )
 	tutorialBtn.x = display.contentWidth*.50
-	tutorialBtn.y = display.contentHeight * .90
+	tutorialBtn.y = display.contentHeight * .80
 	
 	-- create a widget button which will load options.lua
 	optionsBtn = widget.newButton{
@@ -101,7 +101,7 @@ function scene:createScene ( event )
 	}
 	optionsBtn:setReferencePoint( display.CenterReferencePoint )
 	optionsBtn.x = display.contentWidth * .20
-	optionsBtn.y = display.contentHeight * .80
+	optionsBtn.y = display.contentHeight * .70
 	
 	-- all display objects must be inserted into group
 	group:insert(background)

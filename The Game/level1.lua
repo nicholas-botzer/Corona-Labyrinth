@@ -765,6 +765,7 @@ end--end if for map generation
 	upRect.id = "upRect"
 	physics.addBody(upRect, "dynamic",{}) 
 	upRect.isSensor = true
+	upRect.isVisible = false
 	
 	downRect = display.newRect(rect.model.x , rect.model.y, 20,40)
 	downRect:setReferencePoint(display.TopCenterReferencePoint)
@@ -773,6 +774,7 @@ end--end if for map generation
 	downRect.id = "downRect"
 	physics.addBody(downRect, "dynamic",{}) 
 	downRect.isSensor = true
+	downRect.isVisible = false
 	
 	rightRect = display.newRect(rect.model.x , rect.model.y, 40,20)
 	rightRect:setReferencePoint(display.CenterLeftReferencePoint)
@@ -781,6 +783,7 @@ end--end if for map generation
 	rightRect.id = "rightRect"
 	physics.addBody(rightRect, "dynamic",{}) 
 	rightRect.isSensor = true
+	rightRect.isVisible = false
 	
 	leftRect = display.newRect(rect.model.x , rect.model.y, 40,20)
 	leftRect:setReferencePoint(display.CenterRightReferencePoint)
@@ -789,6 +792,7 @@ end--end if for map generation
 	leftRect.id = "leftRect"
 	physics.addBody(leftRect, "dynamic",{}) 
 	leftRect.isSensor = true
+	leftRect.isVisible = false
 	
 	TRD = display.newRect(rect.model.x, rect.model.y, 20,40) 
 	TRD:setReferencePoint(display.BottomCenterReferencePoint)
@@ -797,6 +801,7 @@ end--end if for map generation
 	TRD.id = "TRD"
 	physics.addBody(TRD, "dynamic",{}) 
 	TRD.isSensor = true
+	TRD.isVisible = false
 	
 	TLD = display.newRect(rect.model.x, rect.model.y, 20,40) 
 	TLD:setReferencePoint(display.BottomCenterReferencePoint)
@@ -805,6 +810,7 @@ end--end if for map generation
 	TLD.id = "TLD"
 	physics.addBody(TLD, "dynamic",{}) 
 	TLD.isSensor = true
+	TLD.isVisible = false
 	
 	BLD = display.newRect(rect.model.x, rect.model.y, 20,40) 
 	BLD:setReferencePoint(display.TopCenterReferencePoint)
@@ -813,6 +819,7 @@ end--end if for map generation
 	BLD.id = "BLD"
 	physics.addBody(BLD, "dynamic",{}) 
 	BLD.isSensor = true
+	BLD.isVisible = false
 
 	BRD = display.newRect(rect.model.x, rect.model.y, 20,40) 
 	BRD:setReferencePoint(display.TopCenterReferencePoint)
@@ -821,6 +828,7 @@ end--end if for map generation
 	BRD.id = "BRD"
 	physics.addBody(BRD, "dynamic",{}) 
 	BRD.isSensor = true
+	BRD.isVisible = false
 	
 	-- all display objects must be inserted into group in layer order 
 	group:insert(g1)

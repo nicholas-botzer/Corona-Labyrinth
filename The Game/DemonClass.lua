@@ -29,7 +29,7 @@ function Demon:init(posX, posY)
 			{name = "attackRight", frames={50,51,52,53}, time = 200, loopCount = 1},
 			{name = "attackLeft", frames={36,37,38,39}, time = 200, loopCount = 1},
 			{name = "attackBack", frames={43,44,45,46}, time = 200, loopCount = 1},
-			{name = "death", frames={57,58,59,60,61,62,63}, time = 200, loopCount = 1}
+			{name = "death", frames={57,58,59,60,61,62,63,5}, time = 200, loopCount = 1}
 		}	
 	
 		self.model = display.newSprite(mySheet, sequenceData)
