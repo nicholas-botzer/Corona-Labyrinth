@@ -54,7 +54,7 @@ function scene:createScene ( event )
 	menuMusicChannel = audio.play(menuMusic, {channel=1, loops=-1, fadein=1000})
 	
 	-- set the background to the menu image
-	local background = display.newImageRect( "Capture.png", display.contentWidth, display.contentHeight )
+	local background = display.newImageRect( "Capture.PNG", display.contentWidth, display.contentHeight )
 	background:setReferencePoint( display.TopLeftReferencePoint )
 	background.x, background.y = 0, 0
 	--create the title text for the start menu screen
