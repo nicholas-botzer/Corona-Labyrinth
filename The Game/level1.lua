@@ -330,14 +330,21 @@ local function checkValidDir(r,c,botRow,botCol,dir)
 end
 
 local function makeRoom(r,c)
-    room = display.newImageRect("floors.png",tileSize,tileSize)
+	if(floorType == 1)then
+		room = display.newImageRect("floors.png",tileSize,tileSize)
+	elseif(floorType == 2)then
+		room = display.newImageRect("floor2.png",tileSize,tileSize)
+	elseif(floorType == 3)then
+		room = display.newImageRect("floor3.png",tileSize,tileSize)
+	end
     room:setReferencePoint(display.TopLeftReferencePoint)
     room.x,room.y = r*tileSize,c*tileSize
 	
 	return room
 end
 local function makeWall(r,c)
-    wall = display.newImageRect("walls.png",tileSize,tileSize)
+
+	wall = display.newImageRect("walls.png",tileSize,tileSize)
     wall:setReferencePoint(display.TopLeftReferencePoint)
     wall.x,wall.y = r*tileSize,c*tileSize
 	physics.addBody(wall,"static",{})
@@ -550,6 +557,7 @@ local function tunnels()
 end
 local function generateMap(rows,cols)
 	
+	floorType = math.random(1,3)
 	for i=0,rows do
 		for j=0,cols do
 			if(adjMatrix[j][i] == 1)then
