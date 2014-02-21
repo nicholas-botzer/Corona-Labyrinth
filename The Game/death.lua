@@ -6,35 +6,40 @@ local widget = require "widget"
 -- BEGINNING OF YOUR IMPLEMENTATION
 ---------------------------------------------------------------------------------
 
-local function onMenuBtnRelease( event )
+local function goToMenu( event )
 	-- go to menu.lua scene
 	audio.pause(2)
 	audio.pause(3)
 	storyboard.gotoScene( "menu", "fade", 500 )
+	storyboard.purgeScene("death")
 	return true	-- indicates successful touch
 
 end
 
+
+
+timer.performWithDelay(1000,decreaseTime,60)
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
     local group = self.view
 	
 	local deathText = display.newText( "You have died", display.contentWidth*.38, display.contentHeight *.3, native.systemFont, 28 )
 	deathText:setTextColor( 255, 0, 0 )
-	menuBtn = widget.newButton{
-		label="Menu",
-		labelColor = { default = {255}, over= {128} },
-		defaultFile="button.png",
-		overFile="button-over.png",
-		width=154, height=30,
-		onRelease = onMenuBtnRelease	-- event listener function
-	}
-	menuBtn:setReferencePoint( display.CenterReferencePoint )
-	menuBtn.x = display.contentWidth * .5
-	menuBtn.y = display.contentHeight * .6
+	local timeLimit = 9
+	timeLeft = display.newText(timeLimit, display.contentWidth*.50, display.contentHeight *.4, native.systemFontBold, 24)
+	timeLeft:setTextColor(255,0,0)
+
+	local function timerDown()
+		timeLimit = timeLimit-1
+		timeLeft.text = timeLimit
+		if(timeLimit==0)then
+			print("Time Out") -- or do your code for time out
+		end
+	end
+	timer.performWithDelay(1000,timerDown,timeLimit)
+	timer.performWithDelay(10000, goToMenu )
 	
 	group:insert(deathText)
-	group:insert(menuBtn)
         
        
 end
@@ -50,6 +55,10 @@ end
 -- Called when scene is about to move offscreen:
 function scene:exitScene( event )
      local group = self.view
+	 if timeLeft then
+		timeLeft:removeSelf()
+		timeLeft = nil
+	  end
 
 end
 
@@ -57,6 +66,11 @@ end
 -- Called prior to the removal of scene's "view" (display group)
 function scene:destroyScene( event )
      local group = self.view
+	 
+	  if timeLeft then
+		timeLeft:removeSelf()
+		timeLeft = nil
+	  end
 end
 
 ---------------------------------------------------------------------------------
