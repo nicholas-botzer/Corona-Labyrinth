@@ -268,7 +268,7 @@ end
 function attackPlayer(monster)
 	if (math.abs(monster.model.x - rect.model.x) < 20 and math.abs(monster.model.y - rect.model.y) < 25) then
 		rect:takeDamage(monster.damage)
-		--knockbackCreature(monster, rect, 300)
+		knockbackCreature(rect, monster, 300)
 	end
 end
 					

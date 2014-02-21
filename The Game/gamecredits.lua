@@ -102,7 +102,7 @@ function scene:createScene (event)
 	creditsText = creditsText .. "Imp - William.Thompsonj at OpenGameArt.org (CC-BY 3.0, GPL 3.0, GPL 2.0)\n"
 	creditsText = creditsText .. "Chests - hc at OpenGameArt.org (CC-BY 3.0)\n"
 	creditsText = creditsText .. "Stairs - yd at OpenGameArt.org (CC-BY-SA 3.0)\n"
-	creditsText = creditsText .. "Items - Author (licenses)\n"
+	creditsText = creditsText .. "Item Sheet - VWolfDog at OpenGameArt.com (CC-BY 3.0)\n"
 	creditsText = creditsText .. "Floors - Tiziana at OpenGameArt.org (CC-BY 3.0, LGPL 3.0, LGPL 2.1)\n"
 	creditsText = creditsText .. "Walls - Georges Grondin at OpenGameArt.org (CC-BY-SA 3.0, GPL 3.0, GPL 2.0)\n"
 	creditsText = creditsText .. "Inventory Knight Armor - n-pigeons at Deviant Art (Creative Commons Non-Commercial Share Alike)\n"
