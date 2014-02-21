@@ -434,7 +434,7 @@ function scene:enterScene( event )
 	end
 	
 	displayInventory() 
-	storyboard.returnTo = "level1"
+	storyboard.returnTo = storyboard.getPrevious()
 end
 
 -- Called when scene is about to move offscreen:

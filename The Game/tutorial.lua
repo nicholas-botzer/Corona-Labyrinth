@@ -576,6 +576,7 @@ function scene:exitScene( event )
 	Runtime:removeEventListener( "enterFrame", updateHealth )
 	Runtime:removeEventListener( "enterFrame", trackPlayer)
 	tempHealth = rect.health
+	
 end
 
 -- If scene's view is removed, scene:destroyScene() will be called just prior to:
@@ -596,7 +597,11 @@ function scene:destroyScene( event )
 		analogStick:delete()
 		analogStick = nil
 	end
+	if treasure then
+		g1:remove(treasure)
+	end
 	display.remove(g1)
+	storyboard.purgeScene("inventory")
 	
 end
 

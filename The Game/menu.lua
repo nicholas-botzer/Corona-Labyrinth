@@ -20,6 +20,7 @@ local menuMusic = audio.loadStream("MysticalCaverns.mp3")
 local function onPlayBtnRelease()
 	
 	-- go to level1.lua scene
+	storyboard.purgeScene("tutorial")
 	storyboard.gotoScene( "level1", "fade", 500 )
 	
 	return true	-- indicates successful touch
