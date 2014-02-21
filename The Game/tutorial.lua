@@ -586,6 +586,7 @@ function scene:destroyScene( event )
 	Runtime:removeEventListener( "enterFrame", main )
 	Runtime:removeEventListener( "enterFrame", updateHealth )
 	Runtime:removeEventListener( "enterFrame", trackPlayer)
+	Runtime:removeEventListener( "collision", onCollision) 
 	if invBtn then
 		invBtn:removeSelf()
 		invBtn = nil
