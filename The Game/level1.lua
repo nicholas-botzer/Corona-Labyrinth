@@ -166,6 +166,7 @@ local function onCollision( event )
 	if(not event.object2.id) then  
 		if ( event.phase == "began" ) then
 			rect:takeDamage(2)
+			dmgMask.isVisible = true;
 			if(not analogStick:inCollision()) then
 				rect.markX = rect.model.x 
 				rect.markY = rect.model.y
