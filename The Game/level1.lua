@@ -853,6 +853,11 @@ end
 
 local function main( event )
 	analogStick:slide(rect,-rect.speed, true)
+	if(floorsDone == 0 and not fixed) then
+		fixed = true
+		rect.health = 100 
+		print("Performed")
+	end
 	
 	upRect.x = rect.model.x 
 	upRect.y = rect.model.y
