@@ -339,7 +339,7 @@ function scene:createScene (event)
 	---End Inventory Image declarations 
 	
 	-- create a grey rectangle as the backdrop
-	local background = display.newImageRect( "invScreen.png", display.contentWidth, display.contentHeight )
+	local background = display.newImageRect( "optionsScreen.png", display.contentWidth, display.contentHeight )
 	background:setReferencePoint( display.TopLeftReferencePoint )
 	background.x, background.y = 0, 0
 
