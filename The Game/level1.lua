@@ -532,7 +532,6 @@ local function randomWalk(nodes)
 		end	--end inner while
 		if(counter >= 4 and not flag)then
 			adjMatrix[currentCol + 2][currentRow + 2] = 2
-			adjMatrix[2][2] = 1
 			nodesPlaced = 50
 		else
 			nodesPlaced = nodesPlaced + 1
