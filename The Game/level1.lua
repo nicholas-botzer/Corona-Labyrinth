@@ -269,6 +269,7 @@ function attackPlayer(monster)
 	if (math.abs(monster.model.x - rect.model.x) < 20 and math.abs(monster.model.y - rect.model.y) < 25) then
 		rect:takeDamage(monster.damage)
 		knockbackCreature(rect, monster, 300)
+		dmgMask.isVisible = true;
 	end
 end
 					
@@ -639,6 +640,11 @@ function scene:createScene (event)
 	mask:setReferencePoint( display.TopLeftReferencePoint )
 	mask.x, mask.y = 0, 0
 	
+	dmgMask = display.newImageRect( "masked3_dmg.png", screenW, screenH )
+	dmgMask:setReferencePoint( display.TopLeftReferencePoint )
+	dmgMask.x, dmgMask.y = 0, 0
+	dmgMask.isVisible = false
+	
 if(floorsDone >= levels)then
 	bossRoom = {}
 	for x=0,9 do
@@ -849,6 +855,7 @@ end--end if for map generation
 	camera:track()
 	group:insert( camera )
 	group:insert( mask )
+	group:insert( dmgMask )
 	group:insert( analogStick )
 	group:insert( invBtn )
 	group:insert( swordBtn )
@@ -864,6 +871,10 @@ local function main( event )
 		fixed = true
 		rect.health = 100 
 		print("Performed")
+	end
+	
+	if (dmgMask.isVisible) then
+		timer.performWithDelay (25, function() dmgMask.isVisible = false end)
 	end
 	
 	upRect.x = rect.model.x 
@@ -924,7 +935,7 @@ function scene:enterScene( event )
 	TRD.detected = false 
 	BLD.detected = false 
 	BRD.detected = false  
-	audio.pause(menuMusicChannel)
+	audio.stop(menuMusicChannel)
 	if (floorsDone < levels) then
 		audio.pause(bossMusicChannel)
 		audio.resume(labyrinthMusicChannel)
