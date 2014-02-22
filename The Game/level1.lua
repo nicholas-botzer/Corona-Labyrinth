@@ -17,7 +17,8 @@ require('DemonClass')
 local PerspectiveLib = require("perspective")
 local track = require ("track")
 tileSize = 64
-floorsDone = 0
+floorType = 1
+floorsDone = 6
 require("main") 
 require("options")
 require("ChestClass")
@@ -89,6 +90,13 @@ local function onSwordBtnRelease()
 	rect.model:play()
 	audio.play( swordClashSound ) 
 	
+	if(floorsDone >= levels)then
+		if(creatures[1].isDead == true)then
+			storyboard.gotoScene("victory", "fade", 500)
+			storyboard.purgeScene("inventory")
+			storyboard.purgeScene("level1")
+		end
+	end
 	local stairsFlag = false;
 	if(floorsDone < levels)then
 		if(math.abs(rect.model.x - (stairs.x+50)) < 50 and math.abs(rect.model.y - (stairs.y+50)) < 50)then
@@ -671,20 +679,19 @@ if(floorsDone >= levels)then
 			else
 				bossRoom[x][y] = 1
 			end -- end if
-			creature = Demon((7*tileSize),(7*tileSize))
-			table.insert(creatures, creature)
-			monsterGroup:insert(creature.model)
 		end -- end for y
 	end--end for x
 	generateBossRoom(9,9)
 	startRow = 5
 	startCol = 5
+	creature = Demon((5*tileSize),(3*tileSize))
+	table.insert(creatures, creature)
+	monsterGroup:insert(creature.model)
 	audio.pause(menuMusicChannel)
 	audio.pause(labyrinthMusicChannel)
 	bossMusicChannel = audio.play( bossMusic, {channel=3, loops=-1, fadein=1000})
 else
 	
-	--Creates the intial starting room that the user will be placed into
 	
 	--define use for coordinates of last positioned room
 	adjMatrix = {}

@@ -11,7 +11,7 @@ local function goToMenu( event )
 	audio.pause(2)
 	audio.pause(3)
 	storyboard.gotoScene( "menu", "fade", 500 )
-	storyboard.purgeScene("death")
+	storyboard.purgeScene("victory")
 	return true	-- indicates successful touch
 
 end
@@ -23,11 +23,11 @@ timer.performWithDelay(1000,decreaseTime,60)
 function scene:createScene( event )
     local group = self.view
 	
-	local deathText = display.newText( "You have died", display.contentWidth*.38, display.contentHeight *.3, native.systemFont, 28 )
-	deathText:setTextColor( 255, 0, 0 )
+	local victoryText = display.newText( "Congratulations on defeating the evil demon!", 5, display.contentHeight *.3, native.systemFont, 28 )
+	victoryText:setTextColor( 0, 255, 255)
 	local timeLimit = 9
 	local timeLeft = display.newText(timeLimit, display.contentWidth*.50, display.contentHeight *.4, native.systemFontBold, 24)
-	timeLeft:setTextColor(255,0,0)
+	timeLeft:setTextColor(0,255,255)
 
 	local function timerDown()
 		timeLimit = timeLimit-1
@@ -39,7 +39,7 @@ function scene:createScene( event )
 	timer.performWithDelay(1000,timerDown,timeLimit)
 	timer.performWithDelay(10000, goToMenu )
 	
-	group:insert(deathText)
+	group:insert(victoryText)
 	group:insert(timeLeft)
         
        
