@@ -1,23 +1,13 @@
--Take out prints and comment code
-
 Zach: 
 -Collision Bugs 
--Post sources for credit screen
--Randomize items better
--Test for bugs  
+-Tutorial prompts / bugs 
+-Take out prints and comment code
 
 Will: 
--Credits Screen
--Lower sword sound
--New splash for menu 
--Knockbacks
-	- Wall knock back player slightly 
-	- Enemies knock themselves back after attack
--Flashing mask for when hit
+-Take out prints and comment code
+-Stairs/Attacking bug
 
 Nick:
--Post sources for credit screen
--Boss floor/tuturial
--Death bug (maybe make timing based instead of btn)
--Diagonal fix 
-
+-Death bug
+-victory screen 
+-Take out prints and comment code
