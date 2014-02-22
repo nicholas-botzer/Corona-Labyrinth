@@ -40,6 +40,17 @@ local function onInvBtnRelease()
 	return true	-- indicates successful touch
 end
 
+local function reequip() 
+	if(inUse["sword"]) then
+		rect.damage = rect.baseDamage + inUse["sword"].modifier 
+	end
+	if(inUse["armor"]) then
+		rect.armor = rect.baseArmor + inUse["armor"].modifier
+	end
+	if(inUse["boots"]) then
+		rect.speed = rect.baseSpeed + inUse["boots"].modifier 
+	end
+end
 local function handleConsumption() --Inventory items take effect here 
 	if(inUse["potion"]) then 
 		rect.health = rect.health + inUse["potion"]
@@ -54,11 +65,11 @@ local function handleConsumption() --Inventory items take effect here
 	end
 	if(inUse["armor"] and inUse["armor"].new) then
 		rect.armor = rect.baseArmor + inUse["armor"].modifier
-		inUse["armor"] = false 
+		inUse["armor"].new = false 
 	end
 	if(inUse["boots"] and inUse["boots"].new) then
 		rect.speed = rect.baseSpeed + inUse["boots"].modifier 
-		inUse["boots"] = false 
+		inUse["boots"].new = false 
 	end
 end
 
@@ -73,6 +84,7 @@ local function alreadyHolding(name)
 end
 
 local function onSwordBtnRelease()
+	print(rect.speed)
 	rect:pickAnimation()
 	rect.model:play()
 	audio.play( swordClashSound ) 
@@ -619,8 +631,7 @@ end
 -----------------------------------------------------------------------------------------
 
 function scene:createScene (event)
-	local group = self.view
-	
+	local group = self.view 
 	--set up music
 	audio.pause(menuMusicChannel)
 	audio.pause(bossMusicChannel)
@@ -771,6 +782,7 @@ end--end if for map generation
 	rect.health = tempHealth
 	physics.addBody(rect.model, "dynamic", {})
 	rect.model.isSensor = true
+	reequip()
 	
 	upRect = display.newRect(rect.model.x , rect.model.y, 20,40)
 	upRect:setReferencePoint(display.BottomCenterReferencePoint)
