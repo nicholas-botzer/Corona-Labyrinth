@@ -18,7 +18,7 @@ local PerspectiveLib = require("perspective")
 local track = require ("track")
 tileSize = 64
 floorType = 1
-floorsDone = 6
+floorsDone = 0
 require("main") 
 require("options")
 require("ChestClass")
