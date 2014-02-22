@@ -72,6 +72,7 @@ local function onSwordBtnRelease()
 				--Remove enemy if 0 HP or lower
 				if (creatures[monsterNum].health <= 0) then
 					creatures[monsterNum].isDead = true
+					prompt.text = "Continue to the stairs and press\n the attack button to end the tutorial"
 				end--end if
 			end--end if
 		end
@@ -87,10 +88,9 @@ local function onSwordBtnRelease()
 			if(chests[chestNum].closed == true) then 
 				flag = true
 				chests[chestNum]:open() 
-				local treasure = display.newText("You found a "..chests[chestNum]:getContents(), rect.model.x-65, rect.model.y-30, native.systemFontBold, 20) 
 				table.insert(holding, chests[chestNum]:getContents()) 
-				g1:insert(treasure) 
-				timer.performWithDelay(1250, function() g1:remove(treasure) treasure = nil end)
+				prompt.text = "Items retrieved from chests can be equipped \nby clicking on the inventory button(top right)"
+				timer.performWithDelay(3000, function() prompt.text = "To fight a monster press the attack button\nwhen one is close by" end) 
 			end--end if the chest is closed
 		end--end checking if player is near chest
 		chestNum = chestNum + 1
@@ -490,12 +490,14 @@ function scene:createScene (event)
 	BRD.isSensor = true
 	BRD.isVisible = false
 	
+	prompt = display.newText("Move the analog stick to control character \nCareful, walls do damage if touched!", rect.model.x-110, rect.model.y-70, native.systemFontBold, 15) 
+	timer.performWithDelay(3000, function() prompt.text = "To open a chest stand in front of it \nand press attack" end) 
+	prompt:setReferencePoint(display.TopLeftReferencePoint)
+		
 	-- all display objects must be inserted into group in layer order 
 	group:insert(g1)
 	group:insert(monsterGroup)
-	group:insert( rect.model )
-	
-	
+	group:insert( rect.model )	
 	--camera set up
 	camera:add(g1,4,true)
 	camera:add(monsterGroup,3,true)
@@ -512,12 +514,16 @@ function scene:createScene (event)
 	group:insert(healthBackground)
 	group:insert(healthBar)
 	group:insert(healthAmount)
+	g1:insert(prompt)
 	
 end
 
 local function main( event )
 	analogStick:slide(rect,-rect.speed, true)
-	
+	if(prompt) then 
+		prompt.x = rect.model.x-110
+		prompt.y = rect.model.y-70
+	end
 	if(not tutorialFixed) then
 		tutorialFixed = true
 		rect.health = 100 
@@ -618,8 +624,9 @@ function scene:destroyScene( event )
 		analogStick:delete()
 		analogStick = nil
 	end
-	if treasure then
-		g1:remove(treasure)
+	if prompt then 
+		g1:remove(prompt) 
+		prompt = nil
 	end
 	display.remove(g1)
 	storyboard.purgeScene("inventory")
