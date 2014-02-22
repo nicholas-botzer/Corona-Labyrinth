@@ -77,10 +77,21 @@ local function onSwordBtnRelease()
 	rect.model:play()
 	audio.play( swordClashSound ) 
 	
+	local stairsFlag = false;
+	if(floorsDone < levels)then
+		if(math.abs(rect.model.x - (stairs.x+50)) < 50 and math.abs(rect.model.y - (stairs.y+50)) < 50)then
+			floorsDone = floorsDone + 1
+			tempHealth = rect.health
+			storyboard.purgeScene("level1")
+			storyboard.reloadScene("level1")
+			stairsFlag = true;
+		end
+	end
+	
 	--Handle swinging at enemies here 
 	--Test to see if enemy is range of player character.
 	monsterNum = 1
-	while(monsterNum <= table.getn(creatures))do
+	while(monsterNum <= table.getn(creatures) and not stairsFlag)do
 		if( not creatures[monsterNum].isDead)then
 			if(math.abs(rect.model.x - creatures[monsterNum].model.x) < 40 and math.abs(rect.model.y - creatures[monsterNum].model.y) < 40) then
 				creatures[monsterNum]:takeDamage(rect.damage)
@@ -98,12 +109,10 @@ local function onSwordBtnRelease()
 
 	--Handle chest opening here  
 	--check all chests and use a flag
-	flag = false
 	chestNum = 1
-	while(not flag and chestNum <= table.getn(chests)) do
+	while(not flag and chestNum <= table.getn(chests) and not stairsFlag) do
 		if((math.abs(rect.model.x - chests[chestNum]:getX()) < 50) and (math.abs(rect.model.y - chests[chestNum]:getY()) < 50)) then
 			if(chests[chestNum].closed == true) then 
-				flag = true
 				chests[chestNum]:open() 
 				local treasure = display.newText("You found a "..chests[chestNum]:getContents(), rect.model.x-70, rect.model.y-40, native.systemFontBold, 20) 
 				if(not alreadyHolding(chests[chestNum]:getContents()) or string.find(chests[chestNum]:getContents(), "potion")) then
@@ -116,14 +125,7 @@ local function onSwordBtnRelease()
 		chestNum = chestNum + 1
 	end--end while
 	
-	if(floorsDone < levels and not flag)then
-		if(math.abs(rect.model.x - (stairs.x+50)) < 50 and math.abs(rect.model.y - (stairs.y+50)) < 50)then
-			floorsDone = floorsDone + 1
-			tempHealth = rect.health
-			storyboard.purgeScene("level1")
-			storyboard.reloadScene("level1")
-		end
-	end
+	
 	
 	return true
 end 
