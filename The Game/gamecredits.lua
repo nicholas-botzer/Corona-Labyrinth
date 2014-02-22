@@ -12,18 +12,6 @@ local widget = require "widget"
 -- declarations
 local screenW, screenH, halfW = display.contentWidth, display.contentHeight, display.contentWidth*0.5
 
---[[
-local function scrollListener( event )
-	local phase = event.phase
-	local direction = event.direction
-	if (event.limitReached) then
-		if (direction == "up") then
-			
-		end
-	end
-	
-end
-]]
 
 -- 'onRelease' event listener
 local function onMenuBtnRelease()
@@ -95,7 +83,9 @@ function scene:createScene (event)
 	-- ********************************************
 	-- ***              Credits                 ***
 	-- ********************************************
-	local creditsText = "     Sprites - Author (Licenses):\n"
+	local creditsText = 		 "       Creators:\n" 
+	creditsText = creditsText .. "Nicholas Botzer - Slippery Rock University \nWilliam Botzer - Slippery Rock University \nZachary Petrusch - Slippery Rock University"
+	creditsText = creditsText .. "\n\n     Sprites - Author (Licenses):\n"
 	creditsText = creditsText .. "Player - Author (Licenses)\n"
 	creditsText = creditsText .. "Spider - William.Thompsonj at OpenGameArt.org (CC-BY 3.0, GPL 3.0, GPL 2.0)\n"
 	creditsText = creditsText .. "Skeleton - Wulax at OpenGameArt.org (CC-BY-SA 3.0, GPL 3.0)\n"
@@ -109,6 +99,11 @@ function scene:createScene (event)
 	creditsText = creditsText .. "Inventory Sword - Clint Bellanger (CC-BY-SA 3.0)\n"
 	creditsText = creditsText .. "Inventory Tiles - yd at OpenGameArt.org (CC0 Oublic Domain)\n"
 	creditsText = creditsText .. "Title Screen - Alex Murphy(CC-BY 2.0)\n"
+	
+	creditsText = creditsText .. "\n\n     Libraries\n" 
+	creditsText = creditsText .. "Analog Stick - X-PRESSIVE.COM / MIKE DOGAN GAMES & ENTERTAINMENT\n" 
+	creditsText = creditsText .. "LCS Classes - Roland Yonaba\n"
+	creditsText = creditsText .. "Perspective Library - Caleb P\n"
 	
 	creditsText = creditsText .. "\n\n     Music - Author (Licenses)\n"
 	creditsText = creditsText .. "Mystical Caverns (Menu Music) - MichaelTheCrow on OpenGameArt.org (CC-BY 3.0)\n"
