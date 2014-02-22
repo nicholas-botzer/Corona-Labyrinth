@@ -248,6 +248,7 @@ function attackPlayer(monster)
 	if (math.abs(monster.model.x - rect.model.x) < 20 and math.abs(monster.model.y - rect.model.y) < 25) then
 		rect:takeDamage(monster.damage)
 		knockbackCreature(rect, monster, 300)
+		dmgMask.isVisible = true;
 	end
 end
 					
@@ -319,6 +320,11 @@ function scene:createScene (event)
 	mask = display.newImageRect( "masked3.png", screenW, screenH )
 	mask:setReferencePoint( display.TopLeftReferencePoint )
 	mask.x, mask.y = 0, 0
+	
+	dmgMask = display.newImageRect( "masked3_dmg.png", screenW, screenH )
+	dmgMask:setReferencePoint( display.TopLeftReferencePoint )
+	dmgMask.x, dmgMask.y = 0, 0
+	dmgMask.isVisible = false
 	
 	--g1 is the display group for the map that the user will be placed into
 	g1 = display.newGroup()
@@ -499,6 +505,7 @@ function scene:createScene (event)
 	camera:track()
 	group:insert( camera )
 	group:insert( mask )
+	group:insert( dmgMask )
 	group:insert( analogStick )
 	group:insert( invBtn )
 	group:insert( swordBtn )
@@ -510,6 +517,15 @@ end
 
 local function main( event )
 	analogStick:slide(rect,-rect.speed, true)
+	
+	if(not tutorialFixed) then
+		tutorialFixed = true
+		rect.health = 100 
+	end
+	
+	if (dmgMask.isVisible) then
+		timer.performWithDelay (25, function() dmgMask.isVisible = false end)
+	end
 	
 	upRect.x = rect.model.x 
 	upRect.y = rect.model.y
@@ -559,6 +575,7 @@ function scene:enterScene( event )
 	Runtime:addEventListener( "enterFrame", main )
 	Runtime:addEventListener( "enterFrame", updateHealth )
 	Runtime:addEventListener( "enterFrame", trackPlayer)
+	Runtime:addEventListener( "collision", onCollision )
 	storyboard.returnTo = "menu" 
 	handleConsumption() 
 	upRect.detected = false 
@@ -577,6 +594,7 @@ function scene:exitScene( event )
 	Runtime:removeEventListener( "enterFrame", main )
 	Runtime:removeEventListener( "enterFrame", updateHealth )
 	Runtime:removeEventListener( "enterFrame", trackPlayer)
+	Runtime:removeEventListener( "collision", onCollision) 
 	tempHealth = rect.health
 	
 end
@@ -629,8 +647,6 @@ scene:addEventListener( "exitScene", scene )
 -- storyboard.purgeScene() or storyboard.removeScene().
 scene:addEventListener( "destroyScene", scene )
 
-
-Runtime:addEventListener( "collision", onCollision )
 -----------------------------------------------------------------------------------------
 
 return scene

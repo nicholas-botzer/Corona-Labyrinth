@@ -110,7 +110,7 @@ local function onSwordBtnRelease()
 	--Handle chest opening here  
 	--check all chests and use a flag
 	chestNum = 1
-	while(not flag and chestNum <= table.getn(chests) and not stairsFlag) do
+	while(chestNum <= table.getn(chests) and not stairsFlag) do
 		if((math.abs(rect.model.x - chests[chestNum]:getX()) < 50) and (math.abs(rect.model.y - chests[chestNum]:getY()) < 50)) then
 			if(chests[chestNum].closed == true) then 
 				chests[chestNum]:open() 
@@ -873,7 +873,6 @@ local function main( event )
 	if(floorsDone == 0 and not fixed) then
 		fixed = true
 		rect.health = 100 
-		print("Performed")
 	end
 	
 	if (dmgMask.isVisible) then
@@ -928,6 +927,7 @@ function scene:enterScene( event )
 	Runtime:addEventListener( "enterFrame", main )
 	Runtime:addEventListener( "enterFrame", updateHealth )
 	Runtime:addEventListener( "enterFrame", trackPlayer)
+	Runtime:addEventListener("collision", onCollision)
 	storyboard.returnTo = "menu" 
 	handleConsumption() 
 	upRect.detected = false 
@@ -954,15 +954,17 @@ function scene:exitScene( event )
 	Runtime:removeEventListener( "enterFrame", main )
 	Runtime:removeEventListener( "enterFrame", updateHealth )
 	Runtime:removeEventListener( "enterFrame", trackPlayer)
+	Runtime:removeEventListener("collision", onCollision)
 	tempHealth = rect.health
 end
 
--- If scene's view is removed, scene:destroyScene() will be called just prior to:
+-- If scene's view is removed, scene:Scene() will be called just prior to:
 function scene:destroyScene( event )
 	local group = self.view
 	Runtime:removeEventListener( "enterFrame", main )
 	Runtime:removeEventListener( "enterFrame", updateHealth )
 	Runtime:removeEventListener( "enterFrame", trackPlayer)
+	Runtime:removeEventListener("collision", onCollision)
 	if invBtn then
 		invBtn:removeSelf()
 		invBtn = nil
@@ -1003,8 +1005,6 @@ scene:addEventListener( "exitScene", scene )
 -- storyboard.purgeScene() or storyboard.removeScene().
 scene:addEventListener( "destroyScene", scene )
 
-
-Runtime:addEventListener( "collision", onCollision )
 -----------------------------------------------------------------------------------------
 
 return scene
