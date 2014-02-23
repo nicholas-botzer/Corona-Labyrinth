@@ -295,11 +295,15 @@ function attackPlayer(monster)
 		dmgMask.isVisible = true;
 	end
 end
-					
+--[[ The checkValidDir function is used to check to make sure that there is available space
+	to create a hallway and a room off of the current room. It does this by scanning the area
+	in that direction and checking for the end of the map. It also counts how many room tiles have
+	already been placed in that area and if that value exceeds 10 then it will not generate in that direction
+]]					
 local function checkValidDir(r,c,botRow,botCol,dir)
-	--subtract row 11 times making sure whole area is valid over 6 columns
+	
 	count = 0
-	if(dir == 0)then
+	if(dir == 0)then--scans to the left
 		local column = c - 5
 		for i=1,12 do
 			for j=1,9 do
@@ -310,7 +314,7 @@ local function checkValidDir(r,c,botRow,botCol,dir)
 				end
 			end
 		end
-	elseif(dir == 1)then
+	elseif(dir == 1)then --scans downward
 		row = r - 5
 		for i=1,9 do
 			for j=1,12 do
@@ -321,7 +325,7 @@ local function checkValidDir(r,c,botRow,botCol,dir)
 				end
 			end
 		end
-	elseif(dir == 2)then
+	elseif(dir == 2)then --scans to the right
 		column = c - 5
 		for i=1,9 do
 			for j=1,12 do
@@ -332,7 +336,7 @@ local function checkValidDir(r,c,botRow,botCol,dir)
 				end
 			end
 		end	
-	elseif(dir == 3)then
+	elseif(dir == 3)then --scans in the upward direction
 		row = r - 5
 		for i=1,9 do
 			for j=1,12 do
@@ -344,7 +348,7 @@ local function checkValidDir(r,c,botRow,botCol,dir)
 			end
 		end	
 	end--end if for direction
-	
+	--extra check to make sure that we didn't go over the count for amount of tiles already placed
 	if(count > 10)then
 		return false
 	else
@@ -352,7 +356,8 @@ local function checkValidDir(r,c,botRow,botCol,dir)
 	end
 
 end
-
+--Creates the rooms tiles for the map that is generated. The floorType is choosen in the
+--generateMap function and used for that floor of the dungeon
 local function makeRoom(r,c)
 	if(floorType == 1)then
 		room = display.newImageRect("floors.png",tileSize,tileSize)
@@ -366,6 +371,7 @@ local function makeRoom(r,c)
 	
 	return room
 end
+--Creates the wall tiles for the map and adds the physics to them for collision handling
 local function makeWall(r,c)
 
 	wall = display.newImageRect("walls.png",tileSize,tileSize)
@@ -375,76 +381,84 @@ local function makeWall(r,c)
 	
 	return wall
 end
+--Creates the stairs that allow the user to move onto the next floor
 function makeStairs(r,c)
 	stairs = display.newImageRect("stairs.png",100,100)
 	stairs:setReferencePoint(display.TopLeftReferencePoint)
-	stairs.x,stairs.y = (r*tileSize)-50,(c*tileSize)-50
+	stairs.x,stairs.y = (r*tileSize)-50,(c*tileSize)-50  --sets the location for the stair generation and moves it slighty to adjust for larger size
 	
 	return stairs
 
 end
+--[[
+	The GenerateRoom function spawns the room off of a hallway that was selected by the algorithm.
+	Dir - 0 spawns to the left
+	Dir - 1 spawns downward
+	Dir - 2 spawns to the right
+	Dir - 3 spawns upward
+]]
 local function generateRoom(r,c,botRow,botCol,dir)
 	
-	width = math.random(3,5)
+	width = math.random(3,5)--Allow's for different size rooms to be made
 	height = math.random(3,5)
-	if(dir == 0)then
-		col = math.random((c+2)-width,c)
+	if(dir == 0)then -- making a room to the left
+		col = math.random((c+2)-width,c) --chooses which part of the room will be connected and varies it each time
 		row = r -1
 		for i=0,height do
 			for j=0,width do
 			    adjMatrix[col + j][row - i] = 1
 			end
 		end
-		currentRow = r - height
+		currentRow = r - height --sets the global values for knowledge of where the next area needs to begin spawning from
 		currentCol = col
 		currentBotRow = r - 1
 		currentBotCol =  col + width
-	elseif(dir == 1)then
+	elseif(dir == 1)then --spawning a room downward
 		col = c + 1
-		row = math.random((r-height + 1),r)
+		row = math.random((r-height + 1),r) --varies the connection point to the rooms 
 		for i=0,height do
 			for j=0,width do
 			    adjMatrix[col+j][row+i] = 1
 			end
 		end
-		currentRow = row
+		currentRow = row --sets the global values for knowledge of where the next area needs to begin spawning from
 		currentCol = col
 		currentBotRow = row + height
 		currentBotCol = col + width	
-	elseif(dir == 2)then
+	elseif(dir == 2)then--spawning a room to the right
 		row = r + 1
-		col = math.random((c+2)-width,c)
+		col = math.random((c+2)-width,c)--varies connnection point to the room
 		for i=0,height do
 			for j=0,width do
 			    adjMatrix[col+j][row+i] = 1
 			end
 		end
-		currentRow = row
+		currentRow = row --sets global values for knowledge of the next area that needs to spawn
 		currentCol = col
 		currentBotRow = row + height
 		currentBotCol = col + width	
-	elseif(dir == 3)then
+	elseif(dir == 3)then-- spawns a room upward
 		col = c + 1
-		row = math.random(r,(r+height))
+		row = math.random(r,(r+height))--varies the connection point between the rooms
 		for i=0,height do
 			for j=0,width do
 			    adjMatrix[col-j][row-i] = 1
 			end
 		end
-		currentRow = row - height
+		currentRow = row - height --sets the globals for knowledge on the next area
 		currentCol = col - width
 		currentBotRow = row
 		currentBotCol = col	
 	end
-	room = Room.new(currentRow,currentCol,currentBotRow,currentBotCol)
-	table.insert(rooms,room)
+	room = Room.new(currentRow,currentCol,currentBotRow,currentBotCol) -- creates an object with the info for each rooms key points
+	table.insert(rooms,room) -- inserts it into a table to allow for tunnel generation
 end
 local function generateEdge(r,c,botRow,botCol,dir)
 	
-	if(dir == 0 or dir == 2)then
+	if(dir == 0 or dir == 2)then --does spawning for the left and right directions of the hallways
 		height = math.random(3,6)
 		width = 2
-		col = math.random(c,(botCol-1))
+		col = math.random(c,(botCol-1))--varies connecting location
 		for i=0,width do
 			for j=0,height do
 				if(dir == 0)then
@@ -493,6 +507,8 @@ local function generateEdge(r,c,botRow,botCol,dir)
 	end -- end outer if
 
 end
+--Spawn the start room that the user will be placed into
+--This room will always be a 3X3 room
 local function generateStartRoom(r,c)
 
 	for i=0,3 do
@@ -502,128 +518,124 @@ local function generateStartRoom(r,c)
 	end
 end
 local function randomWalk(nodes)
---use the adj matrix and begin a random walk through the grid
-
-	--check open locations in matrix
+    --choose a starting location forced somewhere inward on the map for an intial location
 	currentRow = math.random(15,45)
 	currentCol = math.random(15,45)
-	startRow = currentRow + 1
+	startRow = currentRow + 1 --get that start rooms and move into it for the player start spot
 	startCol = currentCol + 1
-	currentBotRow = currentRow + 3
+	currentBotRow = currentRow + 3 --get the inital bottom of that room 
 	currentBotCol = currentCol + 3
-	generateStartRoom(currentRow,currentCol)
-	nodesPlaced = 0
-	flag = false
-	while nodesPlaced < nodes do
-		--create the room at the start location
-		--chooseRandom location and check if it is valid
-		--if it's valid go that direction and change adjMatrix
-		--if not check a new direction
-		rand = math.random(0,3)
+	generateStartRoom(currentRow,currentCol)--generate the start room in the adjMatrix with it's 3X3 size
+	nodesPlaced = 0 --set the nodePlaced to 0 for each new floor
+	flag = false --initalize the flag to false
+	while nodesPlaced < nodes do --begin looping through to create all the rooms
+		rand = math.random(0,3)--choose a random direction to check first to see if we can spawn that direction
 		flag = false
-		counter = 0
-		while not flag and counter < 4 do
+		counter = 0 --counts how many of the directions have been invalid, if all four are bad the algorithm stops early and places the stairs
+		while not flag and counter < 4 do --begin checking all 4 directions, if a room is placed then we move to the next spot
 			if(rand == 0)then
 				--check left
 				flag = checkValidDir(currentRow,currentCol,currentBotRow,currentBotCol,0)
-				if(flag)then
+				if(flag)then --generate a hallway and room to the left
 					generateEdge(currentRow,currentCol,currentBotRow,currentBotCol,0)
 					generateRoom(currentRow,currentCol,currentBotRow,currentBotCol,0)
 				end
-				counter = counter + 1
+				counter = counter + 1 --increment the counter for a unsuccessful room placement
 			--creates edge going down
 			elseif(rand == 1)then
 				flag = checkValidDir(currentRow,currentCol,currentBotRow,currentBotCol,1)
-				if(flag)then
+				if(flag)then --generating a rooms going downward
 					generateEdge(currentRow,currentCol,currentBotRow,currentBotCol,1)
 					generateRoom(currentRow,currentCol,currentBotRow,currentBotCol,1)
 				end
-				counter = counter + 1
+				counter = counter + 1 --increment the counter for unsuccessful room placement
 			--creates edge going to the right
 			elseif(rand == 2)then
 				flag = checkValidDir(currentRow,currentCol,currentBotRow,currentBotCol,2)
-				if(flag)then
+				if(flag)then--generate a room to the right
 					generateEdge(currentRow,currentCol,currentBotRow,currentBotCol,2)
 					generateRoom(currentRow,currentCol,currentBotRow,currentBotCol,2)
 				end
-				counter = counter + 1
+				counter = counter + 1 --increment counter for unsuccessful room placement
 			--creates edge going up
 			elseif(rand == 3)then
 				flag = checkValidDir(currentRow,currentCol,currentBotRow,currentBotCol,3)
-				if(flag)then
+				if(flag)then--generate room going upward
 					generateEdge(currentRow,currentCol,currentBotRow,currentBotCol,3)
 					generateRoom(currentRow,currentCol,currentBotRow,currentBotCol,3)
 				end
-				counter = counter + 1
+				counter = counter + 1--increment counter for unsuccessful room placement
 			end
-			rand = rand + 1
-			if(rand > 3)then
+			rand = rand + 1 --increment rand to check the next room direction
+			if(rand > 3)then -- put rand back to zero if we have made it around
 				rand = 0
 			end
 		end	--end inner while
-		if(counter >= 4 and not flag)then
+		if(counter >= 4 and not flag)then --no room was placed so end the algorithm by setting stairs and uping nodesPlaced
 			adjMatrix[currentCol + 2][currentRow + 2] = 2
 			nodesPlaced = 50
 		else
 			nodesPlaced = nodesPlaced + 1
-		end
+		end--end if
 	end--end outer while signaling all nodes and edges have been placed
-	adjMatrix[currentCol + 2][currentRow + 2] = 2
+	adjMatrix[currentCol + 2][currentRow + 2] = 2 --places stairs
 
 end
+--tunnels connects some of the rooms that are further apart so that there a more passageways for the player to go through
 local function tunnels()
 	
-	numRooms = table.getn(rooms)
-	for i=0,3 do
+	numRooms = table.getn(rooms)--gets the number of rooms spawned
+	for i=0,3 do -- chooses to make three connection tunnels between rooms
 		randRoom = math.random(1,numRooms)
 		rooms[randRoom]:connectRooms(rooms[math.random(1,numRooms-1)])
 	end
 end
 local function generateMap(rows,cols)
 	
-	floorType = math.random(1,3)
-	for i=0,rows do
+	floorType = math.random(1,3)--determines what type of floor tiles we will used the keep the maps looking interesting
+	for i=0,rows do --goes through to generate every single tile of the entire map
 		for j=0,cols do
-			if(adjMatrix[j][i] == 1)then
+			if(adjMatrix[j][i] == 1)then --generates a floor tile 
 				room = makeRoom(i,j)
 				g1:insert(room)
-				randChest = math.random(1,150)
-				if(randChest == 1)then
-					chest = Chest.new((i*tileSize),(j*tileSize))
-					table.insert(chests,chest)
-					g1:insert(chest.pic)
+				randChest = math.random(1,150) --creates a random chance that a chest will spawn on the floor tile
+				if(randChest == 1)then--checks to see if one spawned
+					chest = Chest.new((i*tileSize),(j*tileSize))--creates the chest
+					table.insert(chests,chest)--adds the chest to the table holding them
+					g1:insert(chest.pic)--inserts the chest onto the map
 				end
-				randMonster = math.random(1,100)
-				if(randMonster == 1)then
-					creature = Creature((i*tileSize),(j*tileSize))
-					table.insert(creatures,creature)
-					monsterGroup:insert(creature.model)
-				elseif(randMonster == 2)then
-					spider = Spider((i*tileSize),(j*tileSize))
-					table.insert(creatures,spider)
-					monsterGroup:insert(spider.model)
+				randMonster = math.random(1,100)--random chance to spawn a monster
+				if(randMonster == 1)then--checks to see if a skeleton will be map
+					creature = Creature((i*tileSize),(j*tileSize))--creates a skeleton
+					table.insert(creatures,creature)--adds the skeleton to the list
+					monsterGroup:insert(creature.model)--inserts the skeleton into the monsterGroup
+				elseif(randMonster == 2)then--checks for a spider spawn
+					spider = Spider((i*tileSize),(j*tileSize))--creates a spider
+					table.insert(creatures,spider)--inserts the spider into the table
+					monsterGroup:insert(spider.model)--inserts the spider into the monsterGroup
 				end
-			elseif(adjMatrix[j][i] == 0 or adjMatrix[j][i] == 9)then
-				wall = makeWall(i,j)
+			elseif(adjMatrix[j][i] == 0 or adjMatrix[j][i] == 9)then--checks to make a wall
+				wall = makeWall(i,j)--creates a wall
 				g1:insert(wall)
-			elseif(adjMatrix[j][i] == 2)then
-				room = makeRoom(i,j)
+			elseif(adjMatrix[j][i] == 2)then--checks to make stairs
+				room = makeRoom(i,j)--creates a floor tile
 				g1:insert(room)
-				stairs = makeStairs(i,j)
+				stairs = makeStairs(i,j)--creates the stairs that go on top of the floor tile
 				g1:insert(stairs)
 			end-- end if
 		end -- end inner for
 	end--end outer for
 
 end
+--creates the boos room for the final floor
 local function generateBossRoom(rows,cols)
-
+--generates the boos room which will be the same size every time
 	for i=0,rows do
 		for j=0,cols do
-			if(bossRoom[j][i] == 1)then
+			if(bossRoom[j][i] == 1)then --generates a floor tile
 				room = makeRoom(i,j)
 				g1:insert(room)
-			elseif(bossRoom[j][i] == 3 or bossRoom[j][i] == 9)then
+			elseif(bossRoom[j][i] == 3 or bossRoom[j][i] == 9)then --generates a wall tile
 				wall = makeWall(i,j)
 				g1:insert(wall)
 			end
@@ -645,31 +657,33 @@ function scene:createScene (event)
 	--audio.pause(bossMusicChannel)
 	labyrinthMusicChannel = audio.play( labyrinthMusic, {channel=2, loops=-1, fadein=1000})
 	
-	if (tempHealth <= 0) then
-		tempHealth = 100
+	if (tempHealth <= 0) then --tempHealth is used to reset the player's health on each new floor
+		tempHealth = 100      --this check determines that the player died and is starting over
 	end
-	chests = {}
-	creatures = {}
-	rooms = {}
-	camera=PerspectiveLib.createView()
-	physics.start()
+	chests = {} --holds all of the chests that will be spawned onto the map
+	creatures = {} --holds all of the monsters that get spawn onto the map
+	rooms = {} --holds all the rooms so we can create tunnels between them
+	camera=PerspectiveLib.createView() --creates the camera that will track the player for us
+	physics.start()     --generates the starting physics for the game
 	physics.setGravity(0,0)
 	
 	--g1 is the display group for the map that the user will be placed into
 	g1 = display.newGroup()
+	--monsterGroup holds all of the monsters on it that get placed on the map
 	monsterGroup = display.newGroup()
+	--mask that limits the player vision slightly, the mask also turns red briefly upon taking damage
 	mask = display.newImageRect( "masked3.png", screenW, screenH )
 	mask:setReferencePoint( display.TopLeftReferencePoint )
 	mask.x, mask.y = 0, 0
-	
+	--red mask that shows up when the user takes damage
 	dmgMask = display.newImageRect( "masked3_dmg.png", screenW, screenH )
 	dmgMask:setReferencePoint( display.TopLeftReferencePoint )
 	dmgMask.x, dmgMask.y = 0, 0
 	dmgMask.isVisible = false
 	
-if(floorsDone >= levels)then
-	bossRoom = {}
-	for x=0,9 do
+if(floorsDone >= levels)then --checks to see if the player is on the boos floor
+	bossRoom = {} 
+	for x=0,9 do --generates the boss room that the user will be placed into to fight the evil demon
 		bossRoom[x] = {}
 		for y=0,9 do
 			if(x == 0 or x == 9)then
@@ -681,44 +695,43 @@ if(floorsDone >= levels)then
 			end -- end if
 		end -- end for y
 	end--end for x
-	generateBossRoom(9,9)
-	startRow = 5
+	generateBossRoom(9,9)--spawns the boss room
+	startRow = 5 --initalizes the location that the user will be placed at to start
 	startCol = 5
-	creature = Demon((5*tileSize),(3*tileSize))
+	creature = Demon((5*tileSize),(3*tileSize))--creates the evil demon the player will fight
 	table.insert(creatures, creature)
 	monsterGroup:insert(creature.model)
-	
+	--start the awsome boss fight music
 	bossMusicChannel = audio.play( bossMusic, {channel=3, loops=-1, fadein=1000})
-else
-	
+else --the player still has to make progress in the labyrinthian and must fight through another floor
 	
 	--define use for coordinates of last positioned room
-	adjMatrix = {}
-	rows = 62
+	adjMatrix = {} --holds the map grid that will be used for map generation
+	rows = 62 --the size that the map is overall
 	cols = 62
 	for i=0,rows do
 		adjMatrix[i] = {}
 		for j=0,cols do
 			if(i == 0 or i == 62 or i == 1 or i == 2 or i == 3 or i == 4 or i == 59 or i ==60 or i == 61 or i ==62)then
-				adjMatrix[i][j] = 9
+				adjMatrix[i][j] = 9 -- creates a binding box along the outside of the map to signify the edge for the algorithm
 			elseif(j == 0 or j == 62 or j == 1 or j == 2 or j == 3 or j == 4 or j == 59 or j ==60 or j == 61 or j ==62)then 
-				adjMatrix[i][j] = 9
+				adjMatrix[i][j] = 9 -- the binding box is more than 1 deep to make it run smother and ensure no errors
 			else
-				adjMatrix[i][j] = 0
+				adjMatrix[i][j] = 0 --creates a blank spot that originally signifies a wall but can be turned into a room tile
 			end--end if
 		end
 	end
 	
-	local nodes = math.random(7,13)
+	local nodes = math.random(7,13) --deteremines how many rooms should get generated for a particular floor
 	startRow = 0 --used for Rect's start position
 	startCol = 0
-	currentRow = 0
+	currentRow = 0 --holds the global's that we will use so the next room and hallway can be spawned
 	currentCol = 0
 	currentBotRow = 0
 	currentBotCol = 0
-	randomWalk(nodes)
-	tunnels()
-	generateMap(rows,cols)
+	randomWalk(nodes)--calls the randomwalk algorithm to begin determining how the map will be
+	tunnels()   --creates a few extra connectiong "tunnels" that make the map more confusing and interesting
+	generateMap(rows,cols)  --actually spawns the map to the screen, places the monsters, and spawns chests
 end--end if for map generation
 	
 
@@ -735,6 +748,7 @@ end--end if for map generation
     healthBar.x = 10
     healthBar.y = 10
     
+	--holds the text that displays the player's current health
     healthAmount = display.newText {
     	text = "100/100", --defualt value, gets overwritten in updateHealth()
     	x = 70,
@@ -868,6 +882,8 @@ end--end if for map generation
 	group:insert( rect.model )
 
 	--camera set up
+	--groups get inserted in the appropriate order with the map aka g1 being the first thing inserted
+	--all of the monsters are then inserted on top of the map, followed by the character
 	camera:add(g1,4,true)
 	camera:add(monsterGroup,3,true)
 	camera:add(rect.model, 2, true)
@@ -942,10 +958,11 @@ end
 -- Called immediately after scene has moved onscreen:
 function scene:enterScene( event )
 	local group = self.view
+	--creates the eventListeners that are needed to handle different functions
 	Runtime:addEventListener( "enterFrame", main )
-	Runtime:addEventListener( "enterFrame", updateHealth )
-	Runtime:addEventListener( "enterFrame", trackPlayer)
-	Runtime:addEventListener("collision", onCollision)
+	Runtime:addEventListener( "enterFrame", updateHealth ) --listens for changing health
+	Runtime:addEventListener( "enterFrame", trackPlayer) --makes the enimies track the player
+	Runtime:addEventListener("collision", onCollision) --checks for player collision
 	storyboard.returnTo = "menu" 
 	handleConsumption() 
 	upRect.detected = false 
@@ -969,6 +986,7 @@ end
 -- Called when scene is about to move offscreen:
 function scene:exitScene( event )
 	local group = self.view
+	--Removes all of the eventListeners because the scene has changed and they need destroyed
 	Runtime:removeEventListener( "enterFrame", main )
 	Runtime:removeEventListener( "enterFrame", updateHealth )
 	Runtime:removeEventListener( "enterFrame", trackPlayer)
@@ -979,10 +997,12 @@ end
 -- If scene's view is removed, scene:Scene() will be called just prior to:
 function scene:destroyScene( event )
 	local group = self.view
+	--Removes all of the eventListeners because the scene has changed and they need destroyed
 	Runtime:removeEventListener( "enterFrame", main )
 	Runtime:removeEventListener( "enterFrame", updateHealth )
 	Runtime:removeEventListener( "enterFrame", trackPlayer)
 	Runtime:removeEventListener("collision", onCollision)
+	--make sure we remove things we have added
 	if invBtn then
 		invBtn:removeSelf()
 		invBtn = nil
@@ -1001,9 +1021,6 @@ function scene:destroyScene( event )
 	display.remove(g1)
 	
 end
-
-
-
 
 -----------------------------------------------------------------------------------------
 -- END OF YOUR IMPLEMENTATION
