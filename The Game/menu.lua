@@ -36,6 +36,7 @@ local function onTutorialBtnRelease()
 	
 	-- go to options.lua scene
 	storyboard.purgeScene("level1")
+	storyboard.purgeScene("inventory")
 	storyboard.gotoScene( "tutorial", "fade", 200 )
 	
 	return true	-- indicates successful touch

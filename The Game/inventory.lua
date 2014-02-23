@@ -280,13 +280,21 @@ end
 ---------------------------------------
 ------End of display function----------
 ---------------------------------------
-	
+
+---------------------------------------
+--Match Item gives each item the player has collected an unique ID and places it in the user's "bag"
+--The bag is what is interacted with in other inventory routines
+---------------------------------------
 local function matchItem(item) 		
 	table.insert(inBag, display.newSprite(weaponImage, weapons))
 	newIndex = table.getn(inBag) 
 	inBag[newIndex]:setSequence(item)
 	inBag[newIndex].num = newIndex
 end
+---------------------------------
+---------End Match Item----------
+---------------------------------
+
 -----------------------------------------------------------------------------------------
 -- BEGINNING OF YOUR IMPLEMENTATION
 --
@@ -299,11 +307,13 @@ function scene:createScene (event)
 	group = self.view
 	inBag = {}   --items in players bag (holding[] elements are converted from strings to their respective sprite when placed into inBag
 	inUse = {}  --Items currently equipped 
+	--Set equipped item values to nil to begin with (nothing is equipped to start the game) 
 	inUse["sword"] = nil 
 	inUse["armor"] = nil 
 	inUse["boots"] = nil 
 	inUse["potion"] = 0 
-		
+	
+	---------------------------------
 	--Declaration of Inventory Images 
 	weaponSettings =  {
 		height = 32, 
@@ -331,8 +341,9 @@ function scene:createScene (event)
 	}
 	
 	weaponImage = graphics.newImageSheet("icons2.png", weaponSettings)
-	
+	--------------------------------------
 	---End Inventory Image declarations 
+	--------------------------------------
 	
 	-- create a grey rectangle as the backdrop
 	local background = display.newImageRect( "optionsScreen.png", display.contentWidth, display.contentHeight )
@@ -365,6 +376,7 @@ function scene:createScene (event)
 	menuBtn.x = display.contentWidth - menuBtn.width * .5 
 	menuBtn.y = menuBtn.height * .5
 	
+	-------Displays various icons on the screen with which the player is given reference points to interact with later---------
 	local bag = display.newImageRect("tiles2.png", display.contentWidth*.4, display.contentHeight-(menuBtn.height*2))  
 	bag:setReferencePoint(display.TopLeftReferencePoint)
 	bag.x = display.contentWidth*.6
@@ -404,6 +416,7 @@ function scene:createScene (event)
 	potionSlot.x = potionLabel.x 
 	potionSlot.y = potionLabel.y
 	potionSlot:setFillColor(229,8,8)
+	------------End of display set up------------------
 
 	-- all display objects must be inserted into group
 	group:insert( background )
@@ -422,6 +435,8 @@ end
 
 -- Called immediately after scene has moved onscreen:
 function scene:enterScene( event )
+	--When the scene is entered only items that have been found since the last time should be processed 
+	--Any new items need to be displayed and given an ID 
 	group = self.view
 	inventoried = table.getn(inBag) 
 	
@@ -444,8 +459,12 @@ function scene:exitScene( event )
 end
 
 -- If scene's view is removed, scene:destroyScene() will be called just prior to:
+--Inventory screen is only purged in game ending situations (all items should be wiped from existence)
 function scene:destroyScene( event )
-	holding = {}
+	holding = {}  --Game is over player isn't holding any items anymore
+	inUse = {}  --No items are in use, since the game is over
+	inBag = {}  --No items are in the player's "bag"
+	
 	local group = self.view
 	if menuBtn then
 		menuBtn:removeSelf()
