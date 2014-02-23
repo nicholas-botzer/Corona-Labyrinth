@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------------------
 --
--- credits.lua
+-- gamecredits.lua
 --
 -----------------------------------------------------------------------------------------
 require("main") 
@@ -27,7 +27,7 @@ end
 
 
 -----------------------------------------------------------------------------------------
--- BEGINNING OF YOUR IMPLEMENTATION
+-- BEGINNING OF IMPLEMENTATION
 --
 -- NOTE: Code outside of listener functions (below) will only be executed once,
 --		 unless storyboard.removeScene() is called.
@@ -36,12 +36,6 @@ end
 
 function scene:createScene (event)
 	local group = self.view
-
-	-- create a grey rectangle as the backdrop
-	local background = display.newImageRect( "optionsScreen.png", display.contentWidth, display.contentHeight )
-	background:setFillColor(0,0,0)
-	background:setReferencePoint( display.TopLeftReferencePoint )
-	background.x, background.y = 0, 0
 
 	-- add a Menu button
 	menuBtn = widget.newButton{
@@ -57,7 +51,7 @@ function scene:createScene (event)
 	menuBtn.y = menuBtn.height * .5
 	
 	backBtn = widget.newButton{
-		label="Options",
+		label="Back",
 		labelColor = { default = {255}, over= {128} },
 		defaultFile="button.png",
 		overFile="button-over.png",
@@ -77,7 +71,6 @@ function scene:createScene (event)
 		bottomPadding = screenH * .1,
 		horizontalScrollDisabled = true,
 		verticalScrollDisabled = false
-		--listener = scrollListener,
 	}
 	
 	-- ********************************************
@@ -128,25 +121,21 @@ function scene:createScene (event)
 	scrollableCredits:insert(creditsTextObject)
 	
 	--add to display group
-	group:insert(background)
 	group:insert(scrollableCredits)
 	group:insert(menuBtn)
 	group:insert(backBtn)
-
 
 end
 
 -- Called immediately after scene has moved onscreen:
 function scene:enterScene( event )
 	local group = self.view
-	print("inside credits")
 	storyboard.returnTo = "options" 
 end
 
 -- Called when scene is about to move offscreen:
 function scene:exitScene( event )
 	local group = self.view
-	
 end
 
 -- If scene's view is removed, scene:destroyScene() will be called just prior to:
@@ -163,7 +152,7 @@ function scene:destroyScene( event )
 end
 
 -----------------------------------------------------------------------------------------
--- END OF YOUR IMPLEMENTATION
+-- END OF IMPLEMENTATION
 -----------------------------------------------------------------------------------------
 
 -- "createScene" event is dispatched if scene's view does not exist
