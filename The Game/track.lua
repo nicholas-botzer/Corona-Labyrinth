@@ -1,6 +1,9 @@
 local track = {}
 
- 
+--[[*******************************************************************************
+changeSprite(follower, distX, distY) - changes the enemy's model's sprite based
+	on the direction it is moving
+********************************************************************************]]--
  track.changeSprite = function (follower, distX, distY)
 	if (math.abs(distY) > math.abs(distX)) then
 		if (distY > 0) then
@@ -19,7 +22,10 @@ local track = {}
 	end
 end
 
-
+--[[*******************************************************************************
+attackSprite(follower) - changes the enemy's model's sprite to the attacking
+	sprite of that direction
+********************************************************************************]]--
 track.attackSprite = function (follower)
 	if (follower.model.sequence == "back") then
 		follower.model:setSequence("attackBack")
@@ -32,7 +38,10 @@ track.attackSprite = function (follower)
 	end
 end
  
- 
+ --[[*******************************************************************************
+doFollow(follower, target, followSpeed) - handles the movement of a 
+	single enemy this includes movement from knockback
+********************************************************************************]]--
 track.doFollow = function (follower, target, followSpeed)
 	if ( not follower.isDead) then
         local followSpeed = follower.speed
@@ -44,7 +53,9 @@ track.doFollow = function (follower, target, followSpeed)
         -- get total distance
         local distanceTotal = math.sqrt ( ( distanceX * distanceX ) + ( distanceY * distanceY ) )
         
-		if (distanceTotal < 300 and distanceTotal > 20) then 
+		if (distanceTotal < 300 and distanceTotal > 20) then
+		--the enemy is within agro range but not attacking range
+		
 			-- calculate how much to move
 			local moveDistanceX = distanceX / distanceTotal;
 			local moveDistanceY = distanceY / distanceTotal;
@@ -68,13 +79,13 @@ track.doFollow = function (follower, target, followSpeed)
 			track.changeSprite(follower, distanceX, distanceY)
 			follower.model:play()
 		elseif (distanceTotal < 50) then
-			--attacking stuff
+		-- the enemy is within attacking range
 			track.attackSprite(follower)
 			attackPlayer(follower)
 			follower.model:play()
 		end
 		
-		--handle knockback
+		--calculate knockback for X and Y directions
 		if (math.abs(follower.knockbackX) > 5) then
 			follower.model.x = follower.model.x + follower.knockbackX
 			follower.knockbackX = follower.knockbackX * .75
@@ -83,9 +94,6 @@ track.doFollow = function (follower, target, followSpeed)
 			follower.model.y = follower.model.y + follower.knockbackY
 			follower.knockbackY = follower.knockbackY * .75
 		end
-		
-		-- play the sprite animation
-		
 	end
 end
 return track
