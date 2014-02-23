@@ -41,6 +41,11 @@ local function onInvBtnRelease()
 	return true	-- indicates successful touch
 end
 
+--------------------------------
+--This function re-evaluates item modifiers in the event of the scene being destroyed and re-entered
+--One case where this is called is after stairs are taken
+--Without this function item effects wouldn't carry out through various floors
+-------------------------------
 local function reequip() 
 	if(inUse["sword"]) then
 		rect.damage = rect.baseDamage + inUse["sword"].modifier 
@@ -52,28 +57,37 @@ local function reequip()
 		rect.speed = rect.baseSpeed + inUse["boots"].modifier 
 	end
 end
+
+----------------------------
+--This function is called when the scene is entered (in order to handle moving from the inventory screen back to level1.lua
+--This function applies any items that were equipped while in the inventory screen (if any)
+----------------------------
 local function handleConsumption() --Inventory items take effect here 
 	if(inUse["potion"]) then 
 		rect.health = rect.health + inUse["potion"]
-		if(rect.health > 100) then 
+		if(rect.health > 100) then  --Don't allow health to exceed 100
 			rect.health = 100 
 		end
-		inUse["potion"] = 0 
+		inUse["potion"] = 0    --Reset potion restoration counter
 	end
 	if(inUse["sword"] and inUse["sword"].new) then
 		rect.damage = rect.baseDamage + inUse["sword"].modifier 
-		inUse["sword"].new = false 
+		inUse["sword"].new = false  --Item is no longer new, has been equipped 
 	end
 	if(inUse["armor"] and inUse["armor"].new) then
 		rect.armor = rect.baseArmor + inUse["armor"].modifier
-		inUse["armor"].new = false 
+		inUse["armor"].new = false  --Item is no longer new, has been equipped 
 	end
 	if(inUse["boots"] and inUse["boots"].new) then
 		rect.speed = rect.baseSpeed + inUse["boots"].modifier 
-		inUse["boots"].new = false 
+		inUse["boots"].new = false  --Item is no longer new, has been equipped 
 	end
 end
 
+-------------------
+--This function tests to determine if the player already is holding the item that is passed to it
+--Used to prevent duplicate items in the inventory screen 
+-------------------
 local function alreadyHolding(name) 
 	containedFlag = false
 	for i=1,table.getn(holding),1 do 
@@ -90,7 +104,7 @@ local function onSwordBtnRelease()
 	rect.model:play()
 	audio.play( swordClashSound ) 
 	
-	if(floorsDone >= levels)then
+	if(floorsDone >= levels)then  
 		if(creatures[1].isDead == true)then
 			storyboard.gotoScene("victory", "fade", 500)
 			storyboard.purgeScene("inventory")
@@ -150,6 +164,10 @@ local function onSwordBtnRelease()
 	return true
 end 
 
+-------------------------------------------------------------------------------------
+--Following functions (determineWallPos() and determineDiagonal() determine where the wall is in 
+--relation to the player sprite based on 8 collision rectangles that are constantly around the player 
+-------------------------------------------------------------------------------------
 local function determineWallPosition() 
 	pos = "" 
 	if(upRect.detected) then
@@ -184,28 +202,35 @@ local function detectDiagonal()
 	return pos 
 end
 
+-----------------------------------------------------------------------------------------
+--Collision handling function. Collision ties in with the analog stick which controls motion. 
+--When a collision event is detected the analog stick is informed of the collision, and the wall position
+--The analog stick then only lets the player move in a direction away from the wall **(NOTE: Collision is still a bit "buggy" and the user can sometime slide through walls)**
+-----------------------------------------------------------------------------------------
 local function onCollision( event )
-	if(not event.object2.id) then  
+	if(not event.object2.id) then  --The detection rectangles have ids assigned to them, these collisions should be handled separately 
 		if ( event.phase == "began" ) then
-			rect:takeDamage(2)
-			dmgMask.isVisible = true;
+			rect:takeDamage(2)  --Walls do approx. 2 (falls to 1 with any armor on) damage when the player touches one
+			dmgMask.isVisible = true;	--Flashes red mask for the damage dealt by the wall
 			if(not analogStick:inCollision()) then
-				rect.markX = rect.model.x 
+				rect.markX = rect.model.x  --Record where the player's x and y position was when collision occured 
 				rect.markY = rect.model.y
 			end
-			wallPos = determineWallPosition()
+			wallPos = determineWallPosition()  --Determine wall position 
 			if(wallPos == "noWall") then
 				wallPos = detectDiagonal()
 			end
 			print(wallPos)
-			analogStick:collided(true, event.object1.x, event.object1.y, wallPos)
+			analogStick:collided(true, event.object1.x, event.object1.y, wallPos)  --Inform analog stick of the collision
 		end
-	else 
+	else --in the case that the collision is actually between a detector and a wall:
+		--Determine which detector collided, set its detected flag to true 
 		if (event.phase == "began") then 
 			event.object2.count = 0 
 			event.object2.detected = true
 			event.object2.markX = event.object2.x 
 			event.object2.markY = event.object2.y 
+		--If the event is ending, determine if the detected flag should be cleared or not
 		elseif(event.phase == "ended") then   
 			event.object2.count = event.object2.count + 1
 			if(event.object2 == upRect) then 	
@@ -256,7 +281,9 @@ local function onCollision( event )
 		end
 	end
 end
-
+--------------------------------------------------
+--------End Collision Handler---------------------
+--------------------------------------------------
 
 local function updateHealth( event )
 	healthAmount.text = rect.health .. "/" .. rect.maxHealth
@@ -804,6 +831,7 @@ end--end if for map generation
 	rect.model.isSensor = true
 	reequip()
 	
+	--The following objects are used for collision detection and determine wall position--
 	upRect = display.newRect(rect.model.x , rect.model.y, 20,40)
 	upRect:setReferencePoint(display.BottomCenterReferencePoint)
 	upRect.x = rect.model.x 
@@ -875,6 +903,7 @@ end--end if for map generation
 	physics.addBody(BRD, "dynamic",{}) 
 	BRD.isSensor = true
 	BRD.isVisible = false
+	--End of collision aide declarations--
 	
 	-- all display objects must be inserted into group in layer order 
 	group:insert(g1)
@@ -904,15 +933,17 @@ end
 
 local function main( event )
 	analogStick:slide(rect,-rect.speed, true)
-	if(floorsDone == 0 and not fixed) then
+	if(floorsDone == 0 and not fixed) then  
 		fixed = true
 		rect.health = 100 
 	end
 	
+	--Remove the damage mask after 25ms if it is currently visible--
 	if (dmgMask.isVisible) then
 		timer.performWithDelay (25, function() dmgMask.isVisible = false end)
 	end
 	
+	--Collision detectors have to follow the player sprite--
 	upRect.x = rect.model.x 
 	upRect.y = rect.model.y
 	leftRect.x = rect.model.x 
@@ -929,7 +960,8 @@ local function main( event )
 	BLD.y = rect.model.y + rect.model.height*.1
 	BRD.x = rect.model.x + rect.model.width*.5
 	BRD.y = rect.model.y + rect.model.height*.1
-
+	----
+	
 	angle = analogStick:getAngle() 
 	moving = analogStick:getMoving()
 	
@@ -964,7 +996,7 @@ function scene:enterScene( event )
 	Runtime:addEventListener( "enterFrame", trackPlayer) --makes the enimies track the player
 	Runtime:addEventListener("collision", onCollision) --checks for player collision
 	storyboard.returnTo = "menu" 
-	handleConsumption() 
+	handleConsumption()  --Determine if any items were placed onto the player/potions used
 	upRect.detected = false 
 	downRect.detected = false 
 	leftRect.detected = false 
