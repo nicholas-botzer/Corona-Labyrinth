@@ -641,8 +641,8 @@ end
 function scene:createScene (event)
 	local group = self.view 
 	--set up music
-	audio.pause(menuMusicChannel)
-	audio.pause(bossMusicChannel)
+	--audio.pause(menuMusicChannel)
+	--audio.pause(bossMusicChannel)
 	labyrinthMusicChannel = audio.play( labyrinthMusic, {channel=2, loops=-1, fadein=1000})
 	
 	if (tempHealth <= 0) then
@@ -687,8 +687,7 @@ if(floorsDone >= levels)then
 	creature = Demon((5*tileSize),(3*tileSize))
 	table.insert(creatures, creature)
 	monsterGroup:insert(creature.model)
-	audio.pause(menuMusicChannel)
-	audio.pause(labyrinthMusicChannel)
+	
 	bossMusicChannel = audio.play( bossMusic, {channel=3, loops=-1, fadein=1000})
 else
 	
@@ -959,11 +958,11 @@ function scene:enterScene( event )
 	BRD.detected = false  
 	audio.stop(menuMusicChannel)
 	if (floorsDone < levels) then
-		audio.pause(bossMusicChannel)
-		audio.resume(labyrinthMusicChannel)
+		audio.stop(bossMusicChannel)
+		audio.play(labyrinthMusic, {channel=2, loops=-1, fadein=1000})
 	else
-		audio.pause(labyrinthMusicChannel)
-		audio.resume(bossMusicChannel)
+		audio.stop(labyrinthMusicChannel)
+		audio.play(bossMusic, {channel=3, loops=-1, fadein=1000})
 	end
 end
 

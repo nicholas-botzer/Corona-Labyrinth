@@ -44,7 +44,7 @@ track.doFollow = function (follower, target, followSpeed)
         -- get total distance
         local distanceTotal = math.sqrt ( ( distanceX * distanceX ) + ( distanceY * distanceY ) )
         
-		if (distanceTotal < 250 and distanceTotal > 20) then 
+		if (distanceTotal < 300 and distanceTotal > 20) then 
 			-- calculate how much to move
 			local moveDistanceX = distanceX / distanceTotal;
 			local moveDistanceY = distanceY / distanceTotal;

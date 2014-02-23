@@ -51,7 +51,7 @@ end
 
 function scene:createScene ( event )
 	local group = self.view
-	
+
 	--play menuMusic
 	menuMusicChannel = audio.play(menuMusic, {channel=1, loops=-1, fadein=1000})
 	
@@ -117,7 +117,9 @@ end
 function scene:enterScene (event)
 	local group = self.view
 	storyboard.returnTo = "menu" 
-	audio.resume(menuMusicChannel)
+	audio.stop(labyrinthMusicChannel)
+	audio.stop(bossMusicChannel)
+	audio.play(menuMusic, {channel=1, loops=-1, fadein=1000})
 	--insert code here (e.g. stop timers, remove listenets, unload sounds etc)
 end
 
