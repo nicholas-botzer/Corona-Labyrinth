@@ -60,10 +60,10 @@ function scene:createScene ( event )
 	local background = display.newImageRect( "Capture.PNG", display.contentWidth, display.contentHeight )
 	background:setReferencePoint( display.TopLeftReferencePoint )
 	background.x, background.y = 0, 0
+	
 	--create the title text for the start menu screen
 	local titleText = display.newImageRect("titleText.png", display.contentWidth*.85, display.contentHeight*.5)
 	titleText:setReferencePoint(display.TopLeftReferencePoint)
-	--titleText.x , titleText.y = 50, -50
 	titleText.x = display.contentWidth*.07
 	titleText.y = display.contentHeight*.05
 	
@@ -118,25 +118,25 @@ end
 function scene:enterScene (event)
 	local group = self.view
 	storyboard.returnTo = "menu" 
+	
+	--stop all other music and resume playing the menu music
 	audio.stop(labyrinthMusicChannel)
 	audio.stop(bossMusicChannel)
 	audio.play(menuMusic, {channel=1, loops=-1, fadein=1000})
-	--insert code here (e.g. stop timers, remove listenets, unload sounds etc)
 end
 
 -- Called when scene is about to move offscreen:
 function scene:exitScene( event )
 	local group = self.view
 	
-	-- INSERT code here (e.g. stop timers, remove listenets, unload sounds, etc.)
-	
 end
 
 -- If scene's view is removed, scene:destroyScene() will be called just prior to:
 function scene:destroyScene( event )
 	local group = self.view
+	--remove all widgets
 	if playBtn then
-		playBtn:removeSelf()	-- widgets must be manually removed
+		playBtn:removeSelf()
 		playBtn = nil
 	end
 	if optionsBtn then
