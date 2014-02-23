@@ -5,20 +5,24 @@ changeSprite(follower, distX, distY) - changes the enemy's model's sprite based
 	on the direction it is moving
 ********************************************************************************]]--
  track.changeSprite = function (follower, distX, distY)
-	if (math.abs(distY) > math.abs(distX)) then
-		if (distY > 0) then
-			if (not (follower.model.sequence == "back" or follower.model.sequence == "attackBack")) then
-				follower.model:setSequence("back")
+	if (math.abs(distY) > math.abs(distX)) then		--check to see if the player is moving more in the X or Y axis
+		if (distY > 0) then		-- check if the player is moving forward or back
+			-- player is moving back
+			if (not (follower.model.sequence == "back")) then
+				follower.model:setSequence("back")	-- set the sequence to back if the sequence is not already set
 			end
-		elseif (not (follower.model.sequence == "forward" or follower.model.sequence == "attackForward")) then
-			follower.model:setSequence("forward")
+		elseif (not (follower.model.sequence == "forward")) then
+			--player is moving forward
+			follower.model:setSequence("forward")	-- set the sequence to forward if the sequence is not already set
 		end
 	elseif (distX > 0) then
-		if (not (follower.model.sequence == "right" or follower.model.sequence == "attackRight")) then
-			follower.model:setSequence("right")
+		--player is moving right
+		if (not (follower.model.sequence == "right")) then
+			follower.model:setSequence("right")		-- set the sequence to right if the sequence is not already set
 		end
-	elseif (not (follower.model.sequence == "left" or follower.model.sequence == "attackLeft")) then
-		follower.model:setSequence("left")
+	elseif (not (follower.model.sequence == "left")) then
+		--player is moving left
+		follower.model:setSequence("left")			-- set the sequence to left if the sequence is not already set
 	end
 end
 
@@ -75,8 +79,10 @@ track.doFollow = function (follower, target, followSpeed)
 			follower.model.x = follower.model.x + follower.moveX;
 			follower.model.y = follower.model.y + follower.moveY;
 
-			--change sprite
-			track.changeSprite(follower, distanceX, distanceY)
+			--change sprite 
+			if (distanceTotal > 30) then
+				track.changeSprite(follower, distanceX, distanceY)
+			end
 			follower.model:play()
 		elseif (distanceTotal < 50) then
 		-- the enemy is within attacking range

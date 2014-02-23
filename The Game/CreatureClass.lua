@@ -1,9 +1,10 @@
 local LCS = require 'LCS'
-require "options"
+require "options"	-- options needed for difficulty variable
 
 Creature = LCS.class({health, maxHealth, damage, armor, speed, spriteOptions, mySheet ,model, moveX = 0, moveY = 0, knockbackX = 0, knockbackY = 0, isDead})
 
 function Creature:init(posX, posY)
+	-- Initialize creatures base attributes
 	self.health = 30 + 10 * floorsDone
 	self.maxHealth = 30 + 10 * floorsDone
 	self.damage = 3 + difficulty * 5 + floorsDone
@@ -11,7 +12,7 @@ function Creature:init(posX, posY)
 	self.speed = 2 + difficulty
 	self.isDead = false
 
-	--Declare Image Sheet 
+	--Declare and set up Sprite Image Sheet and sequence data
 	spriteOptions = {	
 		height = 64, 
 		width = 64, 
@@ -31,13 +32,22 @@ function Creature:init(posX, posY)
 		{name = "attackLeft", frames={170,171,172,173,174,175}, time = 700, loopCount = 0},
 		{name = "death", frames={261,262,263,264,265,266}, time = 500, loopCount = 1}
 	}	
-
+	
+	-- Display the new sprite at the coordinates passed
 	self.model = display.newSprite(mySheet, sequenceData)
 	self.model:setSequence("forward")
 	self.model.x = posX
 	self.model.y = posY
 
-
+	
+	
+--[[*****************    Methods    ******************]]--
+	
+--[[*******************************************************************************
+takeDamage(dmg) - reduces the creatures health based on the passed dmg value
+	the minimum damage that can be taken is set to 1, changes the sprite sequence
+	if the creature dies
+********************************************************************************]]--
 	function Creature:takeDamage(dmg)
 		if (dmg > self.armor) then 
 			self.health = self.health - (dmg - self.armor)
@@ -46,15 +56,17 @@ function Creature:init(posX, posY)
 		end
 		
 		if (self.health <= 0) then
+			self.isDead = true
 			self.model:setSequence("death")
 			self.model:play()
 		end
 		return
 	end
 
+
 	function Creature:delete()
 		self.model:removeSelf()
 		self.model = nil
 	end
 		
-end
+end -- End CreatureClass
