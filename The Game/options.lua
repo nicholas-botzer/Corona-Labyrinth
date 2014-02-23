@@ -58,7 +58,7 @@ local function levelSelected(level)
 end
 
 -----------------------------------------------------------------------------------------
--- BEGINNING OF YOUR IMPLEMENTATION
+-- BEGINNING OF IMPLEMENTATION
 --
 -- NOTE: Code outside of listener functions (below) will only be executed once,
 --		 unless storyboard.removeScene() is called.
@@ -70,7 +70,6 @@ function scene:createScene (event)
 	
 	-- create a grey rectangle as the backdrop
 	local background = display.newImageRect( "optionsScreen.png", display.contentWidth, display.contentHeight )
-	--background:setFillColor(255,235,205)
 	background:setReferencePoint( display.TopLeftReferencePoint )
 	background.x, background.y = 0, 0
 
@@ -99,6 +98,7 @@ function scene:createScene (event)
 	creditsBtn.x = display.contentWidth - creditsBtn.width * .5
 	creditsBtn.y = creditsBtn.height * .5
 
+	--create a red rectangle to be placed behind the difficulty widgets
     selected = display.newRect(200, 290, 158, 45) 
     selected:setReferencePoint(display.CenterReferencePoint) 
     selected.x = display.contentWidth *.15 + (154)*.5 
@@ -107,6 +107,7 @@ function scene:createScene (event)
     selected:setFillColor(180,0,0)
     selected:setStrokeColor(180,0,0)
     
+	--create a red rectangle to be placed behind the number of floors widgets
     selected2 = display.newRect(400,290,158,45)
     selected2:setReferencePoint(display.CenterReferencePoint)
     selected2.x = display.contentWidth *.67 + (154)*.5

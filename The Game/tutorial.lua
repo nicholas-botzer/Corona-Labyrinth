@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------------------
 --
--- level1.lua
+-- tutorial.lua
 --
 -----------------------------------------------------------------------------------------
 
@@ -37,21 +37,29 @@ local function onInvBtnRelease()
 	return true	-- indicates successful touch
 end
 
+----------------------------
+--This function is called when the scene is entered (in order to handle moving from the inventory screen back to level1.lua
+--This function applies any items that were equipped while in the inventory screen (if any)
+----------------------------
 local function handleConsumption() --Inventory items take effect here 
 	if(inUse["potion"]) then 
 		rect.health = rect.health + inUse["potion"]
-		if(rect.health > 100) then 
+		if(rect.health > 100) then --Don't allow health to exceed 100
 			rect.health = 100 
 		end
+		inUse["potion"] = 0    --Reset potion restoration counter
 	end
 	if(inUse["sword"] and inUse["sword"].new) then
 		rect.damage = rect.baseDamage + inUse["sword"].modifier 
+		inUse["sword"].new = false  --Item is no longer new, has been equipped 
 	end
 	if(inUse["armor"] and inUse["armor"].new) then
 		rect.armor = rect.baseArmor + inUse["armor"].modifier
+		inUse["armor"].new = false  --Item is no longer new, has been equipped 
 	end
 	if(inUse["boots"] and inUse["boots"].new) then
 		rect.speed = rect.baseSpeed + inUse["boots"].modifier 
+		inUse["boots"].new = false  --Item is no longer new, has been equipped 
 	end
 end
 
@@ -107,6 +115,10 @@ local function onSwordBtnRelease()
 	return true
 end 
 
+-------------------------------------------------------------------------------------
+--Following functions (determineWallPos() and determineDiagonal() determine where the wall is in 
+--relation to the player sprite based on 8 collision rectangles that are constantly around the player 
+-------------------------------------------------------------------------------------
 local function determineWallPosition() 
 	pos = "" 
 	if(upRect.detected) then
@@ -141,28 +153,34 @@ local function detectDiagonal()
 	return pos 
 end
 
+-----------------------------------------------------------------------------------------
+--Collision handling function. Collision ties in with the analog stick which controls motion. 
+--When a collision event is detected the analog stick is informed of the collision, and the wall position
+--The analog stick then only lets the player move in a direction away from the wall **(NOTE: Collision is still a bit "buggy" and the user can sometime slide through walls)**
+-----------------------------------------------------------------------------------------
 local function onCollision( event )
-	if(not event.object2.id) then  
+	if(not event.object2.id) then  	--The detection rectangles have ids assigned to them, these collisions should be handled separately 
 		if ( event.phase == "began" ) then
-			rect:takeDamage(2)
-			dmgMask.isVisible = true;
+			rect:takeDamage(2)			--Walls do approx. 2 (falls to 1 with any armor on) damage when the player touches one
+			dmgMask.isVisible = true;		--Flashes red mask for the damage dealt by the wall
 			if(not analogStick:inCollision()) then
-				rect.markX = rect.model.x 
+				rect.markX = rect.model.x 	--Record where the player's x and y position was when collision occured 
 				rect.markY = rect.model.y
 			end
-			wallPos = determineWallPosition()
+			wallPos = determineWallPosition()  --Determine wall position 
 			if(wallPos == "noWall") then
 				wallPos = detectDiagonal()
 			end
-			print(wallPos)
-			analogStick:collided(true, event.object1.x, event.object1.y, wallPos)
+			analogStick:collided(true, event.object1.x, event.object1.y, wallPos)	--Inform analog stick of the collision
 		end
-	else 
+	else --in the case that the collision is actually between a detector and a wall:
+		--Determine which detector collided, set its detected flag to true 
 		if (event.phase == "began") then 
 			event.object2.count = 0 
 			event.object2.detected = true
 			event.object2.markX = event.object2.x 
 			event.object2.markY = event.object2.y 
+		--If the event is ending, determine if the detected flag should be cleared or not
 		elseif(event.phase == "ended") then   
 			event.object2.count = event.object2.count + 1
 			if(event.object2 == upRect) then 	
@@ -213,6 +231,9 @@ local function onCollision( event )
 		end
 	end
 end
+--------------------------------------------------
+--------End Collision Handler---------------------
+--------------------------------------------------
 
 local function updateHealth( event )
 	healthAmount.text = rect.health .. "/" .. rect.maxHealth
@@ -252,14 +273,16 @@ function attackPlayer(monster)
 	end
 end
 					
-
+--Creates the rooms tiles for the map that is generated.
 local function makeRoom(r,c)
+
     room = display.newImageRect("floors.png",tileSize,tileSize)
     room:setReferencePoint(display.TopLeftReferencePoint)
     room.x,room.y = r*tileSize,c*tileSize
 	
 	return room
 end
+--Creates the wall tiles for the map and adds the physics to them for collision handling
 local function makeWall(r,c)
     wall = display.newImageRect("walls.png",tileSize,tileSize)
     wall:setReferencePoint(display.TopLeftReferencePoint)
@@ -268,6 +291,7 @@ local function makeWall(r,c)
 	
 	return wall
 end
+--Creates the stairs that allow the user to exit the tutorial
 function makeStairs(r,c)
 	stairs = display.newImageRect("stairs.png",100,100)
 	stairs:setReferencePoint(display.TopLeftReferencePoint)
@@ -298,7 +322,7 @@ local function generateBossRoom(rows,cols)
 	g1:insert( stairs )
 end
 -----------------------------------------------------------------------------------------
--- BEGINNING OF YOUR IMPLEMENTATION
+-- BEGINNING OF IMPLEMENTATION
 --
 -- NOTE: Code outside of listener functions (below) will only be executed once,
 --		 unless storyboard.removeScene() is called.
@@ -307,20 +331,20 @@ end
 
 function scene:createScene (event)
 	local group = self.view
-	if (tempHealth <= 0) then
-		tempHealth = 100
-	end
-	chests = {}
-	creatures = {}
+
+	tempHealth = 100 -- will set the players health back to 100 when entering the tutorial
+
+	chests = {} --holds all of the chests that will be spawned onto the map
+	creatures = {} --holds all of the monsters that get spawn onto the map
 	monsterGroup = display.newGroup()
-	camera=PerspectiveLib.createView()
-	physics.start()
+	camera=PerspectiveLib.createView() --creates the camera that will track the player for us
+	physics.start()     --generates the starting physics for the game
 	physics.setGravity(0,0)
-	
+	--mask that limits the player vision slightly, the mask also turns red briefly upon taking damage
 	mask = display.newImageRect( "masked3.png", screenW, screenH )
 	mask:setReferencePoint( display.TopLeftReferencePoint )
 	mask.x, mask.y = 0, 0
-	
+	--red mask that shows up when the user takes damage
 	dmgMask = display.newImageRect( "masked3_dmg.png", screenW, screenH )
 	dmgMask:setReferencePoint( display.TopLeftReferencePoint )
 	dmgMask.x, dmgMask.y = 0, 0
@@ -367,7 +391,7 @@ function scene:createScene (event)
     healthBar.y = 10
     
     healthAmount = display.newText {
-    	text = "100/100", --defualt value, gets overwritten in updateHealth()
+    	text = "100/100", --default value, gets overwritten in updateHealth()
     	x = 70,
     	y = 17
     }
@@ -418,6 +442,7 @@ function scene:createScene (event)
 	physics.addBody(rect.model, "dynamic", {})
 	rect.model.isSensor = true
 	
+	--The following objects are used for collision detection and determine wall position--
 	upRect = display.newRect(rect.model.x , rect.model.y, 20,40)
 	upRect:setReferencePoint(display.BottomCenterReferencePoint)
 	upRect.x = rect.model.x 
@@ -489,7 +514,9 @@ function scene:createScene (event)
 	physics.addBody(BRD, "dynamic",{}) 
 	BRD.isSensor = true
 	BRD.isVisible = false
+	--End of collision aide declarations--
 	
+	-- Tutorial prompts to help the player
 	prompt = display.newText("Move the analog stick to control character \nCareful, walls do damage if touched!", rect.model.x-110, rect.model.y-70, native.systemFontBold, 15) 
 	timer.performWithDelay(3000, function() prompt.text = "To open a chest stand in front of it \nand press attack" end) 
 	prompt:setReferencePoint(display.TopLeftReferencePoint)
@@ -498,7 +525,10 @@ function scene:createScene (event)
 	group:insert(g1)
 	group:insert(monsterGroup)
 	group:insert( rect.model )	
+	
 	--camera set up
+	--groups get inserted in the appropriate order with the map aka g1 being the first thing inserted
+	--all of the monsters are then inserted on top of the map, followed by the character
 	camera:add(g1,4,true)
 	camera:add(monsterGroup,3,true)
 	camera:add(rect.model, 2, true)
@@ -529,10 +559,12 @@ local function main( event )
 		rect.health = 100 
 	end
 	
+	--Remove the damage mask after 25ms if it is currently visible--
 	if (dmgMask.isVisible) then
 		timer.performWithDelay (25, function() dmgMask.isVisible = false end)
 	end
 	
+	--Collision detectors have to follow the player sprite--
 	upRect.x = rect.model.x 
 	upRect.y = rect.model.y
 	leftRect.x = rect.model.x 
@@ -578,12 +610,13 @@ end
 -- Called immediately after scene has moved onscreen:
 function scene:enterScene( event )
 	local group = self.view
+	--creates the eventListeners that are needed to handle different functions
 	Runtime:addEventListener( "enterFrame", main )
-	Runtime:addEventListener( "enterFrame", updateHealth )
-	Runtime:addEventListener( "enterFrame", trackPlayer)
-	Runtime:addEventListener( "collision", onCollision )
+	Runtime:addEventListener( "enterFrame", updateHealth ) 	--listens for changing health
+	Runtime:addEventListener( "enterFrame", trackPlayer) 	--makes the enimies track the player
+	Runtime:addEventListener( "collision", onCollision)		--checks for player collision
 	storyboard.returnTo = "menu" 
-	handleConsumption() 
+	handleConsumption() 		--Determine if any items were placed onto the player/potions used
 	upRect.detected = false 
 	downRect.detected = false 
 	leftRect.detected = false 
@@ -597,6 +630,7 @@ end
 -- Called when scene is about to move offscreen:
 function scene:exitScene( event )
 	local group = self.view
+	--Removes all of the eventListeners because the scene has changed and they need destroyed
 	Runtime:removeEventListener( "enterFrame", main )
 	Runtime:removeEventListener( "enterFrame", updateHealth )
 	Runtime:removeEventListener( "enterFrame", trackPlayer)
@@ -608,10 +642,13 @@ end
 -- If scene's view is removed, scene:destroyScene() will be called just prior to:
 function scene:destroyScene( event )
 	local group = self.view
+	--Removes all of the eventListeners because the scene has changed and they need destroyed
 	Runtime:removeEventListener( "enterFrame", main )
 	Runtime:removeEventListener( "enterFrame", updateHealth )
 	Runtime:removeEventListener( "enterFrame", trackPlayer)
 	Runtime:removeEventListener( "collision", onCollision) 
+	
+	--make sure we remove things we have added
 	if invBtn then
 		invBtn:removeSelf()
 		invBtn = nil

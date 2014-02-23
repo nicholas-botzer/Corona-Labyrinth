@@ -14,7 +14,6 @@ local storyboard = require "storyboard"
 holding = {}
 inUse = {}
 
---Add standard armor, boots, and leather vest
  
 storyboard.gotoScene( "menu" )
 
