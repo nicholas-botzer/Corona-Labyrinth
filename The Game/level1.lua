@@ -243,7 +243,7 @@ local function onCollision( event )
 				end
 			end
 			if(event.object2 == rightRect) then 	
-				if(event.object2.x < rightRect.markX) then)
+				if(event.object2.x < rightRect.markX) then
 					rightRect.detected = false
 				end
 			end

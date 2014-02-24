@@ -31,7 +31,7 @@ function scene:createScene( event )
 		timeLimit = timeLimit-1
 		timeLeft.text = timeLimit
 		if(timeLimit==0)then
-			print("Time Out") -- or do your code for time out
+			--print("Time Out") -- or do your code for time out
 		end
 	end
 	timer.performWithDelay(1000,timerDown,timeLimit)
