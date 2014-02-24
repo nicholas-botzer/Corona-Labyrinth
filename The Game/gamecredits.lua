@@ -79,7 +79,7 @@ function scene:createScene (event)
 	local creditsText = 		 "       Creators:\n" 
 	creditsText = creditsText .. "Nicholas Botzer - Slippery Rock University \nWilliam Botzer - Slippery Rock University \nZachary Petrusch - Slippery Rock University"
 	creditsText = creditsText .. "\n\n     Sprites - Author (Licenses):\n"
-	creditsText = creditsText .. "Player - Author (Licenses)\n"
+	creditsText = creditsText .. "jrconway3/makrohn - Universal-LPC-spritesheet - CC-By-SA 3.0\n"
 	creditsText = creditsText .. "Spider - William.Thompsonj at OpenGameArt.org (CC-BY 3.0, GPL 3.0, GPL 2.0)\n"
 	creditsText = creditsText .. "Skeleton - Wulax at OpenGameArt.org (CC-BY-SA 3.0, GPL 3.0)\n"
 	creditsText = creditsText .. "Imp - William.Thompsonj at OpenGameArt.org (CC-BY 3.0, GPL 3.0, GPL 2.0)\n"
