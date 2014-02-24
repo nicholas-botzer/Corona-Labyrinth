@@ -20,13 +20,14 @@ timer.performWithDelay(1000,decreaseTime,60)
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
     local group = self.view
-	
+	--victory Text to display to the player
 	local victoryText = display.newText( "Congratulations on defeating the evil demon!", 5, display.contentHeight *.3, native.systemFont, 28 )
 	victoryText:setTextColor( 0, 255, 255)
 	local timeLimit = 9
+	--time till it returns to the home screen
 	local timeLeft = display.newText(timeLimit, display.contentWidth*.50, display.contentHeight *.4, native.systemFontBold, 24)
 	timeLeft:setTextColor(0,255,255)
-
+	--function to handle updating the timer
 	local function timerDown()
 		timeLimit = timeLimit-1
 		timeLeft.text = timeLimit
@@ -34,9 +35,10 @@ function scene:createScene( event )
 			--print("Time Out") -- or do your code for time out
 		end
 	end
+	--timer to change the time and till we go back to the menu
 	timer.performWithDelay(1000,timerDown,timeLimit)
 	timer.performWithDelay(10000, goToMenu )
-	
+	--insert display items into the group
 	group:insert(victoryText)
 	group:insert(timeLeft)
         
