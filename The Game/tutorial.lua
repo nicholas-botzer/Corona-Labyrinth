@@ -63,23 +63,27 @@ local function handleConsumption() --Inventory items take effect here
 	end
 end
 
+------------------------------------------
+-- onSwordBtnRelease() 
+-- checks to see if the player is in range to use stairs, hit enemies, and open chests
+------------------------------------------
 local function onSwordBtnRelease()
+	-- change sprite and play audio
 	rect:pickAnimation()
 	rect.model:play()
 	audio.play( swordClashSound ) 
 	
 	--Handle swinging at enemies here 
-	--Test to see if enemy is range of player character.
+	--Test to see if any enemy is range of player character.
 	monsterNum = 1
 	while(monsterNum <= table.getn(creatures))do
-		if( not creatures[monsterNum].isDead)then
-			if(math.abs(rect.model.x - creatures[monsterNum].model.x) < 40 and math.abs(rect.model.y - creatures[monsterNum].model.y) < 40) then
+		if( not creatures[monsterNum].isDead)then	--only do range detection if the enemy is alive
+			if(math.abs(rect.model.x - creatures[monsterNum].model.x) < 40 and math.abs(rect.model.y - creatures[monsterNum].model.y) < 40) then	--check the distance between the player and the creature
 				creatures[monsterNum]:takeDamage(rect.damage)
 				knockbackCreature(rect, creatures[monsterNum], 500)
 			
-				--Remove enemy if 0 HP or lower
+				--prompt the user to exit tutorial upon killing the enemy
 				if (creatures[monsterNum].health <= 0) then
-					creatures[monsterNum].isDead = true
 					prompt.text = "Continue to the stairs and press\n the attack button to end the tutorial"
 				end--end if
 			end--end if
@@ -104,6 +108,7 @@ local function onSwordBtnRelease()
 		chestNum = chestNum + 1
 	end--end while
 	
+	--test to exit the tutorial
 	if( not flag)then
 		if(math.abs(rect.model.x - (stairs.x+50)) < 50 and math.abs(rect.model.y - (stairs.y+50)) < 50)then
 			storyboard.gotoScene( "menu", "fade", 500 )	
@@ -185,46 +190,37 @@ local function onCollision( event )
 			event.object2.count = event.object2.count + 1
 			if(event.object2 == upRect) then 	
 				if(event.object2.y > upRect.markY) then
-					print("clearing top collision")
 					upRect.detected = false
 				end
 			end
 			if(event.object2 == leftRect) then 	
 				if(event.object2.x > leftRect.markX) then
-					print("clearing left collision")
 					leftRect.detected = false
 				end
 			end
 			if(event.object2 == rightRect) then 	
 				if(event.object2.x < rightRect.markX) then
-					print("clearing right collision")
 					rightRect.detected = false
 				end
 			end
 			if(event.object2 == downRect) then 	
 				if(event.object2.y < downRect.markY) then
-					print("clearing bottom collision")
 					downRect.detected = false
 				end
 			end
 			if(event.object2 == TRD) then 
 				TRD.detected = false
-				print("clearing top-right diagonal")
 			end
 			if(event.object2 == TLD) then 
 				TLD.detected = false 
-				print("clearing top-left diagonal")
 			end
 			if(event.object2 == BRD) then 
 				BRD.detected = false
-				print("clearing bottom-R diagonal")
 			end
 			if(event.object2 == BLD) then 
 				BLD.detected = false
-				print("clearing bottom-L diagonal")
 			end
 			if(event.object2.count >= 2) then
-				print("Slid past") 
 				analogStick:collided(false) 
 				event.object2.detected = false 
 			end
@@ -235,38 +231,55 @@ end
 --------End Collision Handler---------------------
 --------------------------------------------------
 
+-----------------------------------------------------------------------------------------
+--updateHealth decreases the health bar when the player takes damage
+-----------------------------------------------------------------------------------------
 local function updateHealth( event )
 	healthAmount.text = rect.health .. "/" .. rect.maxHealth
 	healthBar.width = rect.health * 1.2			--decreases the red in the health bar by 1% of its width
 	healthBar.x = 10 - ((100 - rect.health) * .6)	--shifts the healthBar so it decreases from the right only
+--calculation	= starting X - ((playerMaxHealth - playerCurrentHealth) * half of 1% of the healthBar.width)
 	if(rect.health <= 0) then
 		storyboard.gotoScene("death")
 		storyboard.purgeScene("inventory")
 		storyboard.purgeScene("tutorial") 
 	end
 end					
-								-- = starting X - ((playerMaxHealth - playerCurrentHealth) * half of 1% of the healthBar.width)
-					
+
+-----------------------------------------------------------------------------------------
+--trackPlayer() cycles through the enemies having them each call the track function
+-----------------------------------------------------------------------------------------
 local function trackPlayer()
 	for num=1,table.getn(creatures) do
-		if (creatures[num].model) then
+		if (creatures[num].model and not creatures[num].isDead) then
 			track.doFollow (creatures[num], rect, creatures[num].speed)
 		end
 	end
 end	
 
+-----------------------------------------------------------------------------------------
+--knockbackCreature(attacker, creature, force) 
+--		calculates the X and Y axis knockback for a creature or player
+--		*knockback movement is handled in track.lua for creatures and lib_analog_stick.lua for the player
+-----------------------------------------------------------------------------------------
 function knockbackCreature(attacker, creature, force)
 	local distanceX = creature.model.x - attacker.model.x;
 	local distanceY = creature.model.y - attacker.model.y;
 	local totalDistance = math.sqrt ( ( distanceX * distanceX ) + ( distanceY * distanceY ) )
 	local moveDistX = distanceX / totalDistance;
 	local moveDistY = distanceY / totalDistance;
+	
+	--set the knockback values for the creature
 	creature.knockbackX = force * moveDistX /totalDistance
 	creature.knockbackY = force * moveDistY /totalDistance
 end
 
+-----------------------------------------------------------------------------------------
+--attackPlayer(monster) - tests whether a creature is in range to hit the player
+--		*attackPlayer also knocks the CREATURE back
+-----------------------------------------------------------------------------------------
 function attackPlayer(monster)
-	if (math.abs(monster.model.x - rect.model.x) < 20 and math.abs(monster.model.y - rect.model.y) < 25) then
+	if (math.abs(monster.model.x - rect.model.x) < 25 and math.abs(monster.model.y - rect.model.y) < 25) then	--test if in range
 		rect:takeDamage(monster.damage)
 		knockbackCreature(rect, monster, 300)
 		dmgMask.isVisible = true;
