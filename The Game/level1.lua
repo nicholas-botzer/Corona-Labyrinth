@@ -528,7 +528,6 @@ local function generateMap(rows,cols)
 					table.insert(chests,chest)--adds the chest to the table holding them
 					g1:insert(chest.pic)--inserts the chest onto the map
 				end
-				--[[
 				randMonster = math.random(1,100)--random chance to spawn a monster
 				if(randMonster == 1)then--checks to see if a skeleton will be map
 					creature = Creature((i*tileSize),(j*tileSize))--creates a skeleton
@@ -539,7 +538,6 @@ local function generateMap(rows,cols)
 					table.insert(creatures,spider)--inserts the spider into the table
 					monsterGroup:insert(spider.model)--inserts the spider into the monsterGroup
 				end
-				]]
 			elseif(adjMatrix[j][i] == 0 or adjMatrix[j][i] == 9)then--checks to make a wall
 				wall = makeWall(i,j)--creates a wall
 				g1:insert(wall)
