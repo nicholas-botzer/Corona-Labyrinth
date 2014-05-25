@@ -165,21 +165,6 @@ local function onSwordBtnRelease()
 end 
 
 -----------------------------------------------------------------------------------------
---Collision handling function. Collision ties in with the analog stick which controls motion. 
---When a collision event is detected the analog stick is informed of the collision, and the wall position
---The analog stick then only lets the player move in a direction away from the wall **(NOTE: Collision is still a bit "buggy" and the user can sometime slide through walls)**
------------------------------------------------------------------------------------------
-local function onCollision( event )
-	if ( event.phase == "began" ) then
-		rect.markX = rect.model.x  --Record where the player's x and y position was when collision occured 
-		rect.markY = rect.model.y
-	end
-end
---------------------------------------------------
---------End Collision Handler---------------------
---------------------------------------------------
-
------------------------------------------------------------------------------------------
 --updateHealth decreases the health bar when the player takes damage
 -----------------------------------------------------------------------------------------
 local function updateHealth( event )
@@ -772,8 +757,7 @@ end--end if for map generation
 end
 
 local function main( event )
-	print(analogStick:getAngle())
-	analogStick:slide(rect,-rect.speed, true)
+	analogStick:slide(rect,-rect.speed)
 	if(floorsDone == 0 and not fixed) then  
 		fixed = true
 		rect.health = 100 
@@ -816,7 +800,6 @@ function scene:enterScene( event )
 	Runtime:addEventListener( "enterFrame", main )
 	Runtime:addEventListener( "enterFrame", updateHealth ) --listens for changing health
 	Runtime:addEventListener( "enterFrame", trackPlayer) --makes the enimies track the player
-	Runtime:addEventListener("collision", onCollision) --checks for player collision
 	storyboard.returnTo = "menu" 
 	handleConsumption()  --Determine if any items were placed onto the player/potions used
 	audio.stop(menuMusicChannel)
@@ -836,7 +819,6 @@ function scene:exitScene( event )
 	Runtime:removeEventListener( "enterFrame", main )
 	Runtime:removeEventListener( "enterFrame", updateHealth )
 	Runtime:removeEventListener( "enterFrame", trackPlayer)
-	Runtime:removeEventListener("collision", onCollision)
 	tempHealth = rect.health
 end
 
@@ -847,7 +829,6 @@ function scene:destroyScene( event )
 	Runtime:removeEventListener( "enterFrame", main )
 	Runtime:removeEventListener( "enterFrame", updateHealth )
 	Runtime:removeEventListener( "enterFrame", trackPlayer)
-	Runtime:removeEventListener("collision", onCollision)
 	--make sure we remove things we have added
 	if invBtn then
 		invBtn:removeSelf()
