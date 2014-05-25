@@ -159,79 +159,6 @@ local function detectDiagonal()
 end
 
 -----------------------------------------------------------------------------------------
---Collision handling function. Collision ties in with the analog stick which controls motion. 
---When a collision event is detected the analog stick is informed of the collision, and the wall position
---The analog stick then only lets the player move in a direction away from the wall **(NOTE: Collision is still a bit "buggy" and the user can sometime slide through walls)**
------------------------------------------------------------------------------------------
-local function onCollision( event )
-	if(not event.object2.id) then  	--The detection rectangles have ids assigned to them, these collisions should be handled separately 
-		if ( event.phase == "began" ) then
-			rect:takeDamage(2)			--Walls do approx. 2 (falls to 1 with any armor on) damage when the player touches one
-			dmgMask.isVisible = true;		--Flashes red mask for the damage dealt by the wall
-			if(not analogStick:inCollision()) then
-				rect.markX = rect.model.x 	--Record where the player's x and y position was when collision occured 
-				rect.markY = rect.model.y
-			end
-			wallPos = determineWallPosition()  --Determine wall position 
-			if(wallPos == "noWall") then
-				wallPos = detectDiagonal()
-			end
-			analogStick:collided(true, event.object1.x, event.object1.y, wallPos)	--Inform analog stick of the collision
-		end
-	else --in the case that the collision is actually between a detector and a wall:
-		--Determine which detector collided, set its detected flag to true 
-		if (event.phase == "began") then 
-			event.object2.count = 0 
-			event.object2.detected = true
-			event.object2.markX = event.object2.x 
-			event.object2.markY = event.object2.y 
-		--If the event is ending, determine if the detected flag should be cleared or not
-		elseif(event.phase == "ended") then   
-			event.object2.count = event.object2.count + 1
-			if(event.object2 == upRect) then 	
-				if(event.object2.y > upRect.markY) then
-					upRect.detected = false
-				end
-			end
-			if(event.object2 == leftRect) then 	
-				if(event.object2.x > leftRect.markX) then
-					leftRect.detected = false
-				end
-			end
-			if(event.object2 == rightRect) then 	
-				if(event.object2.x < rightRect.markX) then
-					rightRect.detected = false
-				end
-			end
-			if(event.object2 == downRect) then 	
-				if(event.object2.y < downRect.markY) then
-					downRect.detected = false
-				end
-			end
-			if(event.object2 == TRD) then 
-				TRD.detected = false
-			end
-			if(event.object2 == TLD) then 
-				TLD.detected = false 
-			end
-			if(event.object2 == BRD) then 
-				BRD.detected = false
-			end
-			if(event.object2 == BLD) then 
-				BLD.detected = false
-			end
-			if(event.object2.count >= 2) then
-				analogStick:collided(false) 
-				event.object2.detected = false 
-			end
-		end
-	end
-end
---------------------------------------------------
---------End Collision Handler---------------------
---------------------------------------------------
-
------------------------------------------------------------------------------------------
 --updateHealth decreases the health bar when the player takes damage
 -----------------------------------------------------------------------------------------
 local function updateHealth( event )
@@ -453,84 +380,10 @@ function scene:createScene (event)
 	rect = Player(startRow * tileSize, startCol * tileSize)
 	rect.health = tempHealth
 	physics.addBody(rect.model, "dynamic", {})
-	rect.model.isSensor = true
-	
-	--The following objects are used for collision detection and determine wall position--
-	upRect = display.newRect(rect.model.x , rect.model.y, 20,40)
-	upRect:setReferencePoint(display.BottomCenterReferencePoint)
-	upRect.x = rect.model.x 
-	upRect.y = rect.model.y
-	upRect.id = "upRect"
-	physics.addBody(upRect, "dynamic",{}) 
-	upRect.isSensor = true
-	upRect.isVisible = false
-	
-	downRect = display.newRect(rect.model.x , rect.model.y, 20,40)
-	downRect:setReferencePoint(display.TopCenterReferencePoint)
-	downRect.x = rect.model.x 
-	downRect.y = rect.model.y
-	downRect.id = "downRect"
-	physics.addBody(downRect, "dynamic",{}) 
-	downRect.isSensor = true
-	downRect.isVisible = false
-	
-	rightRect = display.newRect(rect.model.x , rect.model.y, 40,20)
-	rightRect:setReferencePoint(display.CenterLeftReferencePoint)
-	rightRect.x = rect.model.x 
-	rightRect.y = rect.model.y
-	rightRect.id = "rightRect"
-	physics.addBody(rightRect, "dynamic",{}) 
-	rightRect.isSensor = true
-	rightRect.isVisible = false
-	
-	leftRect = display.newRect(rect.model.x , rect.model.y, 40,20)
-	leftRect:setReferencePoint(display.CenterRightReferencePoint)
-	leftRect.x = rect.model.x 
-	leftRect.y = rect.model.y
-	leftRect.id = "leftRect"
-	physics.addBody(leftRect, "dynamic",{}) 
-	leftRect.isSensor = true
-	leftRect.isVisible = false
-	
-	TRD = display.newRect(rect.model.x, rect.model.y, 20,40) 
-	TRD:setReferencePoint(display.BottomCenterReferencePoint)
-	TRD.x = rect.model.x + rect.model.width*.5
-	TRD.y = rect.model.y - rect.model.height*.1
-	TRD.id = "TRD"
-	physics.addBody(TRD, "dynamic",{}) 
-	TRD.isSensor = true
-	TRD.isVisible = false
-	
-	TLD = display.newRect(rect.model.x, rect.model.y, 20,40) 
-	TLD:setReferencePoint(display.BottomCenterReferencePoint)
-	TLD.x = rect.model.x - rect.model.width*.5
-	TLD.y = rect.model.y - rect.model.height*.1
-	TLD.id = "TLD"
-	physics.addBody(TLD, "dynamic",{}) 
-	TLD.isSensor = true
-	TLD.isVisible = false
-	
-	BLD = display.newRect(rect.model.x, rect.model.y, 20,40) 
-	BLD:setReferencePoint(display.TopCenterReferencePoint)
-	BLD.x = rect.model.x - rect.model.width*.5
-	BLD.y = rect.model.y + rect.model.height*.1
-	BLD.id = "BLD"
-	physics.addBody(BLD, "dynamic",{}) 
-	BLD.isSensor = true
-	BLD.isVisible = false
-
-	BRD = display.newRect(rect.model.x, rect.model.y, 20,40) 
-	BRD:setReferencePoint(display.TopCenterReferencePoint)
-	BRD.x = rect.model.x + rect.model.width*.5
-	BRD.y = rect.model.y + rect.model.height*.1
-	BRD.id = "BRD"
-	physics.addBody(BRD, "dynamic",{}) 
-	BRD.isSensor = true
-	BRD.isVisible = false
-	--End of collision aide declarations--
+	rect.model.isFixedRotation = true
 	
 	-- Tutorial prompts to help the player
-	prompt = display.newText("Move the analog stick to control character \nCareful, walls do damage if touched!", rect.model.x-110, rect.model.y-70, native.systemFontBold, 15) 
+	prompt = display.newText("Move the analog stick to control character", rect.model.x-110, rect.model.y-70, native.systemFontBold, 15) 
 	timer.performWithDelay(3000, function() prompt.text = "To open a chest stand in front of it \nand press attack" end) 
 	prompt:setReferencePoint(display.TopLeftReferencePoint)
 		
@@ -562,7 +415,7 @@ function scene:createScene (event)
 end
 
 local function main( event )
-	analogStick:slide(rect,-rect.speed, true)
+	analogStick:slide(rect,-rect.speed)
 	if(prompt) then 
 		prompt.x = rect.model.x-110
 		prompt.y = rect.model.y-70
@@ -577,24 +430,6 @@ local function main( event )
 		timer.performWithDelay (25, function() dmgMask.isVisible = false end)
 	end
 	
-	--Collision detectors have to follow the player sprite--
-	upRect.x = rect.model.x 
-	upRect.y = rect.model.y
-	leftRect.x = rect.model.x 
-	leftRect.y = rect.model.y
-	downRect.x = rect.model.x 
-	downRect.y = rect.model.y
-	rightRect.x = rect.model.x 
-	rightRect.y = rect.model.y
-	TRD.x = rect.model.x + rect.model.width*.5
-	TRD.y = rect.model.y - rect.model.height*.1
-	TLD.x = rect.model.x - rect.model.width*.5
-	TLD.y = rect.model.y - rect.model.height*.1
-	BLD.x = rect.model.x - rect.model.width*.5
-	BLD.y = rect.model.y + rect.model.height*.1
-	BRD.x = rect.model.x + rect.model.width*.5
-	BRD.y = rect.model.y + rect.model.height*.1
-
 	angle = analogStick:getAngle() 
 	moving = analogStick:getMoving()
 	
@@ -627,17 +462,8 @@ function scene:enterScene( event )
 	Runtime:addEventListener( "enterFrame", main )
 	Runtime:addEventListener( "enterFrame", updateHealth ) 	--listens for changing health
 	Runtime:addEventListener( "enterFrame", trackPlayer) 	--makes the enimies track the player
-	Runtime:addEventListener( "collision", onCollision)		--checks for player collision
 	storyboard.returnTo = "menu" 
 	handleConsumption() 		--Determine if any items were placed onto the player/potions used
-	upRect.detected = false 
-	downRect.detected = false 
-	leftRect.detected = false 
-	rightRect.detected = false 
-	TLD.detected = false 
-	TRD.detected = false 
-	BLD.detected = false 
-	BRD.detected = false  
 end
 
 -- Called when scene is about to move offscreen:
@@ -647,7 +473,6 @@ function scene:exitScene( event )
 	Runtime:removeEventListener( "enterFrame", main )
 	Runtime:removeEventListener( "enterFrame", updateHealth )
 	Runtime:removeEventListener( "enterFrame", trackPlayer)
-	Runtime:removeEventListener( "collision", onCollision) 
 	tempHealth = rect.health
 	
 end
@@ -659,7 +484,6 @@ function scene:destroyScene( event )
 	Runtime:removeEventListener( "enterFrame", main )
 	Runtime:removeEventListener( "enterFrame", updateHealth )
 	Runtime:removeEventListener( "enterFrame", trackPlayer)
-	Runtime:removeEventListener( "collision", onCollision) 
 	
 	--make sure we remove things we have added
 	if invBtn then
