@@ -15,6 +15,7 @@ require("main")
 local storyboard = require( "storyboard" )
 local scene = storyboard.newScene()
 local widget = require "widget"
+local ads = require("ads")
 currentSelection = ""
 --End of requires 
 
@@ -438,6 +439,8 @@ function scene:enterScene( event )
 	--When the scene is entered only items that have been found since the last time should be processed 
 	--Any new items need to be displayed and given an ID 
 	group = self.view
+	ads.init("admob", "ca-app-pub-9280611113795519/1200026186")
+	ads.show("banner", { x=0, y=display.contentHeight - (display.contentHeight * .09) } )
 	inventoried = table.getn(inBag) 
 	
 	for i=table.getn(inBag), table.getn(holding)-1, 1 do 
@@ -455,7 +458,7 @@ function scene:exitScene( event )
 		modifyText = nil 
 	end
 	local group = self.view
-	
+	ads.hide()
 end
 
 -- If scene's view is removed, scene:destroyScene() will be called just prior to:

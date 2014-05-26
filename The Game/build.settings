@@ -7,6 +7,14 @@ settings = {
 		default = "landscapeRight",
 		supported = { "landscapeRight", }
 	},
+
+	plugins =
+    	{
+        	["CoronaProvider.ads.admob"] =
+        	{
+            	publisherId = "com.coronalabs"
+        	},
+    	}, 
 	
 	iphone = {
 		plist = {
@@ -35,6 +43,7 @@ settings = {
 
 	androidPermissions = {
   		"android.permission.INTERNET",
+		"android.permission.ACCESS_NETWORK_STATE",
   	},
 
 	]]--
