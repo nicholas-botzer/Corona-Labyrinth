@@ -296,13 +296,10 @@ end
 ---------End Match Item----------
 ---------------------------------
 
------------------------------------------------------------------------------------------
--- BEGINNING OF YOUR IMPLEMENTATION
---
--- NOTE: Code outside of listener functions (below) will only be executed once,
---		 unless storyboard.removeScene() is called.
---
------------------------------------------------------------------------------------------
+--Display user's current modified stats
+local function displayStats()
+	
+end
 
 function scene:createScene (event)
 	group = self.view
@@ -384,7 +381,7 @@ function scene:createScene (event)
 	bag.y = menuBtn.y + menuBtn.height*.5
 	
 	--sword.png
-	local armor = display.newImageRect("knightBW.png", display.contentWidth*.2, display.contentHeight-(menuBtn.height*4)) 
+	local armor = display.newImageRect("armored.png", display.contentWidth*.2, display.contentHeight-(menuBtn.height*4)) 
 	armor:setReferencePoint(display.TopLeftReferencePoint) 
 	armor.x = 0 
 	armor.y = menuBtn.y + menuBtn.height
@@ -398,11 +395,11 @@ function scene:createScene (event)
 	selectedSword.strokeWidth = 3 
 	selectedSword:setStrokeColor(204, 51, 204)
 	
-	selectedBoots = display.newRect(armor.x+(armor.width*.4), armor.y+armor.height*.9, 30,30)
+	selectedBoots = display.newRect(armor.x+(armor.width*.4), armor.y+armor.height*.8, 30,30)
 	selectedBoots.strokeWidth = 3 
 	selectedBoots:setStrokeColor(135, 196, 250)
 	
-	selectedArmor = display.newRect(armor.x+(armor.width*.4), armor.y+armor.height*.1, 30,30)
+	selectedArmor = display.newRect(armor.x+(armor.width*.4), armor.y+armor.height*.2, 30,30)
 	selectedArmor.strokeWidth = 3 
 	selectedArmor:setStrokeColor( 0, 204, 153)
 	
@@ -436,18 +433,21 @@ end
 
 -- Called immediately after scene has moved onscreen:
 function scene:enterScene( event )
+	--Ad stuff
+	ads.init("admob", "ca-app-pub-9280611113795519/1200026186")
+	ads.show("banner", { x=0, y=display.contentHeight - (display.contentHeight * .09) } )
+	
 	--When the scene is entered only items that have been found since the last time should be processed 
 	--Any new items need to be displayed and given an ID 
 	group = self.view
-	ads.init("admob", "ca-app-pub-9280611113795519/1200026186")
-	ads.show("banner", { x=0, y=display.contentHeight - (display.contentHeight * .09) } )
 	inventoried = table.getn(inBag) 
 	
 	for i=table.getn(inBag), table.getn(holding)-1, 1 do 
 		matchItem( holding[i+1] ) 
 	end
 	
-	displayInventory() 
+	displayInventory()
+	displayStats()
 	storyboard.returnTo = storyboard.getPrevious()
 end
 
