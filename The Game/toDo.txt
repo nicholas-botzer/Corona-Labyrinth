@@ -1,13 +1,15 @@
 Zach: 
--Collision Bugs 
--Tutorial prompts / bugs 
--Take out prints and comment code
+-Replace Suit of Armor (?) with different photo (without license) [CHANGE CREDITS to reflect]
+-Directional Attacking 
+-Inventory bugs
+-Inventory stats always display 
 
 Will: 
--Take out prints and comment code
 -Stairs/Attacking bug
+-Replace Sword Slash sound with different sound (without license) [CHANGE CREDITS to reflect]
 
 Nick:
--Death bug
--victory screen 
--Take out prints and comment code
+-Death/Victory bug (?)
+-Other bugs
+-Make collision less intensive 
+-Enemy physics (?)
