@@ -305,6 +305,16 @@ local function makeWall(r,c)
 	
 	return wall
 end
+local function makeWallNoPhysics(r,c)
+	
+	wall = display.newImageRect("walls.png",tileSize,tileSize)
+    wall:setReferencePoint(display.TopLeftReferencePoint)
+    wall.x,wall.y = r*tileSize,c*tileSize
+	
+	return wall
+
+
+end
 --Creates the stairs that allow the user to move onto the next floor
 function makeStairs(r,c)
 	stairs = display.newImageRect("stairs.png",100,100)
@@ -514,6 +524,32 @@ local function tunnels()
 		rooms[randRoom]:connectRooms(rooms[math.random(1,numRooms-1)])
 	end
 end
+local function setWalls(rows,cols)
+
+	for i=0,rows do
+		for j=0,cols do
+			if(adjMatrix[j][i] == 1)then
+				local rowChange = -1
+				local colChange = -1
+				print("checking around room")
+				for x=1,9 do
+					print("rowChange value"..rowChange)
+					print("colChange value"..colChange)
+					if(adjMatrix[j + colChange][i + rowChange] == 0)then
+						adjMatrix[j + colChange][i + rowChange] = 3
+					end
+					colChange = colChange + 1
+					if(x%3 == 0)then
+						colChange = -1
+						rowChange = rowChange + 1
+					end
+				end--end for x loop
+			end--end if
+		end--end  for j
+	end--end for i 
+
+
+end
 local function generateMap(rows,cols)
 	
 	floorType = math.random(1,3)--determines what type of floor tiles we will used the keep the maps looking interesting
@@ -538,8 +574,11 @@ local function generateMap(rows,cols)
 					table.insert(creatures,spider)--inserts the spider into the table
 					monsterGroup:insert(spider.model)--inserts the spider into the monsterGroup
 				end
-			elseif(adjMatrix[j][i] == 0 or adjMatrix[j][i] == 9)then--checks to make a wall
+			elseif(adjMatrix[j][i] == 3 or adjMatrix[j][i] == 9)then--checks to make a wall
 				wall = makeWall(i,j)--creates a wall
+				g1:insert(wall)
+			elseif(adjMatrix[j][i] == 0)then
+				wall = makeWallNoPhysics(i,j) --creates a wall without physics
 				g1:insert(wall)
 			elseif(adjMatrix[j][i] == 2)then--checks to make stairs
 				room = makeRoom(i,j)--creates a floor tile
@@ -655,6 +694,7 @@ else --the player still has to make progress in the labyrinthian and must fight 
 	currentBotCol = 0
 	randomWalk(nodes)--calls the randomwalk algorithm to begin determining how the map will be
 	tunnels()   --creates a few extra connectiong "tunnels" that make the map more confusing and interesting
+	setWalls(rows,cols)
 	generateMap(rows,cols)  --actually spawns the map to the screen, places the monsters, and spawns chests
 end--end if for map generation
 	
