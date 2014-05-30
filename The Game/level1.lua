@@ -29,7 +29,15 @@ local rect, invBtn
 local tempHealth = 100
 local screenW, screenH, halfW = display.contentWidth, display.contentHeight, display.contentWidth*0.5
 local swordBtn
-local swordClashSound = audio.loadSound("Sword clash sound effect.mp3")
+local swordClashSound = audio.loadSound("swordClash.mp3")
+local openChestSound = audio.loadSound("chestOpen.mp3")
+local swordSwishSound = audio.loadSound("swordSwish.mp3")
+local stairsSound = audio.loadSound("stairs.mp3")
+local hurt1Sound = audio.loadSound("hurt1.mp3")
+local hurt2Sound = audio.loadSound("hurt2.mp3")
+local hurt3Sound = audio.loadSound("hurt3.mp3")
+local hurt4Sound = audio.loadSound("hurt4.mp3")
+local hurt5Sound = audio.loadSound("hurt5.mp3")
 local background, wall, ground, mask
 local labyrinthMusic = audio.loadStream("Battle Escape.mp3")
 local bossMusic = audio.loadStream("battleThemeA.mp3")
@@ -106,7 +114,6 @@ local function onSwordBtnRelease()
 	-- change sprite and play audio
 	rect:pickAnimation()
 	rect.model:play()
-	audio.play( swordClashSound ) 
 	
 	--check if player is on the boss floor
 	if(floorsDone >= levels)then  
@@ -119,9 +126,12 @@ local function onSwordBtnRelease()
 	end
 	
 	local stairsFlag = false;
+	local creatureFlag = false;
+	local chestFlag = false;
 	--check to see if the player is trying to go to the next floor
 	if(floorsDone < levels)then
 		if(math.abs(rect.model.x - (stairs.x+50)) < 50 and math.abs(rect.model.y - (stairs.y+50)) < 50)then
+			audio.play( stairsSound )
 			floorsDone = floorsDone + 1
 			tempHealth = rect.health
 			storyboard.purgeScene("level1")
@@ -138,6 +148,8 @@ local function onSwordBtnRelease()
 			if(math.abs(rect.model.x - creatures[monsterNum].model.x) < 40 and math.abs(rect.model.y - creatures[monsterNum].model.y) < 40) then	--check the distance between the player and the creature
 				creatures[monsterNum]:takeDamage(rect.damage)
 				knockbackCreature(rect, creatures[monsterNum], 500)
+				audio.play( swordClashSound ) 
+				creatureFlag = true;
 			end--end if
 		end
 		monsterNum = monsterNum + 1
@@ -150,6 +162,8 @@ local function onSwordBtnRelease()
 		if((math.abs(rect.model.x - chests[chestNum]:getX()) < 50) and (math.abs(rect.model.y - chests[chestNum]:getY()) < 50)) then
 			if(chests[chestNum].closed == true) then 
 				chests[chestNum]:open() 
+				audio.play( openChestSound ) 
+				chestFlag = true;
 				local treasure = display.newText("You found a "..chests[chestNum]:getContents(), rect.model.x-70, rect.model.y-40, native.systemFontBold, 20) 
 				if(not alreadyHolding(chests[chestNum]:getContents()) or string.find(chests[chestNum]:getContents(), "potion")) then
 					table.insert(holding, chests[chestNum]:getContents()) 
@@ -160,7 +174,9 @@ local function onSwordBtnRelease()
 		end--end checking if player is near chest
 		chestNum = chestNum + 1
 	end--end while
-
+	if (not stairsFlag and not chestFlag and not creatureFlag) then
+		audio.play( swordSwishSound ) 
+	end
 	return true
 end 
 
@@ -223,8 +239,16 @@ end
 function attackPlayer(monster)
 	if (math.abs(monster.model.x - rect.model.x) < 25 and math.abs(monster.model.y - rect.model.y) < 25) then	--test if in range
 		rect:takeDamage(monster.damage)
-		knockbackCreature(rect, monster, 300)
+		--knockbackCreature(rect, monster, 300)
+		knockbackCreature(monster, rect, 300)
 		dmgMask.isVisible = true;
+		local rand = math.random(1,5)
+		if (rand == 1) then audio.play(hurt1Sound)
+		elseif (rand == 2) then audio.play(hurt2Sound)
+		elseif (rand == 3) then audio.play(hurt3Sound)
+		elseif (rand == 4) then audio.play(hurt4Sound)
+		elseif (rand == 5) then audio.play(hurt5Sound)
+		end
 	end
 end
 

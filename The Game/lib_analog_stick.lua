@@ -117,6 +117,14 @@ function NewStick( Props )
 				Obj.model.x = ( Obj.model.x + Cos( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 				Obj.model.y = ( Obj.model.y + Sin( Rad(self.angle-90) ) * (-maxSpeed * self.percent) )
 			end
+			if (math.abs(Obj.knockbackX) >= 5) then
+				Obj.model.x = Obj.model.x + Obj.knockbackX
+				Obj.knockbackX = Obj.knockbackX * .75
+			end
+			if (math.abs(Obj.knockbackY) >= 5) then
+				Obj.model.y = Obj.model.y + Obj.knockbackY
+				Obj.knockbackY = Obj.knockbackY * .75
+			end
         end
 		
 		---------------------------------------------

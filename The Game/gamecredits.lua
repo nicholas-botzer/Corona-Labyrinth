@@ -103,6 +103,12 @@ function scene:createScene (event)
 	creditsText = creditsText .. "Battle Escape (Labyrinth Music) - bf5man on OpenGameArt.org (CC-BY 3.0)\n"
 	creditsText = creditsText .. "Battle Theme A (Boss Music) - CynicMusic.com (CC-BY 3.0)\n"
 	
+	creditsText = creditsText .. "\n\n     Sound Effects - Author (Licenses)\n"
+	creditsText = creditsText .. "Sword Hit Effect - Adapted from: qubodup's effect on FreeSound.org (CC-BY 3.0)\n"
+	creditsText = creditsText .. "Sword Miss Effect - Adapted from: 32cheeseman32's effect on FreeSound.org (CC-BY 3.0)\n"
+	creditsText = creditsText .. "Stairs Sound Effect - Adapted from: stereostereo's effect on FreeSound.org (CC-BY 3.0)\n"
+	creditsText = creditsText .. "Damage Sound Effect - Adapted from: bennychico11's effect on FreeSound.org (CC-BY 3.0)\n"
+	
 	creditsText = creditsText .. "\n\n     License Links\n"
 	creditsText = creditsText .. "CC-BY 2.0 - http://creativecommons.org/licenses/by/2.0/legalcode \n"
 	creditsText = creditsText .. "CC-BY 3.0 - http://creativecommons.org/licenses/by/3.0/legalcode \n"
