@@ -23,9 +23,11 @@ function scene:createScene( event )
 	--victory Text to display to the player
 	local victoryText = display.newText( "Congratulations on defeating the evil demon!", 5, display.contentHeight *.3, native.systemFont, 28 )
 	victoryText:setTextColor( 0, 255, 255)
+	local scoreText = display.newText("Your Score: "..currentScore, display.contentWidth*.50,display.contentHeight *.5,native.systemFontBold,24)
+	scoreText:setTextColor(0,255,255)
 	local timeLimit = 9
 	--time till it returns to the home screen
-	local timeLeft = display.newText(timeLimit, display.contentWidth*.50, display.contentHeight *.4, native.systemFontBold, 24)
+	local timeLeft = display.newText(timeLimit, display.contentWidth*.4, display.contentHeight *.4, native.systemFontBold, 24)
 	timeLeft:setTextColor(0,255,255)
 	--function to handle updating the timer
 	local function timerDown()
@@ -40,6 +42,7 @@ function scene:createScene( event )
 	timer.performWithDelay(10000, goToMenu )
 	--insert display items into the group
 	group:insert(victoryText)
+	group:insert(scoreText)
 	group:insert(timeLeft)
         
        

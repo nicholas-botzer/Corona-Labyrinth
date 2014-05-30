@@ -26,7 +26,10 @@ function scene:createScene( event )
 	local timeLimit = 9
 	local timeLeft = display.newText(timeLimit, display.contentWidth*.50, display.contentHeight *.4, native.systemFontBold, 24)
 	timeLeft:setTextColor(255,0,0)
-
+	
+	local scoreText = display.newText("Your Score: "..currentScore, display.contentWidth*.4,display.contentHeight *.5,native.systemFontBold,24)
+	scoreText:setTextColor(255,0,0)
+	
 	local function timerDown()
 		timeLimit = timeLimit-1
 		timeLeft.text = timeLimit
@@ -38,6 +41,7 @@ function scene:createScene( event )
 	timer.performWithDelay(10000, goToMenu )
 	
 	group:insert(deathText)
+	group:insert(scoreText)
 	group:insert(timeLeft)
         
        
@@ -58,6 +62,7 @@ function scene:exitScene( event )
 		timeLeft:removeSelf()
 		timeLeft = nil
 	  end
+	  
 
 end
 

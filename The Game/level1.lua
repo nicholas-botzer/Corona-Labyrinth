@@ -33,7 +33,7 @@ local swordClashSound = audio.loadSound("Sword clash sound effect.mp3")
 local background, wall, ground, mask
 local labyrinthMusic = audio.loadStream("Battle Escape.mp3")
 local bossMusic = audio.loadStream("battleThemeA.mp3")
-
+currentScore = 0
 -- 'onRelease' event listener
 local function onInvBtnRelease()
 	-- go to inventory.lua scene
@@ -178,6 +178,15 @@ local function updateHealth( event )
 		storyboard.purgeScene("level1") 
 	end
 end					
+
+------------------------------------------------------------------------------------------
+--updateScore will update the current Score of the player
+------------------------------------------------------------------------------------------
+function updateScore()
+
+	playerScore.text = "Score: "..currentScore
+
+end
 
 -----------------------------------------------------------------------------------------
 --trackPlayer() cycles through the enemies having them each call the track function
@@ -531,10 +540,7 @@ local function setWalls(rows,cols)
 			if(adjMatrix[j][i] == 1)then
 				local rowChange = -1
 				local colChange = -1
-				print("checking around room")
 				for x=1,9 do
-					print("rowChange value"..rowChange)
-					print("colChange value"..colChange)
 					if(adjMatrix[j + colChange][i + rowChange] == 0)then
 						adjMatrix[j + colChange][i + rowChange] = 3
 					end
@@ -721,6 +727,14 @@ end--end if for map generation
 		10
     }
 	
+	playerScore = display.newText {
+		text = "Score:"..currentScore, --start score for the player
+		x = display.contentWidth * .45,
+		y = 17,
+		native.systemFont,
+		10
+	}
+	
 	-- add an inventory button
 	invBtn = widget.newButton{
 		label="Inventory",
@@ -791,6 +805,7 @@ end--end if for map generation
 	group:insert(healthBackground)
 	group:insert(healthBar)
 	group:insert(healthAmount)
+	group:insert(playerScore)
 	
 end
 

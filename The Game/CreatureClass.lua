@@ -59,6 +59,8 @@ takeDamage(dmg) - reduces the creatures health based on the passed dmg value
 			self.isDead = true
 			self.model:setSequence("death")
 			self.model:play()
+			currentScore = currentScore + (10*difficulty+(floorsDone*2))
+			updateScore()
 		end
 		return
 	end

@@ -59,6 +59,8 @@ takeDamage(dmg) - reduces the spiders health based on the passed dmg value
 			self.isDead = true
 			self.model:setSequence("death")
 			self.model:play()
+			currentScore = currentScore + (8*difficulty + (floorsDone*2))
+			updateScore()
 		end
 		return
 	end
