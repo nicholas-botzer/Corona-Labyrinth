@@ -130,7 +130,7 @@ local function characterIsFacing(enemy)
 		attackable = true 
 	elseif(direction == "left" and vx <= x) then
 		attackable = true
-	elseif(direction == "back" and vy >= y) then
+	elseif(direction == "behind" and vy >= y) then
 		attackable = true
 	end
 	return attackable
