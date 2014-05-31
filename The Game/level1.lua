@@ -106,6 +106,35 @@ local function alreadyHolding(name)
 	return containedFlag 
 end
 
+local function characterIsFacing(enemy)
+	local villian = enemy
+	local vx = enemy.model.x
+	local vy = enemy.model.y
+	local x = rect.model.x
+	local y = rect.model.y
+	local direction = analogStick:getAngle()
+	local attackable = false
+	if(direction < 45 or direction > 315) then
+		direction = "forward"
+	elseif(direction > 45 and direction < 135) then
+		direction = "right"
+	elseif(direction > 135 and direction < 225) then
+		direction = "behind"
+	elseif(direction > 225 and direction < 315) then
+		direction = "left"
+	end
+	
+	if(direction == "forward" and vy <= y) then
+		attackable = true
+	elseif(direction == "right" and vx >= x) then
+		attackable = true 
+	elseif(direction == "left" and vx <= x) then
+		attackable = true
+	elseif(direction == "back" and vy >= y) then
+		attackable = true
+	end
+	return attackable
+end
 ------------------------------------------
 -- onSwordBtnRelease() 
 -- checks to see if the player is in range to use stairs, hit enemies, and open chests
@@ -142,14 +171,17 @@ local function onSwordBtnRelease()
 	
 	--Handle swinging at enemies here 
 	--Test to see if enemy is range of player character.
+	--Character must also be facing the enemy 
 	monsterNum = 1
 	while( monsterNum <= table.getn(creatures) and not stairsFlag )do
 		if( not creatures[monsterNum].isDead)then		--only do range detection if the enemy is alive
 			if(math.abs(rect.model.x - creatures[monsterNum].model.x) < 40 and math.abs(rect.model.y - creatures[monsterNum].model.y) < 40) then	--check the distance between the player and the creature
-				creatures[monsterNum]:takeDamage(rect.damage)
-				knockbackCreature(rect, creatures[monsterNum], 500)
-				audio.play( swordClashSound ) 
-				creatureFlag = true;
+				if(characterIsFacing(creatures[monsterNum])) then
+					creatures[monsterNum]:takeDamage(rect.damage)
+					knockbackCreature(rect, creatures[monsterNum], 500)
+					audio.play( swordClashSound ) 
+					creatureFlag = true;
+				end
 			end--end if
 		end
 		monsterNum = monsterNum + 1
