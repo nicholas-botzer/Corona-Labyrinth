@@ -65,13 +65,18 @@ local function snapTo()
 			end
 			if string.find(itemName, "standard") then 
 				inUse["sword"].modifier = 5
+				rect.damage = rect.baseDamage + 5
 			elseif string.find(itemName, "long") then
 				inUse["sword"].modifier = 8
+				rect.damage = rect.baseDamage + 8
 			elseif string.find(itemName, "great") then 
 				inUse["sword"].modifier = 13 
+				rect.damage = rect.baseDamage + 13
 			elseif string.find(itemName, "Master") then 
 				inUse["sword"].modifier = 18 
+				rect.damage = rect.baseDamage + 18
 			end
+			dmgText.text = "Damage: "..rect.damage
 		else
 			item.x = item.origX 
 			item.y = item.origY
@@ -89,18 +94,21 @@ local function snapTo()
 				inBag[inUse["armor"].num].equipped = false 
 				inUse["armor"] = item
 				inUse["armor"].equipped = true
-				inUse["armor"].new = true
 			else
 				inUse["armor"] = item
 				inUse["armor"].equipped = true
 			end
 			if string.find(itemName, "vest") then
 				inUse["armor"].modifier = 5
+				rect.armor = rect.baseArmor + 5
 			elseif string.find(itemName, "standard") then 
 				inUse["armor"].modifier = 10 
+				rect.armor = rect.baseArmor + 10
 			elseif string.find(itemName, "Master") then 
 				inUse["armor"].modifier = 15 
+				rect.armor = rect.baseArmor + 15
 			end
+			armorText.text = "Armor: "..rect.armor
 		else
 			item.x = item.origX 
 			item.y = item.origY
@@ -118,16 +126,18 @@ local function snapTo()
 				inBag[inUse["boots"].num].equipped = false 
 				inUse["boots"] = item
 				inUse["boots"].equipped = true
-				inUse["boots"].new = true
 			else
 				inUse["boots"] = item
 				inUse["boots"].equipped = true
 			end
 			if string.find(itemName, "standard") then
 				inUse["boots"].modifier = 2
+				rect.speed = rect.baseSpeed + 2
 			elseif string.find(itemName, "grand") then 
+				rect.speed = rect.baseSpeed + 3
 				inUse["boots"].modifier = 3
 			end
+			bootText.text = "Speed: "..rect.speed
 		else
 			item.x = item.origX 
 			item.y = item.origY
@@ -137,9 +147,12 @@ local function snapTo()
 	---POTION SNAP--- 
 	if string.find(itemName, "potion") then 
 		if(math.abs(item.x - potionSlot.x) < 50 and math.abs(item.y - potionSlot.y) < 50) then 
-			inUse["potion"] = inUse["potion"]+20
+			rect.health = rect.health + 20
 			if(string.find(itemName, "strong")) then --Add another to counter for a strong potion (strong potion = 2 normal potions)
-				inUse["potion"] = inUse["potion"]+20 
+				rect.health = rect.health + 20
+			end
+			if(rect.health > 100) then  --Don't allow health to exceed 100
+				rect.health = 100 
 			end
 			inBag[currentSelection].equipped = true
 			item:removeSelf()
@@ -157,41 +170,60 @@ end
 --The text stays up as long as the player is touching the item's image. When released the text should be destroyed
 local function displayModifier(item)
 	--Location and attributes for the text are declared first
-	modifyText = display.newText("", modifierLabel.x-(modifierLabel.width*.25), modifierLabel.y+modifierLabel.height, native.systemFont, 15)
+	modifyText = display.newText("", display.contentWidth*.5, display.contentHeight*.35, native.systemFont, 15)
+	local diff = 0
 	
 	--Determine which item is selected out of the possible items 
 	--Each item's modification text is hard coded 
 	
 	---SWORD Text---
 	if string.find(item, "sword") then 
+		diff =  rect.baseDamage - rect.damage
 		if string.find(item, "standard") then 
-			modifyText.text = "Damage + 5"
+			diff = diff + 5
 		elseif string.find(item, "long") then
-			modifyText.text = "Damage + 8"
+			diff = diff + 8
 		elseif string.find(item, "great") then 
-			modifyText.text = "Damage + 13"
+			diff = diff + 13
 		elseif string.find(item, "Master") then 
-			modifyText.text = "Damage + 18"
+			diff = diff + 18
+		end
+		if(diff > 0) then
+			modifyText.text = "Damage +"..diff
+		else
+			modifyText.text = "Damage "..diff
 		end
 	end
 	
 	---ARMOR Text---
 	if string.find(item, "armor") or string.find(item, "vest") then 
+		diff =  rect.baseArmor - rect.armor
 		if string.find(item, "vest") then
-			modifyText.text = "Armor + 5"
+			diff = diff + 5
 		elseif string.find(item, "standard") then 
-			modifyText.text = "Armor + 10"
+			diff = diff + 10
 		elseif string.find(item, "Master") then 
-			modifyText.text = "Armor + 15"
+			diff = diff + 15
+		end
+		if(diff > 0) then
+			modifyText.text = "Armor +"..diff
+		else
+			modifyText.text = "Armor "..diff
 		end
 	end
 	
 	---BOOT Text---
 	if string.find(item, "boots") then 
+		diff = rect.baseSpeed - rect.speed
 		if string.find(item, "standard") then
-			modifyText.text = "Speed + 2"
+			diff = diff + 2
 		elseif string.find(item, "grand") then 
-			modifyText.text = "Speed + 3"
+			diff = diff + 3
+		end
+		if(diff > 0) then
+			modifyText.text = "Speed +"..diff
+		else
+			modifyText.text = "Speed "..diff
 		end
 	end
 	
@@ -298,7 +330,18 @@ end
 
 --Display user's current modified stats
 local function displayStats()
+	dmgText = display.newText("Damage: "..rect.damage, display.contentWidth*.45, display.contentHeight*.15, native.systemFont, 15)
+	dmgText:setTextColor(0,0,0)
 	
+	armorText = display.newText("Armor: "..rect.armor, display.contentWidth*.45, display.contentHeight*.20, native.systemFont, 15)
+	armorText:setTextColor(0,0,0)
+	
+	bootText = display.newText("Speed: "..rect.speed, display.contentWidth*.45, display.contentHeight*.25, native.systemFont, 15)
+	bootText:setTextColor(0,0,0)
+	
+	group:insert(dmgText)
+	group:insert(armorText)
+	group:insert(bootText)
 end
 
 function scene:createScene (event)
@@ -406,9 +449,6 @@ function scene:createScene (event)
 	potionLabel = display.newText("  Place Potion\n  To Consume", sword.x, selectedBoots.y, native.systemFont, 12)
 	potionLabel:setTextColor(0,0,0)
 	
-	modifierLabel = display.newText("Selected \nItem's \nModifier:", display.contentWidth*.45, menuBtn.y+menuBtn.height, native.systemFont, 12)
-	modifierLabel:setTextColor(0,0,0)
-	
 	potionSlot = display.newRect(potionLabel.x, potionLabel.y, potionLabel.width, potionLabel.height) 
 	potionSlot:setReferencePoint(display.CenterReferencePoint)
 	potionSlot.x = potionLabel.x 
@@ -428,7 +468,6 @@ function scene:createScene (event)
 	group:insert ( selectedArmor ) 
 	group:insert ( potionSlot ) 
 	group:insert ( potionLabel ) 
-	group:insert ( modifierLabel ) 
 end
 
 -- Called immediately after scene has moved onscreen:
@@ -457,6 +496,9 @@ function scene:exitScene( event )
 		modifyText:removeSelf() 
 		modifyText = nil 
 	end
+	dmgText:removeSelf()
+	armorText:removeSelf()
+	bootText:removeSelf()
 	local group = self.view
 	ads.hide()
 end

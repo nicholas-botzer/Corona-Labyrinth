@@ -11,7 +11,8 @@ display.setStatusBar( display.HiddenStatusBar )
 local storyboard = require "storyboard"
 
 -- load menu screen
-holding = {}
+local rect
+holding = {"great sword", "Master's armor"}
 inUse = {}
 
  

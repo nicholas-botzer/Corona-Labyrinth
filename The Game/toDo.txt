@@ -1,15 +1,15 @@
-Zach: 
--Replace Suit of Armor (?) with different photo (without license) [CHANGE CREDITS to reflect]
--Directional Attacking 
+Zach:  
 -Inventory bugs
--Inventory stats always display 
+-Inventory click-click interface 
 
 Will: 
--Stairs/Attacking bug
--Replace Sword Slash sound with different sound (without license) [CHANGE CREDITS to reflect]
+-Stairs/Attacking bug (?)
 
 Nick:
 -Death/Victory bug (?)
 -Other bugs
--Make collision less intensive 
 -Enemy physics (?)
+-Local score tracking 
+
+Unassigned:
+-Make text smaller (Health/Score)

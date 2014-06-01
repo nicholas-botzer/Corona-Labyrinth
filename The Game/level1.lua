@@ -25,7 +25,7 @@ require("ChestClass")
 require("RoomClass")
 
 -- declarations
-local rect, invBtn
+local invBtn
 local tempHealth = 100
 local screenW, screenH, halfW = display.contentWidth, display.contentHeight, display.contentWidth*0.5
 local swordBtn
@@ -56,39 +56,13 @@ end
 -------------------------------
 local function reequip() 
 	if(inUse["sword"]) then
-		rect.damage = rect.baseDamage + inUse["sword"].modifier 
+		rect.damage = rect.baseDamage + inUse["sword"].modifier
 	end
 	if(inUse["armor"]) then
 		rect.armor = rect.baseArmor + inUse["armor"].modifier
 	end
 	if(inUse["boots"]) then
 		rect.speed = rect.baseSpeed + inUse["boots"].modifier 
-	end
-end
-
-----------------------------
---This function is called when the scene is entered (in order to handle moving from the inventory screen back to level1.lua
---This function applies any items that were equipped while in the inventory screen (if any)
-----------------------------
-local function handleConsumption() --Inventory items take effect here 
-	if(inUse["potion"]) then 
-		rect.health = rect.health + inUse["potion"]
-		if(rect.health > 100) then  --Don't allow health to exceed 100
-			rect.health = 100 
-		end
-		inUse["potion"] = 0    --Reset potion restoration counter
-	end
-	if(inUse["sword"] and inUse["sword"].new) then
-		rect.damage = rect.baseDamage + inUse["sword"].modifier 
-		inUse["sword"].new = false  --Item is no longer new, has been equipped 
-	end
-	if(inUse["armor"] and inUse["armor"].new) then
-		rect.armor = rect.baseArmor + inUse["armor"].modifier
-		inUse["armor"].new = false  --Item is no longer new, has been equipped 
-	end
-	if(inUse["boots"] and inUse["boots"].new) then
-		rect.speed = rect.baseSpeed + inUse["boots"].modifier 
-		inUse["boots"].new = false  --Item is no longer new, has been equipped 
 	end
 end
 
@@ -143,6 +117,7 @@ local function onSwordBtnRelease()
 	-- change sprite and play audio
 	rect:pickAnimation()
 	rect.model:play()
+	print(rect.damage)
 	
 	--check if player is on the boss floor
 	if(floorsDone >= levels)then  
@@ -910,7 +885,7 @@ function scene:enterScene( event )
 	Runtime:addEventListener( "enterFrame", updateHealth ) --listens for changing health
 	Runtime:addEventListener( "enterFrame", trackPlayer) --makes the enimies track the player
 	storyboard.returnTo = "menu" 
-	handleConsumption()  --Determine if any items were placed onto the player/potions used
+	--handleConsumption()  --Determine if any items were placed onto the player/potions used
 	audio.stop(menuMusicChannel)
 	if (floorsDone < levels) then
 		audio.stop(bossMusicChannel)
