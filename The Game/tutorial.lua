@@ -17,7 +17,7 @@ require('DemonClass')
 local PerspectiveLib = require("perspective")
 local track = require ("track")
 tileSize = 64
-floorsDone = 0
+floorsDone = -1
 require("main") 
 require("options")
 require("ChestClass")
