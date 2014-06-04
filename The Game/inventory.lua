@@ -16,7 +16,7 @@ local storyboard = require( "storyboard" )
 local scene = storyboard.newScene()
 local widget = require "widget"
 local ads = require("ads")
-currentSelection = ""
+currentSelection = nil
 --End of requires 
 
 -- declarations
@@ -77,6 +77,9 @@ local function snapTo()
 				rect.damage = rect.baseDamage + 18
 			end
 			dmgText.text = "Damage: "..rect.damage
+			currentSelection = nil
+			modifyText:removeSelf() --Removes the text displaying the previous items modification stats 
+			modifyText = nil 
 		else
 			item.x = item.origX 
 			item.y = item.origY
@@ -109,6 +112,9 @@ local function snapTo()
 				rect.armor = rect.baseArmor + 15
 			end
 			armorText.text = "Armor: "..rect.armor
+			currentSelection = nil
+			modifyText:removeSelf() --Removes the text displaying the previous items modification stats 
+			modifyText = nil 
 		else
 			item.x = item.origX 
 			item.y = item.origY
@@ -138,6 +144,9 @@ local function snapTo()
 				inUse["boots"].modifier = 3
 			end
 			bootText.text = "Speed: "..rect.speed
+			currentSelection = nil
+			modifyText:removeSelf() --Removes the text displaying the previous items modification stats 
+			modifyText = nil 
 		else
 			item.x = item.origX 
 			item.y = item.origY
@@ -156,6 +165,9 @@ local function snapTo()
 			end
 			inBag[currentSelection].equipped = true
 			item:removeSelf()
+			currentSelection = nil
+			modifyText:removeSelf() --Removes the text displaying the previous items modification stats 
+			modifyText = nil 
 		else
 			item.x = item.origX 
 			item.y = item.origY
@@ -241,7 +253,16 @@ end
 ---End of modification text function-----
 -----------------------------------------
 
-
+local function placeItem(event)
+	if event.phase == "began" then
+		if(currentSelection) then
+			inBag[currentSelection].x = event.x
+			inBag[currentSelection].y = event.y 
+			snapTo()
+		end
+	end
+	return true
+end
 
 --Handles the drag and drop functionality of item images--
 local function touchHandler(event) 
@@ -249,9 +270,12 @@ local function touchHandler(event)
 		num = event.target.num			--Gets the id of the item (ids are given when items are first displayed in the inventory screen)
 		display.currentStage:setFocus(event.target) --Ensures that no other item's touch handler will be activated during the handling of this item
 													--Without setFocus it would be possible to "lose" the dragging item by moving your finger too fast
-													--Set focus makes this object the focus for all future touch events (until focus is released) 
-
+													--Set focus makes this object the focus for all future touch events (until focus is released) 		
 		if event.phase == "began" then  
+			if modifyText then
+				modifyText:removeSelf()
+				modifyText = nil 
+			end
 			currentSelection = num			--Current Selection refers to the item that is currently being moved -> it is set to the item's id (num)
 			--Cycles through every item currently displayed in the inventory screen and removes their touch
 			--Handlers so that they aren't accidentally fired off during the handling of the current items touch event
@@ -277,11 +301,9 @@ local function touchHandler(event)
 				end
 			end
 			display.currentStage:setFocus(nil)  --Frees the scene's focus 
-			modifyText:removeSelf() --Removes the text displaying the previous items modification stats 
-			modifyText = nil 
 		end
-    end
-    return true
+		return true
+    end 
 end
 ----------------------------------------------------
 ----End of drag and drop handler (touch handler)----
@@ -431,20 +453,23 @@ function scene:createScene (event)
 	
 	local sword = display.newImageRect("swordWhite.png", display.contentWidth*.2, display.contentHeight-(menuBtn.height*4)) 
 	sword:setReferencePoint(display.TopLeftReferencePoint) 
-	sword.x = display.contentWidth*.2
+	sword.x = display.contentWidth*.2	
 	sword.y = menuBtn.y + menuBtn.height 
 	
 	selectedSword = display.newRect(sword.x+(sword.width*.5), sword.y+(sword.height*.5), 30, 30)
 	selectedSword.strokeWidth = 3 
 	selectedSword:setStrokeColor(204, 51, 204)
+	selectedSword:addEventListener("touch", placeItem)
 	
 	selectedBoots = display.newRect(armor.x+(armor.width*.4), armor.y+armor.height*.8, 30,30)
 	selectedBoots.strokeWidth = 3 
 	selectedBoots:setStrokeColor(135, 196, 250)
+	selectedBoots:addEventListener("touch", placeItem)
 	
 	selectedArmor = display.newRect(armor.x+(armor.width*.4), armor.y+armor.height*.2, 30,30)
 	selectedArmor.strokeWidth = 3 
 	selectedArmor:setStrokeColor( 0, 204, 153)
+	selectedArmor:addEventListener("touch", placeItem)
 	
 	potionLabel = display.newText("  Place Potion\n  To Consume", sword.x, selectedBoots.y, native.systemFont, 12)
 	potionLabel:setTextColor(0,0,0)
@@ -454,6 +479,7 @@ function scene:createScene (event)
 	potionSlot.x = potionLabel.x 
 	potionSlot.y = potionLabel.y
 	potionSlot:setFillColor(229,8,8)
+	potionSlot:addEventListener("touch", placeItem)
 	------------End of display set up------------------
 
 	-- all display objects must be inserted into group

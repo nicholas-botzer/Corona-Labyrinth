@@ -12,7 +12,7 @@ local storyboard = require "storyboard"
 
 -- load menu screen
 local rect
-holding = {}
+holding = {"grand boots"}
 inUse = {}
 
  
