@@ -20,7 +20,6 @@ timer.performWithDelay(1000,decreaseTime,60)
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
     local group = self.view
-	
 	local deathText = display.newText( "You have died", display.contentWidth*.38, display.contentHeight *.3, native.systemFont, 28 )
 	deathText:setTextColor( 255, 0, 0 )
 	local timeLimit = 9
@@ -39,7 +38,7 @@ function scene:createScene( event )
 	end
 	timer.performWithDelay(1000,timerDown,timeLimit)
 	timer.performWithDelay(10000, goToMenu )
-	
+	currentScore = 0
 	group:insert(deathText)
 	group:insert(scoreText)
 	group:insert(timeLeft)
