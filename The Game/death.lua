@@ -9,6 +9,8 @@ local widget = require "widget"
 local function goToMenu( event )
 	-- go to menu.lua scene
 	storyboard.gotoScene( "menu", "fade", 500 )
+	floorsDone = 0
+	storyboard.purgeScene("level1")
 	storyboard.purgeScene("death")
 	return true	-- indicates successful touch
 

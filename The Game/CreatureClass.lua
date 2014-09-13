@@ -1,4 +1,5 @@
 local LCS = require 'LCS'
+local storyboard = require( "storyboard" )
 require "options"	-- options needed for difficulty variable
 
 Creature = LCS.class({health, maxHealth, damage, armor, speed, spriteOptions, mySheet ,model, moveX = 0, moveY = 0, knockbackX = 0, knockbackY = 0, isDead})
@@ -59,7 +60,7 @@ takeDamage(dmg) - reduces the creatures health based on the passed dmg value
 			self.isDead = true
 			self.model:setSequence("death")
 			self.model:play()
-			if ( not floorsDone == -1) then
+			if ( floorsDone >= 0 ) then
 				currentScore = currentScore + (10*difficulty+(floorsDone*2))
 				updateScore()
 			end

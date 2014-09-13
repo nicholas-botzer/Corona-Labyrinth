@@ -11,6 +11,7 @@ function Demon:init(posX, posY)
 	self.damage = 5 + difficulty * 5
 	self.armor = 4 + difficulty
 	self.speed = 3 + difficulty
+	self.isDead = false
 
 	--Declare and set up Sprite Image Sheet and sequence data
 	spriteOptions = {	
@@ -59,6 +60,8 @@ takeDamage(dmg) - reduces the demons health based on the passed dmg value
 			self.isDead = true
 			self.model:setSequence("death")
 			self.model:play()
+			currentScore = currentScore + (22*difficulty+(floorsDone*3))
+			updateScore()
 		end
 		return
 	end

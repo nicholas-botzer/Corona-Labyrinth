@@ -40,8 +40,8 @@ local function onRelease(btnName)
     	difficulty = 2
     else 
     	selected.y = hardMode.y + 20
-   		difficulty = 3
-    end 
+   		difficulty = 3    
+	end 
     return true ;
 end
 

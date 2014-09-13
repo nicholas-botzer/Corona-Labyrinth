@@ -7,7 +7,7 @@ function Player:init(posX, posY)
 	-- Initialize player's base attributes
 	self.health = 100
 	self.maxHealth = 100
-	self.baseDamage = 10 
+	self.baseDamage = 10
 	self.damage = 10
 	self.baseArmor = 1 
 	self.armor = 1

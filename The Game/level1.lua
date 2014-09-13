@@ -117,11 +117,16 @@ local function onSwordBtnRelease()
 	-- change sprite and play audio
 	rect:pickAnimation()
 	rect.model:play()
-	print(rect.damage)
 	
 	--check if player is on the boss floor
 	if(floorsDone >= levels)then  
-		if(creatures[1].isDead == true)then
+		bossesDead = true;
+		for z=1, (difficulty+1) do
+			if (creatures[z].isDead == false)then
+				bossesDead = false
+			end
+		end
+		if (bossesDead == true) then
 			-- when the boss is dead goto the victory screen
 			storyboard.gotoScene("victory", "fade", 500)
 			storyboard.purgeScene("inventory")
@@ -265,7 +270,6 @@ end
 	already been placed in that area and if that value exceeds 10 then it will not generate in that direction
 ]]					
 local function checkValidDir(r,c,botRow,botCol,dir)
-	
 	count = 0
 	if(dir == 0)then--scans to the left
 		local column = c - 5
@@ -696,12 +700,25 @@ if(floorsDone >= levels)then --checks to see if the player is on the boos floor
 		end -- end for y
 	end--end for x
 	generateBossRoom(9,9)--spawns the boss room
-	startRow = 5 --initalizes the location that the user will be placed at to start
+	startRow = 5 --initializes the location that the user will be placed at to start
 	startCol = 5
-	creature = Demon((5*tileSize),(3*tileSize))--creates the evil demon the player will fight
-	table.insert(creatures, creature)
-	monsterGroup:insert(creature.model)
-	--start the awsome boss fight music
+	local bossX = math.random(9)
+	local bossY = math.random(9)
+	creatures = {}
+	for i=0, difficulty do	
+		bossX = math.random(9)
+		bossY = math.random(9)
+		while( bossX == 5) do
+			bossX = math.random(9)
+		end
+		while ( bossY == 5) do
+			bossY = math.random(9)
+		end
+		boss = Demon(bossX*tileSize,bossY*tileSize)--creates the evil demon the player will fight
+		table.insert(creatures, boss)
+		monsterGroup:insert(boss.model)
+	end
+	--start the awesome boss fight music
 	bossMusicChannel = audio.play( bossMusic, {channel=3, loops=-1, fadein=1000})
 else --the player still has to make progress in the labyrinthian and must fight through another floor
 	
@@ -750,21 +767,9 @@ end--end if for map generation
     healthBar.y = 10
     
 	--holds the text that displays the player's current health
-    healthAmount = display.newText {
-    	text = "100/100", --defualt value, gets overwritten in updateHealth()
-    	x = 70,
-    	y = 17,
-		native.systemFont,
-		10
-    }
-	
-	playerScore = display.newText {
-		text = "Score:"..currentScore, --start score for the player
-		x = display.contentWidth * .45,
-		y = 17,
-		native.systemFont,
-		10
-	}
+	healthAmount = display.newText("", 70, 7, native.systemFont, 18)
+
+	playerScore = display.newText("Score:"..currentScore, display.contentWidth * .45, 7, native.systemFont, 20)
 	
 	-- add an inventory button
 	invBtn = widget.newButton{

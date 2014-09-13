@@ -346,11 +346,7 @@ function scene:createScene (event)
     healthBar.x = 10
     healthBar.y = 10
     
-    healthAmount = display.newText {
-    	text = "100/100", --default value, gets overwritten in updateHealth()
-    	x = 70,
-    	y = 17
-    }
+    healthAmount = display.newText("", 70, 7, native.systemFont, 18)
 	
 	-- add an inventory button
 	invBtn = widget.newButton{
