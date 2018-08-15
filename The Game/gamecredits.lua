@@ -4,8 +4,8 @@
 --
 -----------------------------------------------------------------------------------------
 require("main") 
-local storyboard = require( "storyboard" )
-local scene = storyboard.newScene()
+local composer = require( "composer" )
+local scene = composer.newScene()
 
 local widget = require "widget"
 
@@ -16,12 +16,12 @@ local screenW, screenH, halfW = display.contentWidth, display.contentHeight, dis
 -- 'onRelease' event listener
 local function onMenuBtnRelease()
 	-- go to menu.lua scene
-	storyboard.gotoScene( "menu", "fade", 500 )
+	composer.gotoScene( "menu", {effect="fade", time=500} )
 	return true	-- indicates successful touch
 end
 local function onBackBtnRelease()
 	-- go to menu.lua scene
-	storyboard.gotoScene( "options", "fade", 200 )
+	composer.gotoScene( "options", {effect="fade", time=200})
 	return true	-- indicates successful touch
 end
 
@@ -30,11 +30,11 @@ end
 -- BEGINNING OF IMPLEMENTATION
 --
 -- NOTE: Code outside of listener functions (below) will only be executed once,
---		 unless storyboard.removeScene() is called.
+--		 unless composer.removeScene() is called.
 --
 -----------------------------------------------------------------------------------------
 
-function scene:createScene (event)
+function scene:create (event)
 	local group = self.view
 
 	-- add a Menu button
@@ -46,7 +46,6 @@ function scene:createScene (event)
 		width=154, height=30,
 		onRelease = onMenuBtnRelease	-- event listener function
 	}
-	menuBtn:setReferencePoint( display.CenterReferencePoint )
 	menuBtn.x = menuBtn.width * .5
 	menuBtn.y = menuBtn.height * .5
 	
@@ -58,7 +57,6 @@ function scene:createScene (event)
 		width=154, height=30,
 		onRelease = onBackBtnRelease	-- event listener function
 	}
-	backBtn:setReferencePoint( display.CenterReferencePoint )
 	backBtn.x = display.contentWidth - creditsBtn.width * .5
 	backBtn.y = creditsBtn.height * .5
 
@@ -123,7 +121,8 @@ function scene:createScene (event)
 	-- ********************************************
 	
 	local creditsTextObject = display.newText(creditsText, 0,0, 800,0, "Arial", 14)
-	creditsTextObject:setTextColor(50)
+	creditsTextObject.anchorX, creditsTextObject.anchorY = 0, 0
+	creditsTextObject:setTextColor(0)
 	scrollableCredits:insert(creditsTextObject)
 	
 	--add to display group
@@ -134,18 +133,18 @@ function scene:createScene (event)
 end
 
 -- Called immediately after scene has moved onscreen:
-function scene:enterScene( event )
+function scene:enter( event )
 	local group = self.view
-	storyboard.returnTo = "options" 
+	composer.returnTo = "options" 
 end
 
 -- Called when scene is about to move offscreen:
-function scene:exitScene( event )
+function scene:exit( event )
 	local group = self.view
 end
 
--- If scene's view is removed, scene:destroyScene() will be called just prior to:
-function scene:destroyScene( event )
+-- If scene's view is removed, scene:destroy() will be called just prior to:
+function scene:destroy( event )
 	local group = self.view
 	if menuBtn then
 		menuBtn:removeSelf()
@@ -161,20 +160,12 @@ end
 -- END OF IMPLEMENTATION
 -----------------------------------------------------------------------------------------
 
--- "createScene" event is dispatched if scene's view does not exist
-scene:addEventListener( "createScene", scene )
-
--- "enterScene" event is dispatched whenever scene transition has finished
-scene:addEventListener( "enterScene", scene )
-
--- "exitScene" event is dispatched whenever before next scene's transition begins
-scene:addEventListener( "exitScene", scene )
-
--- "destroyScene" event is dispatched before view is unloaded, which can be
--- automatically unloaded in low memory situations, or explicitly via a call to
--- storyboard.purgeScene() or storyboard.removeScene().
-scene:addEventListener( "destroyScene", scene )
-
+-----------------------------------------------------------------------------------------
+-- Listener setup
+scene:addEventListener( "create", scene )
+scene:addEventListener( "show", scene )
+scene:addEventListener( "hide", scene )
+scene:addEventListener( "destroy", scene )
 -----------------------------------------------------------------------------------------
 
 return scene

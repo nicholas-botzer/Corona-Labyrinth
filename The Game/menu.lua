@@ -117,8 +117,12 @@ function scene:show (event)
 	composer.returnTo = "menu" 
 	
 	--stop all other music and resume playing the menu music
-	audio.stop(labyrinthMusicChannel)
-	audio.stop(bossMusicChannel)
+	if(labyrinthMusicChannel ~= nil) then
+		audio.stop(labyrinthMusicChannel)
+	end
+	if (bossMusicChannel ~= nil) then
+		audio.stop(bossMusicChannel)
+	end
 	audio.play(menuMusic, {channel=1, loops=-1, fadein=1000})
 end
 
@@ -150,19 +154,12 @@ end
 -- END OF YOUR IMPLEMENTATION
 -----------------------------------------------------------------------------------------
 
--- "createScene" event is dispatched if scene's view does not exist
+-----------------------------------------------------------------------------------------
+-- Listener setup
 scene:addEventListener( "create", scene )
-
--- "enterScene" event is dispatched whenever scene transition has finished
 scene:addEventListener( "show", scene )
-
--- "exitScene" event is dispatched whenever before next scene's transition begins
 scene:addEventListener( "hide", scene )
-
--- "destroyScene" event is dispatched before view is unloaded, which can be
--- automatically unloaded in low memory situations, or explicitly via a call to composer.removeScene().
 scene:addEventListener( "destroy", scene )
-
 -----------------------------------------------------------------------------------------
 
 return scene

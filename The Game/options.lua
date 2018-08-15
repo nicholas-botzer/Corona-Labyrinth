@@ -6,8 +6,8 @@
 
 require("main")
  
-local storyboard = require( "storyboard" )
-local scene = storyboard.newScene()
+local composer = require( "composer" )
+local scene = composer.newScene()
 --local ads = require ("ads")
 difficulty = 1
 levels = math.random(3,5)
@@ -21,12 +21,12 @@ local screenW, screenH, halfW = display.contentWidth, display.contentHeight, dis
 -- 'onRelease' event listener
 local function onCreditsBtnRelease()
 	-- go to credits.lua scene
-	storyboard.gotoScene( "gamecredits", "fade", 500 )
+	composer.gotoScene( "gamecredits", {effect="fade", time=500} )
 	return true	-- indicates successful touch
 end
 local function onMenuBtnRelease()
 	-- go to menu.lua scene
-	storyboard.gotoScene( "menu", "fade", 500 )
+	composer.gotoScene( "menu", {effect="fade", time=500} )
 	return true	-- indicates successful touch
 end
 
@@ -64,7 +64,7 @@ end
 -- BEGINNING OF IMPLEMENTATION
 --
 -- NOTE: Code outside of listener functions (below) will only be executed once,
---		 unless storyboard.removeScene() is called.
+--		 unless composer.remove() is called.
 --
 -----------------------------------------------------------------------------------------
 local function adListener( event )
@@ -74,12 +74,12 @@ local function adListener( event )
 end
 
 
-function scene:createScene (event)
+function scene:create (event)
 	local group = self.view
 	
 	-- create a grey rectangle as the backdrop
 	local background = display.newImageRect( "optionsScreen.png", display.contentWidth, display.contentHeight )
-	background:setReferencePoint( display.TopLeftReferencePoint )
+	background.anchorX, background.anchorY = 0, 0
 	background.x, background.y = 0, 0
 	
 	
@@ -92,7 +92,6 @@ function scene:createScene (event)
 		width=154, height=30,
 		onRelease = onMenuBtnRelease	-- event listener function
 	}
-	menuBtn:setReferencePoint( display.CenterReferencePoint )
 	menuBtn.x = menuBtn.width * .5
 	menuBtn.y = menuBtn.height * .5
 	
@@ -104,13 +103,11 @@ function scene:createScene (event)
 		width=154, height=30,
 		onRelease = onCreditsBtnRelease	-- event listener function
 	}
-	creditsBtn:setReferencePoint( display.CenterReferencePoint )
 	creditsBtn.x = display.contentWidth - creditsBtn.width * .5
 	creditsBtn.y = creditsBtn.height * .5
 
 	--create a red rectangle to be placed behind the difficulty widgets
     selected = display.newRect(200, 290, 158, 45) 
-    selected:setReferencePoint(display.CenterReferencePoint) 
     selected.x = display.contentWidth *.15 + (154)*.5 
     selected.y = display.contentHeight *.45 + (40)*.5
     selected.strokeWidth = 3
@@ -119,7 +116,6 @@ function scene:createScene (event)
     
 	--create a red rectangle to be placed behind the number of floors widgets
     selected2 = display.newRect(400,290,158,45)
-    selected2:setReferencePoint(display.CenterReferencePoint)
     selected2.x = display.contentWidth *.67 + (154)*.5
     selected2.y = display.contentHeight *.45+ (40)*.5
     selected2.strokeWidth = 3
@@ -137,7 +133,7 @@ function scene:createScene (event)
     	onRelease = function() return onRelease("easy") end
     	
     }
-    easyMode:setReferencePoint(display.TopLeftReferencePoint)
+	easyMode.anchorX, easyMode.anchorY = 0, 0
     easyMode.x = display.contentWidth * .15
     easyMode.y = display.contentHeight*.45
     
@@ -150,7 +146,7 @@ function scene:createScene (event)
     	onRelease = function() return onRelease("med") end
     	
     }
-    mediumMode:setReferencePoint(display.TopLeftReferencePoint)
+	mediumMode.anchorX, mediumMode.anchorY = 0, 0
     mediumMode.x = display.contentWidth * .15
     mediumMode.y = display.contentHeight*.60
     
@@ -162,7 +158,7 @@ function scene:createScene (event)
     	width=154, height=40,
     	onRelease = function() return onRelease("hard") end
     }
-    hardMode:setReferencePoint(display.TopLeftReferencePoint)
+	hardMode.anchorX, hardMode.anchorY = 0, 0
     hardMode.x = display.contentWidth * .15
     hardMode.y = display.contentHeight*.75
     
@@ -176,7 +172,7 @@ function scene:createScene (event)
     	width=154, height=40,
     	onRelease = function() return levelSelected("low") end
     }
-    lowLevels:setReferencePoint(display.TopLeftReferencePoint)
+	lowLevels.anchorX, lowLevels.anchorY = 0, 0
     lowLevels.x = display.contentWidth * .67
     lowLevels.y = display.contentHeight*.45
     
@@ -188,7 +184,7 @@ function scene:createScene (event)
     	width=154, height=40,
     	onRelease = function() return levelSelected("medium") end
     }
-    midLevels:setReferencePoint(display.TopLeftReferencePoint)
+	midLevels.anchorX, midLevels.anchorY = 0, 0
     midLevels.x = display.contentWidth * .67
     midLevels.y = display.contentHeight*.60
     
@@ -200,7 +196,7 @@ function scene:createScene (event)
     	width=154, height=40,
     	onRelease = function() return levelSelected("high") end
     }
-    highLevels:setReferencePoint(display.TopLeftReferencePoint)
+	highLevels.anchorX, highLevels.anchorY = 0, 0
     highLevels.x = display.contentWidth * .67
     highLevels.y = display.contentHeight*.75
     
@@ -233,21 +229,21 @@ function scene:createScene (event)
 end
 
 -- Called immediately after scene has moved onscreen:
-function scene:enterScene( event )
+function scene:enter( event )
 	local group = self.view
 	-- ads.init("admob", "ca-app-pub-9280611113795519/1956905785", adListener)
 	-- ads.show("banner", { x=0, y=display.contentHeight - (display.contentHeight * .09) } )
-	storyboard.returnTo = "menu" 
+	composer.returnTo = "menu" 
 end
 
 -- Called when scene is about to move offscreen:
-function scene:exitScene( event )
+function scene:exit( event )
 	local group = self.view
 	-- ads.hide()
 end
 
--- If scene's view is removed, scene:destroyScene() will be called just prior to:
-function scene:destroyScene( event )
+-- If scene's view is removed, scene:destroy() will be called just prior to:
+function scene:destroy( event )
 	local group = self.view
 	if menuBtn then
 		menuBtn:removeSelf()
@@ -292,20 +288,12 @@ end
 -- END OF YOUR IMPLEMENTATION
 -----------------------------------------------------------------------------------------
 
--- "createScene" event is dispatched if scene's view does not exist
-scene:addEventListener( "createScene", scene )
-
--- "enterScene" event is dispatched whenever scene transition has finished
-scene:addEventListener( "enterScene", scene )
-
--- "exitScene" event is dispatched whenever before next scene's transition begins
-scene:addEventListener( "exitScene", scene )
-
--- "destroyScene" event is dispatched before view is unloaded, which can be
--- automatically unloaded in low memory situations, or explicitly via a call to
--- storyboard.purgeScene() or storyboard.removeScene().
-scene:addEventListener( "destroyScene", scene )
-
+-----------------------------------------------------------------------------------------
+-- Listener setup
+scene:addEventListener( "create", scene )
+scene:addEventListener( "show", scene )
+scene:addEventListener( "hide", scene )
+scene:addEventListener( "destroy", scene )
 -----------------------------------------------------------------------------------------
 
 return scene
