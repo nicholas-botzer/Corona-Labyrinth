@@ -8,7 +8,8 @@
 display.setStatusBar( display.HiddenStatusBar )
 
 -- include the Corona "storyboard" module
-local storyboard = require "storyboard"
+local composer = require "composer"
+composer.gotoScene( "menu" )
 
 -- load menu screen
 local rect
@@ -16,7 +17,7 @@ holding = {}
 inUse = {}
 
  
-storyboard.gotoScene( "menu" )
+
 
 --Codes the keys for back button functionality 
 local function onKeyEvent(event)
@@ -24,7 +25,7 @@ local function onKeyEvent(event)
     local keyName = event.keyName 
     
 	if ( "back" == keyName and phase == "up" ) then
-		storyboard.gotoScene( storyboard.returnTo, "fade", 500 )
+		composer.gotoScene( composer.returnTo, {effect="fade", time=500} )
 		return true	-- indicates successful touch
 		
 	else 

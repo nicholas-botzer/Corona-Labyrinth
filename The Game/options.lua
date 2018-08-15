@@ -8,7 +8,7 @@ require("main")
  
 local storyboard = require( "storyboard" )
 local scene = storyboard.newScene()
-local ads = require ("ads")
+--local ads = require ("ads")
 difficulty = 1
 levels = math.random(3,5)
 
@@ -235,15 +235,15 @@ end
 -- Called immediately after scene has moved onscreen:
 function scene:enterScene( event )
 	local group = self.view
-	ads.init("admob", "ca-app-pub-9280611113795519/1956905785", adListener)
-	ads.show("banner", { x=0, y=display.contentHeight - (display.contentHeight * .09) } )
+	-- ads.init("admob", "ca-app-pub-9280611113795519/1956905785", adListener)
+	-- ads.show("banner", { x=0, y=display.contentHeight - (display.contentHeight * .09) } )
 	storyboard.returnTo = "menu" 
 end
 
 -- Called when scene is about to move offscreen:
 function scene:exitScene( event )
 	local group = self.view
-	ads.hide()
+	-- ads.hide()
 end
 
 -- If scene's view is removed, scene:destroyScene() will be called just prior to:
@@ -285,7 +285,7 @@ function scene:destroyScene( event )
 		creditsBtn:removeSelf()
 		creditsBtn = nil
 	end
-	ads.hide()
+	--ads.hide()
 end
 
 -----------------------------------------------------------------------------------------

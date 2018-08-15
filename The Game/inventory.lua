@@ -15,7 +15,7 @@ require("main")
 local storyboard = require( "storyboard" )
 local scene = storyboard.newScene()
 local widget = require "widget"
-local ads = require("ads")
+--local ads = require("ads")
 currentSelection = nil
 --End of requires 
 
@@ -499,8 +499,8 @@ end
 -- Called immediately after scene has moved onscreen:
 function scene:enterScene( event )
 	--Ad stuff
-	ads.init("admob", "ca-app-pub-9280611113795519/1200026186")
-	ads.show("banner", { x=0, y=display.contentHeight - (display.contentHeight * .09) } )
+	-- ads.init("admob", "ca-app-pub-9280611113795519/1200026186")
+	-- ads.show("banner", { x=0, y=display.contentHeight - (display.contentHeight * .09) } )
 	
 	--When the scene is entered only items that have been found since the last time should be processed 
 	--Any new items need to be displayed and given an ID 
@@ -526,7 +526,7 @@ function scene:exitScene( event )
 	armorText:removeSelf()
 	bootText:removeSelf()
 	local group = self.view
-	ads.hide()
+	--ads.hide()
 end
 
 -- If scene's view is removed, scene:destroyScene() will be called just prior to:

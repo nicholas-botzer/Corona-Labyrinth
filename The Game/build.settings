@@ -8,13 +8,13 @@ settings = {
 		supported = { "landscapeRight", }
 	},
 
-	plugins =
-    	{
-        	["CoronaProvider.ads.admob"] =
-        	{
-            	publisherId = "com.coronalabs"
-        	},
-    	}, 
+	
+	--[[ plugins =     	{
+		["CoronaProvider.ads.admob"] =
+		{
+			publisherId = "com.coronalabs"
+		},
+	}, ]]--
 	
 	iphone = {
 		plist = {

@@ -4,9 +4,9 @@
 --
 -----------------------------------------------------------------------------------------
 
-require("main") 
-local storyboard = require( "storyboard" )
-local scene = storyboard.newScene()
+--require("main") 
+local composer = require( "composer" )
+local scene = composer.newScene()
 
 -- include Corona's "widget" library
 local widget = require "widget"
@@ -20,24 +20,24 @@ local menuMusic = audio.loadStream("MysticalCaverns.mp3")
 local function onPlayBtnRelease()
 	
 	-- go to level1.lua scene
-	storyboard.purgeScene("tutorial")
-	storyboard.gotoScene( "level1", "fade", 500 )
+	composer.removeScene("tutorial")
+	composer.gotoScene( "level1", {effect="fade", time=500} )
 	
 	return true	-- indicates successful touch
 end
 local function onOptionsBtnRelease()
 	
 	-- go to options.lua scene
-	storyboard.gotoScene( "options", "fade", 200 )
+	composer.gotoScene( "options", {effect="fade", time=500} )
 	
 	return true	-- indicates successful touch
 end
 local function onTutorialBtnRelease()
 	
 	-- go to options.lua scene
-	storyboard.purgeScene("level1")
-	storyboard.purgeScene("inventory")
-	storyboard.gotoScene( "tutorial", "fade", 200 )
+	composer.removeScene("level1")
+	composer.removeScene("inventory")
+	composer.gotoScene( "tutorial", {effect="fade", time=500} )
 	
 	return true	-- indicates successful touch
 end
@@ -46,11 +46,11 @@ end
 -- BEGINNING OF YOUR IMPLEMENTATION
 -- 
 -- NOTE: Code outside of listener functions (below) will only be executed once,
---		 unless storyboard.removeScene() is called.
+--		 unless composer.removeScene() is called.
 -- 
 -----------------------------------------------------------------------------------------
 
-function scene:createScene ( event )
+function scene:create ( event )
 	local group = self.view
 
 	--play menuMusic
@@ -58,12 +58,12 @@ function scene:createScene ( event )
 	
 	-- set the background to the menu image
 	local background = display.newImageRect( "Capture.PNG", display.contentWidth, display.contentHeight )
-	background:setReferencePoint( display.TopLeftReferencePoint )
+	background.anchorX, background.anchorY = 0, 0
 	background.x, background.y = 0, 0
 	
 	--create the title text for the start menu screen
 	local titleText = display.newImageRect("titleText.png", display.contentWidth*.85, display.contentHeight*.5)
-	titleText:setReferencePoint(display.TopLeftReferencePoint)
+	titleText.anchorX, titleText.anchorY = 0, 0
 	titleText.x = display.contentWidth*.07
 	titleText.y = display.contentHeight*.05
 	
@@ -76,7 +76,6 @@ function scene:createScene ( event )
 		width=150, height=35,
 		onRelease = onPlayBtnRelease
 	}
-	playBtn:setReferencePoint( display.CenterReferencePoint )
 	playBtn.x = display.contentWidth*.8
 	playBtn.y = display.contentHeight * .70
 	
@@ -89,7 +88,6 @@ function scene:createScene ( event )
 		width=150, height=35,
 		onRelease = onTutorialBtnRelease
 	}
-	tutorialBtn:setReferencePoint( display.CenterReferencePoint )
 	tutorialBtn.x = display.contentWidth*.50
 	tutorialBtn.y = display.contentHeight * .80
 	
@@ -102,7 +100,6 @@ function scene:createScene ( event )
 		width=150, height=35,
 		onRelease = onOptionsBtnRelease
 	}
-	optionsBtn:setReferencePoint( display.CenterReferencePoint )
 	optionsBtn.x = display.contentWidth * .20
 	optionsBtn.y = display.contentHeight * .70
 	
@@ -115,9 +112,9 @@ function scene:createScene ( event )
 end
 
 --Called immediately after scene has moved onscreen:
-function scene:enterScene (event)
+function scene:show (event)
 	local group = self.view
-	storyboard.returnTo = "menu" 
+	composer.returnTo = "menu" 
 	
 	--stop all other music and resume playing the menu music
 	audio.stop(labyrinthMusicChannel)
@@ -132,7 +129,7 @@ function scene:exitScene( event )
 end
 
 -- If scene's view is removed, scene:destroyScene() will be called just prior to:
-function scene:destroyScene( event )
+function scene:destroy( event )
 	local group = self.view
 	--remove all widgets
 	if playBtn then
@@ -154,18 +151,17 @@ end
 -----------------------------------------------------------------------------------------
 
 -- "createScene" event is dispatched if scene's view does not exist
-scene:addEventListener( "createScene", scene )
+scene:addEventListener( "create", scene )
 
 -- "enterScene" event is dispatched whenever scene transition has finished
-scene:addEventListener( "enterScene", scene )
+scene:addEventListener( "show", scene )
 
 -- "exitScene" event is dispatched whenever before next scene's transition begins
-scene:addEventListener( "exitScene", scene )
+scene:addEventListener( "hide", scene )
 
 -- "destroyScene" event is dispatched before view is unloaded, which can be
--- automatically unloaded in low memory situations, or explicitly via a call to
--- storyboard.purgeScene() or storyboard.removeScene().
-scene:addEventListener( "destroyScene", scene )
+-- automatically unloaded in low memory situations, or explicitly via a call to composer.removeScene().
+scene:addEventListener( "destroy", scene )
 
 -----------------------------------------------------------------------------------------
 
