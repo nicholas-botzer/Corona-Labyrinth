@@ -651,6 +651,45 @@ local function generateBossRoom(rows,cols)
 		end
 	end
 end
+
+
+local function main( event )
+	analogStick:slide(rect,-rect.speed)
+	if(floorsDone == 0 and not fixed) then  
+		fixed = true
+		rect.health = 100 
+	end
+	
+	--Remove the damage mask after 25ms if it is currently visible--
+	if (dmgMask.isVisible) then
+		timer.performWithDelay (25, function() dmgMask.isVisible = false end)
+	end
+	
+	angle = analogStick:getAngle() 
+	moving = analogStick:getMoving()
+	
+	--Determine which animation to play based on the direction of the analog stick	
+	if(angle <= 45 or angle > 315) then
+		seq = "forward"
+	elseif(angle <= 135 and angle > 45) then
+		seq = "right"
+	elseif(angle <= 225 and angle > 135) then 
+		seq = "back" 
+	elseif(angle <= 315 and angle > 225) then 
+		seq = "left" 
+	end
+	
+	--Change the sequence only if another sequence isn't still playing 
+	if(not (seq == rect.model.sequence) and moving) then -- and not attacking
+		rect.model:setSequence(seq)
+	end
+	
+	--If the analog stick is moving, animate the sprite
+	if(moving) then 
+		rect.model:play() 
+	end
+end
+
 -----------------------------------------------------------------------------------------
 -- BEGINNING OF YOUR IMPLEMENTATION
 --
@@ -691,72 +730,72 @@ function scene:create (event)
 	dmgMask.x, dmgMask.y = 0, 0
 	dmgMask.isVisible = false
 	
-if(floorsDone >= levels)then --checks to see if the player is on the boos floor
-	bossRoom = {} 
-	for x=0,9 do --generates the boss room that the user will be placed into to fight the evil demon
-		bossRoom[x] = {}
-		for y=0,9 do
-			if(x == 0 or x == 9)then
-				bossRoom[x][y] = 9
-			elseif(y == 0 or y == 9)then
-				bossRoom[x][y] = 9
-			else
-				bossRoom[x][y] = 1
-			end -- end if
-		end -- end for y
-	end--end for x
-	generateBossRoom(9,9)--spawns the boss room
-	startRow = 5 --initializes the location that the user will be placed at to start
-	startCol = 5
-	local bossX = math.random(9)
-	local bossY = math.random(9)
-	creatures = {}
-	for i=0, difficulty do	
-		bossX = math.random(9)
-		bossY = math.random(9)
-		while( bossX == 5) do
+	if(floorsDone >= levels)then --checks to see if the player is on the boos floor
+		bossRoom = {} 
+		for x=0,9 do --generates the boss room that the user will be placed into to fight the evil demon
+			bossRoom[x] = {}
+			for y=0,9 do
+				if(x == 0 or x == 9)then
+					bossRoom[x][y] = 9
+				elseif(y == 0 or y == 9)then
+					bossRoom[x][y] = 9
+				else
+					bossRoom[x][y] = 1
+				end -- end if
+			end -- end for y
+		end--end for x
+		generateBossRoom(9,9)--spawns the boss room
+		startRow = 5 --initializes the location that the user will be placed at to start
+		startCol = 5
+		local bossX = math.random(9)
+		local bossY = math.random(9)
+		creatures = {}
+		for i=0, difficulty do	
 			bossX = math.random(9)
-		end
-		while ( bossY == 5) do
 			bossY = math.random(9)
+			while( bossX == 5) do
+				bossX = math.random(9)
+			end
+			while ( bossY == 5) do
+				bossY = math.random(9)
+			end
+			boss = Demon(bossX*tileSize,bossY*tileSize)--creates the evil demon the player will fight
+			table.insert(creatures, boss)
+			monsterGroup:insert(boss.model)
 		end
-		boss = Demon(bossX*tileSize,bossY*tileSize)--creates the evil demon the player will fight
-		table.insert(creatures, boss)
-		monsterGroup:insert(boss.model)
-	end
-	--start the awesome boss fight music
-	bossMusicChannel = audio.play( bossMusic, {channel=3, loops=-1, fadein=1000})
-else --the player still has to make progress in the labyrinthian and must fight through another floor
+		--start the awesome boss fight music
+		bossMusicChannel = audio.play( bossMusic, {channel=3, loops=-1, fadein=1000})
+	else --the player still has to make progress in the labyrinthian and must fight through another floor
 	
-	--define use for coordinates of last positioned room
-	adjMatrix = {} --holds the map grid that will be used for map generation
-	rows = 62 --the size that the map is overall
-	cols = 62
-	for i=0,rows do
-		adjMatrix[i] = {}
-		for j=0,cols do
-			if(i == 0 or i == 62 or i == 1 or i == 2 or i == 3 or i == 4 or i == 59 or i ==60 or i == 61 or i ==62)then
-				adjMatrix[i][j] = 9 -- creates a binding box along the outside of the map to signify the edge for the algorithm
-			elseif(j == 0 or j == 62 or j == 1 or j == 2 or j == 3 or j == 4 or j == 59 or j ==60 or j == 61 or j ==62)then 
-				adjMatrix[i][j] = 9 -- the binding box is more than 1 deep to make it run smother and ensure no errors
-			else
-				adjMatrix[i][j] = 0 --creates a blank spot that originally signifies a wall but can be turned into a room tile
-			end--end if
+		--define use for coordinates of last positioned room
+		adjMatrix = {} --holds the map grid that will be used for map generation
+		rows = 62 --the size that the map is overall
+		cols = 62
+		for i=0,rows do
+			adjMatrix[i] = {}
+			for j=0,cols do
+				if(i == 0 or i == 62 or i == 1 or i == 2 or i == 3 or i == 4 or i == 59 or i ==60 or i == 61 or i ==62)then
+					adjMatrix[i][j] = 9 -- creates a binding box along the outside of the map to signify the edge for the algorithm
+				elseif(j == 0 or j == 62 or j == 1 or j == 2 or j == 3 or j == 4 or j == 59 or j ==60 or j == 61 or j ==62)then 
+					adjMatrix[i][j] = 9 -- the binding box is more than 1 deep to make it run smother and ensure no errors
+				else
+					adjMatrix[i][j] = 0 --creates a blank spot that originally signifies a wall but can be turned into a room tile
+				end--end if
+			end
 		end
-	end
-	
-	local nodes = math.random(7,13) --deteremines how many rooms should get generated for a particular floor
-	startRow = 0 --used for Rect's start position
-	startCol = 0
-	currentRow = 0 --holds the global's that we will use so the next room and hallway can be spawned
-	currentCol = 0
-	currentBotRow = 0
-	currentBotCol = 0
-	randomWalk(nodes)--calls the randomwalk algorithm to begin determining how the map will be
-	tunnels()   --creates a few extra connectiong "tunnels" that make the map more confusing and interesting
-	setWalls(rows,cols)
-	generateMap(rows,cols)  --actually spawns the map to the screen, places the monsters, and spawns chests
-end--end if for map generation
+		
+		local nodes = math.random(7,13) --deteremines how many rooms should get generated for a particular floor
+		startRow = 0 --used for Rect's start position
+		startCol = 0
+		currentRow = 0 --holds the global's that we will use so the next room and hallway can be spawned
+		currentCol = 0
+		currentBotRow = 0
+		currentBotCol = 0
+		randomWalk(nodes)--calls the randomwalk algorithm to begin determining how the map will be
+		tunnels()   --creates a few extra connectiong "tunnels" that make the map more confusing and interesting
+		setWalls(rows,cols)
+		generateMap(rows,cols)  --actually spawns the map to the screen, places the monsters, and spawns chests
+	end--end if for map generation
 	
 
 	--generate the health bar for the player
@@ -847,43 +886,9 @@ end--end if for map generation
 	group:insert(healthAmount)
 	group:insert(playerScore)
 	
-end
-
-local function main( event )
-	analogStick:slide(rect,-rect.speed)
-	if(floorsDone == 0 and not fixed) then  
-		fixed = true
-		rect.health = 100 
-	end
-	
-	--Remove the damage mask after 25ms if it is currently visible--
-	if (dmgMask.isVisible) then
-		timer.performWithDelay (25, function() dmgMask.isVisible = false end)
-	end
-	
-	angle = analogStick:getAngle() 
-	moving = analogStick:getMoving()
-	
-	--Determine which animation to play based on the direction of the analog stick	
-	if(angle <= 45 or angle > 315) then
-		seq = "forward"
-	elseif(angle <= 135 and angle > 45) then
-		seq = "right"
-	elseif(angle <= 225 and angle > 135) then 
-		seq = "back" 
-	elseif(angle <= 315 and angle > 225) then 
-		seq = "left" 
-	end
-	
-	--Change the sequence only if another sequence isn't still playing 
-	if(not (seq == rect.model.sequence) and moving) then -- and not attacking
-		rect.model:setSequence(seq)
-	end
-	
-	--If the analog stick is moving, animate the sprite
-	if(moving) then 
-		rect.model:play() 
-	end
+	Runtime:addEventListener( "enterFrame", main )
+	Runtime:addEventListener( "enterFrame", updateHealth ) --listens for changing health
+	Runtime:addEventListener( "enterFrame", trackPlayer) --makes the enimies track the player
 end
 
 -- Called immediately after scene has moved onscreen:

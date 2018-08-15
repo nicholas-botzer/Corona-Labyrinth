@@ -277,6 +277,47 @@ local function generateBossRoom(rows,cols)
 	stairs = makeStairs(2,2)
 	g1:insert( stairs )
 end
+
+local function main( event )
+	analogStick:slide(rect,-rect.speed)
+	if(prompt) then 
+		prompt.x = rect.model.x-110
+		prompt.y = rect.model.y-70
+	end
+	if(not tutorialFixed) then
+		tutorialFixed = true
+		rect.health = 100 
+	end
+	
+	--Remove the damage mask after 25ms if it is currently visible--
+	if (dmgMask.isVisible) then
+		timer.performWithDelay (25, function() dmgMask.isVisible = false end)
+	end
+	
+	angle = analogStick:getAngle() 
+	moving = analogStick:getMoving()
+	
+	--Determine which animation to play based on the direction of the analog stick	
+	if(angle <= 45 or angle > 315) then
+		seq = "forward"
+	elseif(angle <= 135 and angle > 45) then
+		seq = "right"
+	elseif(angle <= 225 and angle > 135) then 
+		seq = "back" 
+	elseif(angle <= 315 and angle > 225) then 
+		seq = "left" 
+	end
+	
+	--Change the sequence only if another sequence isn't still playing 
+	if(not (seq == rect.model.sequence) and moving) then -- and not attacking
+		rect.model:setSequence(seq)
+	end
+	
+	--If the analog stick is moving, animate the sprite
+	if(moving) then 
+		rect.model:play() 
+	end
+end
 -----------------------------------------------------------------------------------------
 -- BEGINNING OF IMPLEMENTATION
 --
@@ -422,47 +463,9 @@ function scene:create (event)
 	group:insert(healthAmount)
 	g1:insert(prompt)
 	
-end
-
-local function main( event )
-	analogStick:slide(rect,-rect.speed)
-	if(prompt) then 
-		prompt.x = rect.model.x-110
-		prompt.y = rect.model.y-70
-	end
-	if(not tutorialFixed) then
-		tutorialFixed = true
-		rect.health = 100 
-	end
-	
-	--Remove the damage mask after 25ms if it is currently visible--
-	if (dmgMask.isVisible) then
-		timer.performWithDelay (25, function() dmgMask.isVisible = false end)
-	end
-	
-	angle = analogStick:getAngle() 
-	moving = analogStick:getMoving()
-	
-	--Determine which animation to play based on the direction of the analog stick	
-	if(angle <= 45 or angle > 315) then
-		seq = "forward"
-	elseif(angle <= 135 and angle > 45) then
-		seq = "right"
-	elseif(angle <= 225 and angle > 135) then 
-		seq = "back" 
-	elseif(angle <= 315 and angle > 225) then 
-		seq = "left" 
-	end
-	
-	--Change the sequence only if another sequence isn't still playing 
-	if(not (seq == rect.model.sequence) and moving) then -- and not attacking
-		rect.model:setSequence(seq)
-	end
-	
-	--If the analog stick is moving, animate the sprite
-	if(moving) then 
-		rect.model:play() 
-	end
+	Runtime:addEventListener( "enterFrame", main )
+	Runtime:addEventListener( "enterFrame", updateHealth )
+	Runtime:addEventListener( "enterFrame", trackPlayer)
 end
 
 -- Called immediately after scene has moved onscreen:
