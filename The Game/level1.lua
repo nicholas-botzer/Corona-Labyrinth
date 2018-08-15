@@ -4,8 +4,8 @@
 --
 -----------------------------------------------------------------------------------------
 
-local storyboard = require( "storyboard" )
-local scene = storyboard.newScene()
+local composer = require( "composer" )
+local scene = composer.newScene()
 system.activate("multitouch")
 local widget = require "widget"
 local StickLib   = require("lib_analog_stick")
@@ -45,7 +45,7 @@ currentScore = 0
 -- 'onRelease' event listener
 local function onInvBtnRelease()
 	-- go to inventory.lua scene
-	storyboard.gotoScene( "inventory", "fade", 150 )
+	composer.gotoScene( "inventory", {effect="fade", time=150} )
 	return true	-- indicates successful touch
 end
 
@@ -128,9 +128,9 @@ local function onSwordBtnRelease()
 		end
 		if (bossesDead == true) then
 			-- when the boss is dead goto the victory screen
-			storyboard.gotoScene("victory", "fade", 500)
-			storyboard.purgeScene("inventory")
-			storyboard.purgeScene("level1")
+			composer.gotoScene("victory", {effect="fade", time=500} )
+			composer.removeScene("inventory")
+			composer.removeScene("level1")
 		end
 	end
 	
@@ -143,8 +143,8 @@ local function onSwordBtnRelease()
 			audio.play( stairsSound )
 			floorsDone = floorsDone + 1
 			tempHealth = rect.health
-			storyboard.purgeScene("level1")
-			storyboard.reloadScene("level1")
+			composer.removeScene("level1")
+			composer.gotoScene("level1")
 			stairsFlag = true;
 		end
 	end
@@ -201,9 +201,9 @@ local function updateHealth( event )
 	healthBar.x = 10 - ((100 - rect.health) * .6)	--shifts the healthBar so it decreases from the right only
 --calculation	= starting X - ((playerMaxHealth - playerCurrentHealth) * half of 1% of the healthBar.width)
 	if(rect.health <= 0) then
-		storyboard.gotoScene("death")
-		storyboard.purgeScene("inventory")
-		storyboard.purgeScene("level1") 
+		composer.gotoScene("death")
+		composer.removeScene("inventory")
+		composer.removeScene("level1") 
 	end
 end					
 
@@ -334,40 +334,41 @@ local function makeRoom(r,c)
 	elseif(floorType == 3)then
 		room = display.newImageRect("floor3.png",tileSize,tileSize)
 	end
-    room:setReferencePoint(display.TopLeftReferencePoint)
+	room.anchorX, room.anchorY = 0, 0
     room.x,room.y = r*tileSize,c*tileSize
 	
 	return room
 end
+
 --Creates the wall tiles for the map and adds the physics to them for collision handling
 local function makeWall(r,c)
 
 	wall = display.newImageRect("walls.png",tileSize,tileSize)
-    wall:setReferencePoint(display.TopLeftReferencePoint)
+	wall.anchorX, wall.anchorY = 0, 0
     wall.x,wall.y = r*tileSize,c*tileSize
 	physics.addBody(wall,"static",{})
 	
 	return wall
 end
+
 local function makeWallNoPhysics(r,c)
 	
 	wall = display.newImageRect("walls.png",tileSize,tileSize)
-    wall:setReferencePoint(display.TopLeftReferencePoint)
+	wall.anchorX, wall.anchorY = 0, 0
     wall.x,wall.y = r*tileSize,c*tileSize
 	
 	return wall
-
-
 end
+
 --Creates the stairs that allow the user to move onto the next floor
 function makeStairs(r,c)
 	stairs = display.newImageRect("stairs.png",100,100)
-	stairs:setReferencePoint(display.TopLeftReferencePoint)
+	stairs.anchorX, stairs.anchorY = 0, 0
 	stairs.x,stairs.y = (r*tileSize)-50,(c*tileSize)-50  --sets the location for the stair generation and moves it slighty to adjust for larger size
 	
 	return stairs
-
 end
+
 --[[
 	The GenerateRoom function spawns the room off of a hallway that was selected by the algorithm.
 	Dir - 0 spawns to the left
@@ -431,6 +432,7 @@ local function generateRoom(r,c,botRow,botCol,dir)
 	room = Room.new(currentRow,currentCol,currentBotRow,currentBotCol) -- creates an object with the info for each rooms key points
 	table.insert(rooms,room) -- inserts it into a table to allow for tunnel generation
 end
+
 local function generateEdge(r,c,botRow,botCol,dir)
 	
 	if(dir == 0 or dir == 2)then --does spawning for the left and right directions of the hallways
@@ -483,8 +485,8 @@ local function generateEdge(r,c,botRow,botCol,dir)
 			currentRow = row
 		end
 	end -- end outer if
-
 end
+
 --Spawn the start room that the user will be placed into
 --This room will always be a 3X3 room
 local function generateStartRoom(r,c)
@@ -495,6 +497,7 @@ local function generateStartRoom(r,c)
 		end
 	end
 end
+
 local function randomWalk(nodes)
     --choose a starting location forced somewhere inward on the map for an intial location
 	currentRow = math.random(15,45)
@@ -559,6 +562,7 @@ local function randomWalk(nodes)
 	adjMatrix[currentCol + 2][currentRow + 2] = 2 --places stairs
 
 end
+
 --tunnels connects some of the rooms that are further apart so that there a more passageways for the player to go through
 local function tunnels()
 	
@@ -568,6 +572,7 @@ local function tunnels()
 		rooms[randRoom]:connectRooms(rooms[math.random(1,numRooms-1)])
 	end
 end
+
 local function setWalls(rows,cols)
 
 	for i=0,rows do
@@ -588,9 +593,8 @@ local function setWalls(rows,cols)
 			end--end if
 		end--end  for j
 	end--end for i 
-
-
 end
+
 local function generateMap(rows,cols)
 	
 	floorType = math.random(1,3)--determines what type of floor tiles we will used the keep the maps looking interesting
@@ -631,6 +635,7 @@ local function generateMap(rows,cols)
 	end--end outer for
 
 end
+
 --creates the boos room for the final floor
 local function generateBossRoom(rows,cols)
 --generates the boos room which will be the same size every time
@@ -650,11 +655,11 @@ end
 -- BEGINNING OF YOUR IMPLEMENTATION
 --
 -- NOTE: Code outside of listener functions (below) will only be executed once,
---		 unless storyboard.removeScene() is called.
+--		 unless composer.removeScene() is called.
 --
 -----------------------------------------------------------------------------------------
 
-function scene:createScene (event)
+function scene:create (event)
 	local group = self.view 
 	--set up music
 	--audio.pause(menuMusicChannel)
@@ -677,11 +682,12 @@ function scene:createScene (event)
 	monsterGroup = display.newGroup()
 	--mask that limits the player vision slightly, the mask also turns red briefly upon taking damage
 	mask = display.newImageRect( "masked3.png", screenW, screenH )
-	mask:setReferencePoint( display.TopLeftReferencePoint )
+	mask.anchorX, mask.anchorY = 0, 0
 	mask.x, mask.y = 0, 0
+	
 	--red mask that shows up when the user takes damage
 	dmgMask = display.newImageRect( "masked3_dmg.png", screenW, screenH )
-	dmgMask:setReferencePoint( display.TopLeftReferencePoint )
+	dmgMask.anchorX, dmgMask.anchorY = 0, 0
 	dmgMask.x, dmgMask.y = 0, 0
 	dmgMask.isVisible = false
 	
@@ -755,13 +761,13 @@ end--end if for map generation
 
 	--generate the health bar for the player
 	healthBackground = display.newRect(10,10,120,15) 
-    healthBackground:setReferencePoint(display.TopLeftReferencePoint) 
+	healthBackground.anchorX, healthBackground.anchorY = 0, 0
     healthBackground.strokeWidth = 3
     healthBackground:setFillColor(0,0,0)
     healthBackground:setStrokeColor(255,255,255)
     
     healthBar = display.newRect(10,10,120,15)
-    healthBar:setReferencePoint(display.TopLeftReferencePoint)
+	healthBar.anchorX, healthBar.anchorY = 0, 0
     healthBar:setFillColor(180,0,0)
     healthBar.x = 10
     healthBar.y = 10
@@ -780,7 +786,6 @@ end--end if for map generation
 		width=140, height=30,
 		onRelease = onInvBtnRelease	-- event listener function
 	}
-	invBtn:setReferencePoint( display.CenterReferencePoint )
 	invBtn.x = screenW - invBtn.width * .5
 	invBtn.y = invBtn.height * .5
 	
@@ -793,18 +798,17 @@ end--end if for map generation
 		width = 58, height = 65,
 		onRelease = onSwordBtnRelease
 	}
-	swordBtn:setReferencePoint( display.CenterReferencePoint )
 	swordBtn.x = screenW - swordBtn.width*.7 
 	swordBtn.y = screenH - swordBtn.height
 	
 	-- adds an analog stick
 	analogStick = StickLib.NewStick(
 		{
-			x = screenW * .17,
-			y = screenH * .75,
+			x = screenW * 0.17,
+			y = screenH * 0.75,
 			thumbSize = 50,
 			borderSize = 55,
-			snapBackSpeed = .35,
+			snapBackSpeed = 0.35,
 			R = 255,
 			G = 255,
 			B = 255
@@ -883,13 +887,13 @@ local function main( event )
 end
 
 -- Called immediately after scene has moved onscreen:
-function scene:enterScene( event )
+function scene:enter( event )
 	local group = self.view
 	--creates the eventListeners that are needed to handle different functions
 	Runtime:addEventListener( "enterFrame", main )
 	Runtime:addEventListener( "enterFrame", updateHealth ) --listens for changing health
 	Runtime:addEventListener( "enterFrame", trackPlayer) --makes the enimies track the player
-	storyboard.returnTo = "menu" 
+	composer.returnTo = "menu" 
 	--handleConsumption()  --Determine if any items were placed onto the player/potions used
 	audio.stop(menuMusicChannel)
 	if (floorsDone < levels) then
@@ -902,7 +906,7 @@ function scene:enterScene( event )
 end
 
 -- Called when scene is about to move offscreen:
-function scene:exitScene( event )
+function scene:exit( event )
 	local group = self.view
 	--Removes all of the eventListeners because the scene has changed and they need destroyed
 	Runtime:removeEventListener( "enterFrame", main )
@@ -912,7 +916,7 @@ function scene:exitScene( event )
 end
 
 -- If scene's view is removed, scene:Scene() will be called just prior to:
-function scene:destroyScene( event )
+function scene:destroy( event )
 	local group = self.view
 	--Removes all of the eventListeners because the scene has changed and they need destroyed
 	Runtime:removeEventListener( "enterFrame", main )
@@ -942,20 +946,12 @@ end
 -- END OF YOUR IMPLEMENTATION
 -----------------------------------------------------------------------------------------
 
--- "createScene" event is dispatched if scene's view does not exist
-scene:addEventListener( "createScene", scene )
-
--- "enterScene" event is dispatched whenever scene transition has finished
-scene:addEventListener( "enterScene", scene )
-
--- "exitScene" event is dispatched whenever before next scene's transition begins
-scene:addEventListener( "exitScene", scene )
-
--- "destroyScene" event is dispatched before view is unloaded, which can be
--- automatically unloaded in low memory situations, or explicitly via a call to
--- storyboard.purgeScene() or storyboard.removeScene().
-scene:addEventListener( "destroyScene", scene )
-
+-----------------------------------------------------------------------------------------
+-- Listener setup
+scene:addEventListener( "create", scene )
+scene:addEventListener( "show", scene )
+scene:addEventListener( "hide", scene )
+scene:addEventListener( "destroy", scene )
 -----------------------------------------------------------------------------------------
 
 return scene
