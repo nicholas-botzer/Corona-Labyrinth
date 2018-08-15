@@ -4,8 +4,6 @@
 --
 -----------------------------------------------------------------------------------------
 
-require("main")
- 
 local composer = require( "composer" )
 local scene = composer.newScene()
 --local ads = require ("ads")
@@ -276,10 +274,6 @@ function scene:destroy( event )
 	if highLevels then
 		highLevels:removeSelf()
 		highLevels = nil
-	end
-	if creditsBtn then
-		creditsBtn:removeSelf()
-		creditsBtn = nil
 	end
 	--ads.hide()
 end

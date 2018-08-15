@@ -4,8 +4,8 @@
 --
 -----------------------------------------------------------------------------------------
 
-local storyboard = require( "storyboard" )
-local scene = storyboard.newScene()
+local composer = require( "composer" )
+local scene = composer.newScene()
 system.activate("multitouch")
 local widget = require "widget"
 local StickLib   = require("lib_analog_stick")
@@ -41,7 +41,7 @@ local background, wall, ground, mask
 -- 'onRelease' event listener
 local function onInvBtnRelease()
 	-- go to inventory.lua scene
-	storyboard.gotoScene( "inventory", "fade", 150 )
+	composer.gotoScene( "inventory", {effect="fade", time=150} )
 	return true	-- indicates successful touch
 end
 
@@ -120,9 +120,9 @@ local function onSwordBtnRelease()
 	if( not flag)then
 		if(math.abs(rect.model.x - (stairs.x+50)) < 50 and math.abs(rect.model.y - (stairs.y+50)) < 50)then
 			audio.play( stairsSound )
-			storyboard.gotoScene( "menu", "fade", 500 )	
-			storyboard.purgeScene("tutorial")
-			storyboard.purgeScene("inventory")
+			composer.gotoScene( "menu", {effect="fade", time=500} )	
+			composer.removeScene("tutorial")
+			composer.removeScene("inventory")
 		end
 	end
 	
@@ -176,9 +176,9 @@ local function updateHealth( event )
 	healthBar.x = 10 - ((100 - rect.health) * .6)	--shifts the healthBar so it decreases from the right only
 --calculation	= starting X - ((playerMaxHealth - playerCurrentHealth) * half of 1% of the healthBar.width)
 	if(rect.health <= 0) then
-		storyboard.gotoScene("death")
-		storyboard.purgeScene("inventory")
-		storyboard.purgeScene("tutorial") 
+		composer.gotoScene("death")
+		composer.removeScene("inventory")
+		composer.removeScene("tutorial") 
 	end
 end					
 
@@ -233,7 +233,7 @@ end
 local function makeRoom(r,c)
 
     room = display.newImageRect("floors.png",tileSize,tileSize)
-    room:setReferencePoint(display.TopLeftReferencePoint)
+	room.anchorX, room.anchorY = 0, 0
     room.x,room.y = r*tileSize,c*tileSize
 	
 	return room
@@ -241,7 +241,7 @@ end
 --Creates the wall tiles for the map and adds the physics to them for collision handling
 local function makeWall(r,c)
     wall = display.newImageRect("walls.png",tileSize,tileSize)
-    wall:setReferencePoint(display.TopLeftReferencePoint)
+	wall.anchorX, wall.anchorY = 0, 0
     wall.x,wall.y = r*tileSize,c*tileSize
 	physics.addBody(wall,"static",{})
 	
@@ -250,7 +250,7 @@ end
 --Creates the stairs that allow the user to exit the tutorial
 function makeStairs(r,c)
 	stairs = display.newImageRect("stairs.png",100,100)
-	stairs:setReferencePoint(display.TopLeftReferencePoint)
+	stairs.anchorX, stairs.anchorY = 0, 0
 	stairs.x,stairs.y = (r*tileSize)-50,(c*tileSize)-50
 	
 	return stairs
@@ -281,11 +281,11 @@ end
 -- BEGINNING OF IMPLEMENTATION
 --
 -- NOTE: Code outside of listener functions (below) will only be executed once,
---		 unless storyboard.removeScene() is called.
+--		 unless composer.removeScene() is called.
 --
 -----------------------------------------------------------------------------------------
 
-function scene:createScene (event)
+function scene:create (event)
 	local group = self.view
 
 	tempHealth = 100 -- will set the players health back to 100 when entering the tutorial
@@ -298,11 +298,11 @@ function scene:createScene (event)
 	physics.setGravity(0,0)
 	--mask that limits the player vision slightly, the mask also turns red briefly upon taking damage
 	mask = display.newImageRect( "masked3.png", screenW, screenH )
-	mask:setReferencePoint( display.TopLeftReferencePoint )
+	mask.anchorX, mask.anchorY = 0, 0
 	mask.x, mask.y = 0, 0
 	--red mask that shows up when the user takes damage
 	dmgMask = display.newImageRect( "masked3_dmg.png", screenW, screenH )
-	dmgMask:setReferencePoint( display.TopLeftReferencePoint )
+	dmgMask.anchorX, dmgMask.anchorY = 0, 0
 	dmgMask.x, dmgMask.y = 0, 0
 	dmgMask.isVisible = false
 	
@@ -335,13 +335,13 @@ function scene:createScene (event)
 
 	--generate the health bar for the player
 	healthBackground = display.newRect(10,10,120,15) 
-    healthBackground:setReferencePoint(display.TopLeftReferencePoint) 
+	healthBackground.anchorX, healthBackground.anchorY = 0, 0
     healthBackground.strokeWidth = 3
     healthBackground:setFillColor(0,0,0)
     healthBackground:setStrokeColor(255,255,255)
     
     healthBar = display.newRect(10,10,120,15)
-    healthBar:setReferencePoint(display.TopLeftReferencePoint)
+	healthBar.anchorX, healthBar.anchorY = 0, 0
     healthBar:setFillColor(180,0,0)
     healthBar.x = 10
     healthBar.y = 10
@@ -357,7 +357,6 @@ function scene:createScene (event)
 		width=140, height=30,
 		onRelease = onInvBtnRelease	-- event listener function
 	}
-	invBtn:setReferencePoint( display.CenterReferencePoint )
 	invBtn.x = screenW - invBtn.width * .5
 	invBtn.y = invBtn.height * .5
 	
@@ -370,7 +369,6 @@ function scene:createScene (event)
 		width = 58, height = 65,
 		onRelease = onSwordBtnRelease
 	}
-	swordBtn:setReferencePoint( display.CenterReferencePoint )
 	swordBtn.x = screenW - swordBtn.width*.5 
 	swordBtn.y = screenH - swordBtn.height 
 	
@@ -397,7 +395,7 @@ function scene:createScene (event)
 	-- Tutorial prompts to help the player
 	prompt = display.newText("Move the analog stick to control character", rect.model.x-110, rect.model.y-70, native.systemFontBold, 15) 
 	timer.performWithDelay(3000, function() prompt.text = "To open a chest stand in front of it \nand press attack" end) 
-	prompt:setReferencePoint(display.TopLeftReferencePoint)
+	prompt.anchorX, prompt.anchorY = 0, 0
 		
 	-- all display objects must be inserted into group in layer order 
 	group:insert(g1)
@@ -468,18 +466,18 @@ local function main( event )
 end
 
 -- Called immediately after scene has moved onscreen:
-function scene:enterScene( event )
+function scene:enter( event )
 	local group = self.view
 	--creates the eventListeners that are needed to handle different functions
 	Runtime:addEventListener( "enterFrame", main )
 	Runtime:addEventListener( "enterFrame", updateHealth ) 	--listens for changing health
 	Runtime:addEventListener( "enterFrame", trackPlayer) 	--makes the enimies track the player
-	storyboard.returnTo = "menu" 
+	composer.returnTo = "menu" 
 	handleConsumption() 		--Determine if any items were placed onto the player/potions used
 end
 
 -- Called when scene is about to move offscreen:
-function scene:exitScene( event )
+function scene:exit( event )
 	local group = self.view
 	--Removes all of the eventListeners because the scene has changed and they need destroyed
 	Runtime:removeEventListener( "enterFrame", main )
@@ -490,7 +488,7 @@ function scene:exitScene( event )
 end
 
 -- If scene's view is removed, scene:destroyScene() will be called just prior to:
-function scene:destroyScene( event )
+function scene:destroy( event )
 	local group = self.view
 	--Removes all of the eventListeners because the scene has changed and they need destroyed
 	Runtime:removeEventListener( "enterFrame", main )
@@ -515,7 +513,7 @@ function scene:destroyScene( event )
 		prompt = nil
 	end
 	display.remove(g1)
-	storyboard.purgeScene("inventory")
+	composer.removeScene("inventory")
 	
 end
 
@@ -526,20 +524,12 @@ end
 -- END OF YOUR IMPLEMENTATION
 -----------------------------------------------------------------------------------------
 
--- "createScene" event is dispatched if scene's view does not exist
-scene:addEventListener( "createScene", scene )
-
--- "enterScene" event is dispatched whenever scene transition has finished
-scene:addEventListener( "enterScene", scene )
-
--- "exitScene" event is dispatched whenever before next scene's transition begins
-scene:addEventListener( "exitScene", scene )
-
--- "destroyScene" event is dispatched before view is unloaded, which can be
--- automatically unloaded in low memory situations, or explicitly via a call to
--- storyboard.purgeScene() or storyboard.removeScene().
-scene:addEventListener( "destroyScene", scene )
-
+-----------------------------------------------------------------------------------------
+-- Listener setup
+scene:addEventListener( "create", scene )
+scene:addEventListener( "show", scene )
+scene:addEventListener( "hide", scene )
+scene:addEventListener( "destroy", scene )
 -----------------------------------------------------------------------------------------
 
 return scene

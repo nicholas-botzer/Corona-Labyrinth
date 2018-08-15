@@ -1,5 +1,4 @@
 local LCS = require 'LCS'
-local storyboard = require( "storyboard" )
 require "options"	-- options needed for difficulty variable
 
 Creature = LCS.class({health, maxHealth, damage, armor, speed, spriteOptions, mySheet ,model, moveX = 0, moveY = 0, knockbackX = 0, knockbackY = 0, isDead})

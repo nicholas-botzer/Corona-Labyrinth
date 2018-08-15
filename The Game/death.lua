@@ -1,5 +1,5 @@
-local storyboard = require("storyboard")
-local scene = storyboard.newScene()
+local composer = require("composer")
+local scene = composer.newScene()
 local widget = require "widget"
 
 ---------------------------------------------------------------------------------
@@ -8,11 +8,11 @@ local widget = require "widget"
 
 local function goToMenu( event )
 	-- go to menu.lua scene
-	storyboard.gotoScene( "menu", "fade", 500 )
+	composer.gotoScene( "menu", {effect="fade", time=500} )
 	floorsDone = 0
 	currentScore = 0
-	storyboard.purgeScene("level1")
-	storyboard.purgeScene("death")
+	composer.removeScene("level1")
+	composer.removeScene("death")
 	return true	-- indicates successful touch
 
 end
@@ -21,7 +21,7 @@ end
 
 timer.performWithDelay(1000,decreaseTime,60)
 -- Called when the scene's view does not exist:
-function scene:createScene( event )
+function scene:create( event )
     local group = self.view
 	local deathText = display.newText( "You have died", display.contentWidth*.38, display.contentHeight *.3, native.systemFont, 28 )
 	deathText:setTextColor( 255, 0, 0 )
@@ -51,14 +51,14 @@ end
 
 
 -- Called immediately after scene has moved onscreen:
-function scene:enterScene( event )
+function scene:enter( event )
 		local group = self.view	
  
 end
 
 
 -- Called when scene is about to move offscreen:
-function scene:exitScene( event )
+function scene:exit( event )
      local group = self.view
 	 if timeLeft then
 		timeLeft:removeSelf()
@@ -70,7 +70,7 @@ end
 
 
 -- Called prior to the removal of scene's "view" (display group)
-function scene:destroyScene( event )
+function scene:destroy( event )
      local group = self.view
 	 
 	  if timeLeft then
@@ -83,20 +83,12 @@ end
 -- END OF YOUR IMPLEMENTATION
 ---------------------------------------------------------------------------------
 
--- "createScene" event is dispatched if scene's view does not exist
-scene:addEventListener( "createScene", scene )
-
--- "enterScene" event is dispatched whenever scene transition has finished
-scene:addEventListener( "enterScene", scene )
-
--- "exitScene" event is dispatched before next scene's transition begins
-scene:addEventListener( "exitScene", scene )
-
--- "destroyScene" event is dispatched before view is unloaded, which can be
--- automatically unloaded in low memory situations, or explicitly via a call to
--- storyboard.purgeScene() or storyboard.removeScene().
-scene:addEventListener( "destroyScene", scene )
-
----------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------
+-- Listener setup
+scene:addEventListener( "create", scene )
+scene:addEventListener( "show", scene )
+scene:addEventListener( "hide", scene )
+scene:addEventListener( "destroy", scene )
+-----------------------------------------------------------------------------------------
 
 return scene

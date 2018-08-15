@@ -12,8 +12,8 @@ Most code here is handled through arrays that can be accessed in both level1.lua
 
 --Necessary requirements
 require("main")
-local storyboard = require( "storyboard" )
-local scene = storyboard.newScene()
+local composer = require( "composer" )
+local scene = composer.newScene()
 local widget = require "widget"
 --local ads = require("ads")
 currentSelection = nil
@@ -25,17 +25,17 @@ local backBtn, screenW, screenH, halfW = display.contentWidth, display.contentHe
 -- 'onRelease' event listener
 --Takes the user to the menu screen
 local function onMenuBtnRelease()
-	local previousScene = storyboard.getPrevious()
+	local previousScene = composer.getSceneName( "previous" )
 	-- go to menu.lua scene
-	storyboard.gotoScene( "menu", "fade", 500 )
+	composer.gotoScene( "menu", {effect="fade", time=500} )
 	return true	-- indicates successful touch
 end
 --End menu button function
 
 --Handles back button event
 local function onBackBtnRelease()
-	local previousScene = storyboard.getPrevious()
-	storyboard.gotoScene( previousScene, "fade", 250 )
+	local previousScene = composer.getSceneName( "previous" )
+	composer.gotoScene( previousScene, {effect="fade", time=250} )
 	return true	-- indicates successful touch
 end
 --End of back button code
@@ -366,7 +366,7 @@ local function displayStats()
 	group:insert(bootText)
 end
 
-function scene:createScene (event)
+function scene:create (event)
 	group = self.view
 	inBag = {}   --items in players bag (holding[] elements are converted from strings to their respective sprite when placed into inBag
 	inUse = {}  --Items currently equipped 
@@ -410,7 +410,7 @@ function scene:createScene (event)
 	
 	-- create a grey rectangle as the backdrop
 	local background = display.newImageRect( "optionsScreen.png", display.contentWidth, display.contentHeight )
-	background:setReferencePoint( display.TopLeftReferencePoint )
+	background.anchorX, background.anchorY = 0, 0
 	background.x, background.y = 0, 0
 
 	-- add a Menu button
@@ -422,6 +422,8 @@ function scene:createScene (event)
 		width=154, height=30,
 		onRelease = onMenuBtnRelease	-- event listener function
 	}
+	menuBtn.x = display.contentWidth - menuBtn.width * .5 
+	menuBtn.y = menuBtn.height * .5
 	
 	backBtn = widget.newButton{
 		label="Back",
@@ -431,28 +433,25 @@ function scene:createScene (event)
 		width=154, height=30,
 		onRelease = onBackBtnRelease	-- event listener function
 	}
-	backBtn:setReferencePoint( display.CenterReferencePoint )
 	backBtn.x = backBtn.width *.5 
 	backBtn.y = menuBtn.height * .5 
 	
-	menuBtn:setReferencePoint( display.CenterReferencePoint )
-	menuBtn.x = display.contentWidth - menuBtn.width * .5 
-	menuBtn.y = menuBtn.height * .5
+	
 	
 	-------Displays various icons on the screen with which the player is given reference points to interact with later---------
 	local bag = display.newImageRect("tiles2.png", display.contentWidth*.4, display.contentHeight-(menuBtn.height*2))  
-	bag:setReferencePoint(display.TopLeftReferencePoint)
+	bag.anchorX, bag.anchorY = 0, 0
 	bag.x = display.contentWidth*.6
 	bag.y = menuBtn.y + menuBtn.height*.5
 	
 	--sword.png
 	local armor = display.newImageRect("armored.png", display.contentWidth*.2, display.contentHeight-(menuBtn.height*4)) 
-	armor:setReferencePoint(display.TopLeftReferencePoint) 
+	armor.anchorX, armor.anchorY = 0, 0
 	armor.x = 0 
 	armor.y = menuBtn.y + menuBtn.height
 	
 	local sword = display.newImageRect("swordWhite.png", display.contentWidth*.2, display.contentHeight-(menuBtn.height*4)) 
-	sword:setReferencePoint(display.TopLeftReferencePoint) 
+	sword.anchorX, sword.anchorY = 0, 0
 	sword.x = display.contentWidth*.2	
 	sword.y = menuBtn.y + menuBtn.height 
 	
@@ -475,7 +474,6 @@ function scene:createScene (event)
 	potionLabel:setTextColor(0,0,0)
 	
 	potionSlot = display.newRect(potionLabel.x, potionLabel.y, potionLabel.width, potionLabel.height) 
-	potionSlot:setReferencePoint(display.CenterReferencePoint)
 	potionSlot.x = potionLabel.x 
 	potionSlot.y = potionLabel.y
 	potionSlot:setFillColor(229,8,8)
@@ -497,7 +495,7 @@ function scene:createScene (event)
 end
 
 -- Called immediately after scene has moved onscreen:
-function scene:enterScene( event )
+function scene:enter( event )
 	--Ad stuff
 	-- ads.init("admob", "ca-app-pub-9280611113795519/1200026186")
 	-- ads.show("banner", { x=0, y=display.contentHeight - (display.contentHeight * .09) } )
@@ -513,11 +511,11 @@ function scene:enterScene( event )
 	
 	displayInventory()
 	displayStats()
-	storyboard.returnTo = storyboard.getPrevious()
+	composer.returnTo = composer.getPrevious()
 end
 
 -- Called when scene is about to move offscreen:
-function scene:exitScene( event )
+function scene:exit( event )
 	if(modifyText) then 
 		modifyText:removeSelf() 
 		modifyText = nil 
@@ -531,7 +529,7 @@ end
 
 -- If scene's view is removed, scene:destroyScene() will be called just prior to:
 --Inventory screen is only purged in game ending situations (all items should be wiped from existence)
-function scene:destroyScene( event )
+function scene:destroy( event )
 	holding = {}  --Game is over player isn't holding any items anymore
 	inUse = {}  --No items are in use, since the game is over
 	inBag = {}  --No items are in the player's "bag"
@@ -552,19 +550,12 @@ end
 -- END OF YOUR IMPLEMENTATION
 -----------------------------------------------------------------------------------------
 
--- "createScene" event is dispatched if scene's view does not exist
-scene:addEventListener( "createScene", scene )
-
--- "enterScene" event is dispatched whenever scene transition has finished
-scene:addEventListener( "enterScene", scene )
-
--- "exitScene" event is dispatched whenever before next scene's transition begins
-scene:addEventListener( "exitScene", scene )
-
--- "destroyScene" event is dispatched before view is unloaded, which can be
--- automatically unloaded in low memory situations, or explicitly via a call to
--- storyboard.purgeScene() or storyboard.removeScene().
-scene:addEventListener( "destroyScene", scene )
+-----------------------------------------------------------------------------------------
+-- Listener setup
+scene:addEventListener( "create", scene )
+scene:addEventListener( "show", scene )
+scene:addEventListener( "hide", scene )
+scene:addEventListener( "destroy", scene )
 -----------------------------------------------------------------------------------------
 
 return scene

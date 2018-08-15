@@ -3,7 +3,6 @@
 -- gamecredits.lua
 --
 -----------------------------------------------------------------------------------------
-require("main") 
 local composer = require( "composer" )
 local scene = composer.newScene()
 
