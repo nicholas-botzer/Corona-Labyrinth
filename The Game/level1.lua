@@ -814,7 +814,7 @@ function scene:create (event)
 	--holds the text that displays the player's current health
 	healthAmount = display.newText("", 70, 18, native.systemFont, 18)
 
-	playerScore = display.newText("Score:"..currentScore, display.contentWidth * .45, 7, native.systemFont, 20)
+	playerScore = display.newText("Score:"..currentScore, display.contentWidth * .5, 18, native.systemFont, 20)
 	
 	-- add an inventory button
 	invBtn = widget.newButton{
