@@ -398,8 +398,8 @@ function scene:create (event)
     healthBar:setFillColor(180,0,0)
     healthBar.x = 10
     healthBar.y = 10
-    
-    healthAmount = display.newText("", 70, 7, native.systemFont, 18)
+	
+	healthAmount = display.newText("", 70, 18, native.systemFont, 18)
 	
 	-- add an inventory button
 	invBtn = widget.newButton{

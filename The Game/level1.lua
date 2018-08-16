@@ -328,11 +328,11 @@ end
 --generateMap function and used for that floor of the dungeon
 local function makeRoom(r,c)
 	if(floorType == 1)then
-		room = display.newImageRect("floors.png",tileSize,tileSize)
+		room = display.newImageRect("Images/floors.png",tileSize,tileSize)
 	elseif(floorType == 2)then
-		room = display.newImageRect("floor2.png",tileSize,tileSize)
+		room = display.newImageRect("Images/floor2.png",tileSize,tileSize)
 	elseif(floorType == 3)then
-		room = display.newImageRect("floor3.png",tileSize,tileSize)
+		room = display.newImageRect("Images/floor3.png",tileSize,tileSize)
 	end
 	room.anchorX, room.anchorY = 0, 0
     room.x,room.y = r*tileSize,c*tileSize
@@ -343,7 +343,7 @@ end
 --Creates the wall tiles for the map and adds the physics to them for collision handling
 local function makeWall(r,c)
 
-	wall = display.newImageRect("walls.png",tileSize,tileSize)
+	wall = display.newImageRect("Images/walls.png",tileSize,tileSize)
 	wall.anchorX, wall.anchorY = 0, 0
     wall.x,wall.y = r*tileSize,c*tileSize
 	physics.addBody(wall,"static",{})
@@ -353,7 +353,7 @@ end
 
 local function makeWallNoPhysics(r,c)
 	
-	wall = display.newImageRect("walls.png",tileSize,tileSize)
+	wall = display.newImageRect("Images/walls.png",tileSize,tileSize)
 	wall.anchorX, wall.anchorY = 0, 0
     wall.x,wall.y = r*tileSize,c*tileSize
 	
@@ -362,7 +362,7 @@ end
 
 --Creates the stairs that allow the user to move onto the next floor
 function makeStairs(r,c)
-	stairs = display.newImageRect("stairs.png",100,100)
+	stairs = display.newImageRect("Images/stairs.png",100,100)
 	stairs.anchorX, stairs.anchorY = 0, 0
 	stairs.x,stairs.y = (r*tileSize)-50,(c*tileSize)-50  --sets the location for the stair generation and moves it slighty to adjust for larger size
 	
@@ -720,12 +720,12 @@ function scene:create (event)
 	--monsterGroup holds all of the monsters on it that get placed on the map
 	monsterGroup = display.newGroup()
 	--mask that limits the player vision slightly, the mask also turns red briefly upon taking damage
-	mask = display.newImageRect( "masked3.png", screenW, screenH )
+	mask = display.newImageRect( "Images/masked3.png", screenW, screenH )
 	mask.anchorX, mask.anchorY = 0, 0
 	mask.x, mask.y = 0, 0
 	
 	--red mask that shows up when the user takes damage
-	dmgMask = display.newImageRect( "masked3_dmg.png", screenW, screenH )
+	dmgMask = display.newImageRect( "Images/masked3_dmg.png", screenW, screenH )
 	dmgMask.anchorX, dmgMask.anchorY = 0, 0
 	dmgMask.x, dmgMask.y = 0, 0
 	dmgMask.isVisible = false
@@ -812,7 +812,7 @@ function scene:create (event)
     healthBar.y = 10
     
 	--holds the text that displays the player's current health
-	healthAmount = display.newText("", 70, 7, native.systemFont, 18)
+	healthAmount = display.newText("", 70, 18, native.systemFont, 18)
 
 	playerScore = display.newText("Score:"..currentScore, display.contentWidth * .45, 7, native.systemFont, 20)
 	
@@ -820,8 +820,8 @@ function scene:create (event)
 	invBtn = widget.newButton{
 		label="Inventory",
 		labelColor = { default = {255}, over= {128} },
-		defaultFile="button.png",
-		overFile="button-over.png",
+		defaultFile="Images/button.png",
+		overFile="Images/button-over.png",
 		width=140, height=30,
 		onRelease = onInvBtnRelease	-- event listener function
 	}
@@ -832,8 +832,8 @@ function scene:create (event)
 	swordBtn = widget.newButton{
 		label="Attack",
 		labelColor = {default = {255}, over = {128} },
-		defaultFile="swordIcon.png",
-		overFile="swordIcon.png",
+		defaultFile="Images/swordIcon.png",
+		overFile="Images/swordIcon.png",
 		width = 58, height = 65,
 		onRelease = onSwordBtnRelease
 	}
