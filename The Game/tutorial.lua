@@ -184,9 +184,10 @@ end
 -----------------------------------------------------------------------------------------
 local function updateHealth( event )
 	healthAmount.text = rect.health .. "/" .. rect.maxHealth
+
 	healthBar.width = rect.health * 1.2			--decreases the red in the health bar by 1% of its width
-	healthBar.x = 10 - ((100 - rect.health) * .6)	--shifts the healthBar so it decreases from the right only
---calculation	= starting X - ((playerMaxHealth - playerCurrentHealth) * half of 1% of the healthBar.width)
+	healthBar.anchorX = 0;
+	
 	if(rect.health <= 0) then
 		composer.gotoScene("death")
 		composer.removeScene("inventory")
