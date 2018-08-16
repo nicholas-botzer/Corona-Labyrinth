@@ -359,7 +359,7 @@ local function displayStats()
 	armorText:setTextColor(0,0,0)
 	
 	bootText = display.newText("Speed: "..rect.speed, display.contentWidth*.45, display.contentHeight*.25, native.systemFont, 15)
-	bootText:setTextColor(0,0,0)
+	bootText:setFillColor(0,0,0)
 	
 	group:insert(dmgText)
 	group:insert(armorText)
@@ -403,13 +403,13 @@ function scene:create (event)
 		{name = "leather vest", frames = { 32 }},
 	}
 	
-	weaponImage = graphics.newImageSheet("icons2.png", weaponSettings)
+	weaponImage = graphics.newImageSheet("Images/icons2.png", weaponSettings)
 	--------------------------------------
 	---End Inventory Image declarations 
 	--------------------------------------
 	
 	-- create a grey rectangle as the backdrop
-	local background = display.newImageRect( "optionsScreen.png", display.contentWidth, display.contentHeight )
+	local background = display.newImageRect( "Images/optionsScreen.png", display.contentWidth, display.contentHeight )
 	background.anchorX, background.anchorY = 0, 0
 	background.x, background.y = 0, 0
 
@@ -417,8 +417,8 @@ function scene:create (event)
 	menuBtn = widget.newButton{
 		label="Menu",
 		labelColor = { default = {255}, over= {128} },
-		defaultFile="button.png",
-		overFile="button-over.png",
+		defaultFile="Images/button.png",
+		overFile="Images/button-over.png",
 		width=154, height=30,
 		onRelease = onMenuBtnRelease	-- event listener function
 	}
@@ -428,8 +428,8 @@ function scene:create (event)
 	backBtn = widget.newButton{
 		label="Back",
 		labelColor = { default = {255}, over= {128} },
-		defaultFile="button.png",
-		overFile="button-over.png",
+		defaultFile="Images/button.png",
+		overFile="Images/button-over.png",
 		width=154, height=30,
 		onRelease = onBackBtnRelease	-- event listener function
 	}
@@ -439,18 +439,18 @@ function scene:create (event)
 	
 	
 	-------Displays various icons on the screen with which the player is given reference points to interact with later---------
-	local bag = display.newImageRect("tiles2.png", display.contentWidth*.4, display.contentHeight-(menuBtn.height*2))  
+	local bag = display.newImageRect("Images/tiles2.png", display.contentWidth*.4, display.contentHeight-(menuBtn.height*2))  
 	bag.anchorX, bag.anchorY = 0, 0
 	bag.x = display.contentWidth*.6
 	bag.y = menuBtn.y + menuBtn.height*.5
 	
 	--sword.png
-	local armor = display.newImageRect("armored.png", display.contentWidth*.2, display.contentHeight-(menuBtn.height*4)) 
+	local armor = display.newImageRect("Images/armored.png", display.contentWidth*.2, display.contentHeight-(menuBtn.height*4)) 
 	armor.anchorX, armor.anchorY = 0, 0
 	armor.x = 0 
 	armor.y = menuBtn.y + menuBtn.height
 	
-	local sword = display.newImageRect("swordWhite.png", display.contentWidth*.2, display.contentHeight-(menuBtn.height*4)) 
+	local sword = display.newImageRect("Images/swordWhite.png", display.contentWidth*.2, display.contentHeight-(menuBtn.height*4)) 
 	sword.anchorX, sword.anchorY = 0, 0
 	sword.x = display.contentWidth*.2	
 	sword.y = menuBtn.y + menuBtn.height 

@@ -21,7 +21,7 @@ chestDetails = {
 	sheetContentHeight = 64 
 }
 	
-chestSheet = graphics.newImageSheet("chestResize.png", chestDetails) 
+chestSheet = graphics.newImageSheet("Sprites/chestResize.png", chestDetails) 
 --End of sprite declaration -- 
 
 --List of all potential items that may be placed in the chests--  

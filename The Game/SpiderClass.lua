@@ -20,7 +20,7 @@ function Spider:init(posX, posY)
 		sheetContentWidth = 640, 
 		sheetContentHeight = 320 
 	}
-	mySheet = graphics.newImageSheet("Spider-Sprite.png", spriteOptions) 
+	mySheet = graphics.newImageSheet("Sprites/Spider-Sprite.png", spriteOptions) 
 	sequenceData = {
 		{name = "forward", frames={1,5,6,7,8,9,10}, time = 1000, loopCount = 1},
 		{name = "right", frames={31,35,36,37,38,39,40}, time = 1000, loopCount = 1}, 

@@ -20,7 +20,7 @@ function Creature:init(posX, posY)
 		sheetContentWidth = 832, 
 		sheetContentHeight = 1344 
 	}
-	mySheet = graphics.newImageSheet("skeleton_3.png", spriteOptions, 50, 50)
+	mySheet = graphics.newImageSheet("Sprites/skeleton_3.png", spriteOptions, 50, 50)
 	sequenceData = {
 		{name = "forward", frames={105,106,107,108,109,110,111,112}, time = 500, loopCount = 1},
 		{name = "right", frames={144,145,146,147,148,149,150,151,152}, time = 500, loopCount = 1}, 

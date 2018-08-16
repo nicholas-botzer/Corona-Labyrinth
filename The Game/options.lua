@@ -76,7 +76,7 @@ function scene:create (event)
 	local group = self.view
 	
 	-- create a grey rectangle as the backdrop
-	local background = display.newImageRect( "optionsScreen.png", display.contentWidth, display.contentHeight )
+	local background = display.newImageRect( "Images/optionsScreen.png", display.contentWidth, display.contentHeight )
 	background.anchorX, background.anchorY = 0, 0
 	background.x, background.y = 0, 0
 	
@@ -85,8 +85,8 @@ function scene:create (event)
 	menuBtn = widget.newButton{
 		label="Menu",
 		labelColor = { default = {255}, over= {128} },
-		defaultFile="button.png",
-		overFile="button-over.png",
+		defaultFile="Images/button.png",
+		overFile="Images/button-over.png",
 		width=154, height=30,
 		onRelease = onMenuBtnRelease	-- event listener function
 	}
@@ -96,8 +96,8 @@ function scene:create (event)
 	creditsBtn = widget.newButton{
 		label="Credits",
 		labelColor = { default = {255}, over= {128} },
-		defaultFile="button.png",
-		overFile="button-over.png",
+		defaultFile="Images/button.png",
+		overFile="Images/button-over.png",
 		width=154, height=30,
 		onRelease = onCreditsBtnRelease	-- event listener function
 	}
@@ -125,8 +125,8 @@ function scene:create (event)
     easyMode = widget.newButton{
     	label="Easy",
     	labelColor = { default = {34,139,34}, over ={100,100,250}},
-    	defaultFile="button.png",
-    	overFile="button-over.png",
+    	defaultFile="Images/button.png",
+    	overFile="Images/button-over.png",
     	width=154, height=40,
     	onRelease = function() return onRelease("easy") end
     	
@@ -138,8 +138,8 @@ function scene:create (event)
     mediumMode = widget.newButton{
     	label="Medium",
     	labelColor = { default = {0,0,225}, over ={100,100,250}},
-    	defaultFile="button.png",
-    	overFile="button-over.png",
+    	defaultFile="Images/button.png",
+    	overFile="Images/button-over.png",
     	width=154, height=40,
     	onRelease = function() return onRelease("med") end
     	
@@ -151,8 +151,8 @@ function scene:create (event)
     hardMode = widget.newButton{
     	label="Hard",
     	labelColor = { default = {255,0,0}, over ={100,100,250}},
-    	defaultFile="button.png",
-    	overFile="button-over.png",
+    	defaultFile="Images/button.png",
+    	overFile="Images/button-over.png",
     	width=154, height=40,
     	onRelease = function() return onRelease("hard") end
     }
@@ -165,8 +165,8 @@ function scene:create (event)
     lowLevels = widget.newButton{
     	label="3 - 5",
     	labelColor = { default = {34,139,34}, over={100,100,250}},
-    	defaultFile="button.png",
-    	overFile="button-over.png",
+    	defaultFile="Images/button.png",
+    	overFile="Images/button-over.png",
     	width=154, height=40,
     	onRelease = function() return levelSelected("low") end
     }
@@ -177,8 +177,8 @@ function scene:create (event)
     midLevels = widget.newButton{
     	label="6 - 8",
     	labelColor = { default = {0,0,255}, over={100,100,250}},
-    	defaultFile="button.png",
-    	overFile="button-over.png",
+    	defaultFile="Images/button.png",
+    	overFile="Images/button-over.png",
     	width=154, height=40,
     	onRelease = function() return levelSelected("medium") end
     }
@@ -189,8 +189,8 @@ function scene:create (event)
     highLevels = widget.newButton{
     	label="9 - 11",
     	labelColor = { default = {255,0,0}, over={100,100,250}},
-    	defaultFile="button.png",
-    	overFile="button-over.png",
+    	defaultFile="Images/button.png",
+    	overFile="Images/button-over.png",
     	width=154, height=40,
     	onRelease = function() return levelSelected("high") end
     }
@@ -200,13 +200,13 @@ function scene:create (event)
     
     --end creation of levels buttons
     
-	local titleText = display.newText( "Options", display.contentWidth * .40, display.contentHeight*.15, "Canterbury" ,display.contentHeight * .1)
+	local titleText = display.newText( "Options", display.contentWidth * .40, display.contentHeight*.15, "Fonts/Canterbury" ,display.contentHeight * .1)
 	titleText:setTextColor{ 0,0,0}
 	
-	local difficultyText = display.newText( "Difficulty", display.contentWidth * .15, display.contentHeight*.3, "Canterbury" ,display.contentHeight * .1)
+	local difficultyText = display.newText( "Difficulty", display.contentWidth * .15, display.contentHeight*.3, "Fonts/Canterbury" ,display.contentHeight * .1)
 	difficultyText:setTextColor{ 0,0,0}
 	
-	local levelsText = display.newText( "Levels", display.contentWidth * .7, display.contentHeight*.3, "Canterbury" ,display.contentHeight * .1)
+	local levelsText = display.newText( "Levels", display.contentWidth * .7, display.contentHeight*.3, "Fonts/Canterbury" ,display.contentHeight * .1)
 	levelsText:setTextColor{ 0,0,0}
 	
 	-- all display objects must be inserted into group

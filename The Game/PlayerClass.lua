@@ -22,7 +22,7 @@ function Player:init(posX, posY)
 		sheetContentWidth = 832, 
 		sheetContentHeight = 1344 
 	}
-	mySheet = graphics.newImageSheet("rectSmall.png", spriteOptions) 
+	mySheet = graphics.newImageSheet("Sprites/rectSmall.png", spriteOptions) 
 	sequenceData = {
 		{name = "forward", frames={105,106,107,108,109,110,111,112}, time = 500, loopCount = 1},
 		{name = "right", frames={144,145,146,147,148,149,150,151,152}, time = 500, loopCount = 1}, 

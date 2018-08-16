@@ -27,21 +27,29 @@ local rect, invBtn
 local tempHealth = 100
 local screenW, screenH, halfW = display.contentWidth, display.contentHeight, display.contentWidth*0.5
 local swordBtn
-local swordClashSound = audio.loadSound("swordClash.mp3")
-local openChestSound = audio.loadSound("chestOpen.mp3")
-local swordSwishSound = audio.loadSound("swordSwish.mp3")
-local stairsSound = audio.loadSound("stairs.mp3")
-local hurt1Sound = audio.loadSound("hurt1.mp3")
-local hurt2Sound = audio.loadSound("hurt2.mp3")
-local hurt3Sound = audio.loadSound("hurt3.mp3")
-local hurt4Sound = audio.loadSound("hurt4.mp3")
-local hurt5Sound = audio.loadSound("hurt5.mp3")
+local swordClashSound = audio.loadSound("SFX/swordClash.mp3")
+local openChestSound = audio.loadSound("SFX/chestOpen.mp3")
+local swordSwishSound = audio.loadSound("SFX/swordSwish.mp3")
+local stairsSound = audio.loadSound("SFX/stairs.mp3")
+local hurt1Sound = audio.loadSound("SFX/hurt1.mp3")
+local hurt2Sound = audio.loadSound("SFX/hurt2.mp3")
+local hurt3Sound = audio.loadSound("SFX/hurt3.mp3")
+local hurt4Sound = audio.loadSound("SFX/hurt4.mp3")
+local hurt5Sound = audio.loadSound("SFX/hurt5.mp3")
 local background, wall, ground, mask
+currentScore = 0
 
 -- 'onRelease' event listener
 local function onInvBtnRelease()
 	-- go to inventory.lua scene
-	composer.gotoScene( "inventory", {effect="fade", time=150} )
+	local options = {
+		effect = "fade",
+		time = 500,
+		params = { 
+			player=rect
+		}
+	}
+	composer.gotoScene( "inventory", options )
 	return true	-- indicates successful touch
 end
 
@@ -83,9 +91,11 @@ local function onSwordBtnRelease()
 	--Handle swinging at enemies here 
 	--Test to see if any enemy is range of player character.
 	monsterNum = 1
+	creatureFlag = false
 	while(monsterNum <= table.getn(creatures))do
 		if( not creatures[monsterNum].isDead)then	--only do range detection if the enemy is alive
 			if(math.abs(rect.model.x - creatures[monsterNum].model.x) < 40 and math.abs(rect.model.y - creatures[monsterNum].model.y) < 40) then	--check the distance between the player and the creature
+				creatureFlag = true
 				creatures[monsterNum]:takeDamage(rect.damage)
 				knockbackCreature(rect, creatures[monsterNum], 500)
 				audio.play( swordClashSound ) 
@@ -125,7 +135,9 @@ local function onSwordBtnRelease()
 			composer.removeScene("inventory")
 		end
 	end
-	
+	if (not stairsFlag and not chestFlag and not creatureFlag) then
+		audio.play( swordSwishSound ) 
+	end
 	return true
 end 
 
@@ -232,7 +244,7 @@ end
 --Creates the rooms tiles for the map that is generated.
 local function makeRoom(r,c)
 
-    room = display.newImageRect("floors.png",tileSize,tileSize)
+    room = display.newImageRect("Images/floors.png",tileSize,tileSize)
 	room.anchorX, room.anchorY = 0, 0
     room.x,room.y = r*tileSize,c*tileSize
 	
@@ -240,7 +252,7 @@ local function makeRoom(r,c)
 end
 --Creates the wall tiles for the map and adds the physics to them for collision handling
 local function makeWall(r,c)
-    wall = display.newImageRect("walls.png",tileSize,tileSize)
+    wall = display.newImageRect("Images/walls.png",tileSize,tileSize)
 	wall.anchorX, wall.anchorY = 0, 0
     wall.x,wall.y = r*tileSize,c*tileSize
 	physics.addBody(wall,"static",{})
@@ -249,7 +261,7 @@ local function makeWall(r,c)
 end
 --Creates the stairs that allow the user to exit the tutorial
 function makeStairs(r,c)
-	stairs = display.newImageRect("stairs.png",100,100)
+	stairs = display.newImageRect("Images/stairs.png",100,100)
 	stairs.anchorX, stairs.anchorY = 0, 0
 	stairs.x,stairs.y = (r*tileSize)-50,(c*tileSize)-50
 	
@@ -338,11 +350,11 @@ function scene:create (event)
 	physics.start()     --generates the starting physics for the game
 	physics.setGravity(0,0)
 	--mask that limits the player vision slightly, the mask also turns red briefly upon taking damage
-	mask = display.newImageRect( "masked3.png", screenW, screenH )
+	mask = display.newImageRect( "Images/masked3.png", screenW, screenH )
 	mask.anchorX, mask.anchorY = 0, 0
 	mask.x, mask.y = 0, 0
 	--red mask that shows up when the user takes damage
-	dmgMask = display.newImageRect( "masked3_dmg.png", screenW, screenH )
+	dmgMask = display.newImageRect( "Images/masked3_dmg.png", screenW, screenH )
 	dmgMask.anchorX, dmgMask.anchorY = 0, 0
 	dmgMask.x, dmgMask.y = 0, 0
 	dmgMask.isVisible = false
@@ -393,8 +405,8 @@ function scene:create (event)
 	invBtn = widget.newButton{
 		label="Inventory",
 		labelColor = { default = {255}, over= {128} },
-		defaultFile="button.png",
-		overFile="button-over.png",
+		defaultFile="Images/button.png",
+		overFile="Images/button-over.png",
 		width=140, height=30,
 		onRelease = onInvBtnRelease	-- event listener function
 	}
@@ -405,8 +417,8 @@ function scene:create (event)
 	swordBtn = widget.newButton{
 		label="Attack",
 		labelColor = {default = {255}, over = {128} },
-		defaultFile="swordIcon.png",
-		overFile="swordIcon.png",
+		defaultFile="Images/swordIcon.png",
+		overFile="Images/swordIcon.png",
 		width = 58, height = 65,
 		onRelease = onSwordBtnRelease
 	}

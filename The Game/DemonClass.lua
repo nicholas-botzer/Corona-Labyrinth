@@ -21,7 +21,7 @@ function Demon:init(posX, posY)
 		sheetContentWidth = 448, 
 		sheetContentHeight = 576 
 	}
-	mySheet = graphics.newImageSheet("Imp-Sprite.png", spriteOptions) 
+	mySheet = graphics.newImageSheet("Sprites/Imp-Sprite.png", spriteOptions) 
 	sequenceData = {
 		{name = "forward", frames={1,2,3,4}, time = 1000, loopCount = 1},
 		{name = "right", frames={22,23,24,25}, time = 1000, loopCount = 1}, 

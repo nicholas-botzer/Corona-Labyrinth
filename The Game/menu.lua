@@ -12,7 +12,7 @@ local widget = require "widget"
 
 -- forward declarations and other locals
 local playBtn, optionsBtn, tutorialBtn
-local menuMusic = audio.loadStream("MysticalCaverns.mp3")
+local menuMusic = audio.loadStream("Music/MysticalCaverns.mp3")
 	
 	
 ------------ Function List ------------
@@ -56,12 +56,12 @@ function scene:create ( event )
 	menuMusicChannel = audio.play(menuMusic, {channel=1, loops=-1, fadein=1000})
 	
 	-- set the background to the menu image
-	local background = display.newImageRect( "Capture.PNG", display.contentWidth, display.contentHeight )
+	local background = display.newImageRect( "Images/Capture.PNG", display.contentWidth, display.contentHeight )
 	background.anchorX, background.anchorY = 0, 0
 	background.x, background.y = 0, 0
 	
 	--create the title text for the start menu screen
-	local titleText = display.newImageRect("titleText.png", display.contentWidth*.85, display.contentHeight*.5)
+	local titleText = display.newImageRect("Images/titleText.png", display.contentWidth*.85, display.contentHeight*.5)
 	titleText.anchorX, titleText.anchorY = 0, 0
 	titleText.x = display.contentWidth*.07
 	titleText.y = display.contentHeight*.05
@@ -70,8 +70,8 @@ function scene:create ( event )
 	playBtn = widget.newButton{
 		label="Play",
 		labelColor = { default={255}, over={128} },
-		defaultFile="button.png",
-		overFile="button-over.png",
+		defaultFile="Images/button.png",
+		overFile="Images/button-over.png",
 		width=150, height=35,
 		onRelease = onPlayBtnRelease
 	}
@@ -82,8 +82,8 @@ function scene:create ( event )
 	tutorialBtn = widget.newButton{
 		label="Tutorial",
 		labelColor = { default={255}, over={128} },
-		defaultFile="button.png",
-		overFile="button-over.png",
+		defaultFile="Images/button.png",
+		overFile="Images/button-over.png",
 		width=150, height=35,
 		onRelease = onTutorialBtnRelease
 	}
@@ -94,8 +94,8 @@ function scene:create ( event )
 	optionsBtn = widget.newButton{
 		label="Options",
 		labelColor = { default={255}, over={128} },
-		defaultFile="button.png",
-		overFile="button-over.png",
+		defaultFile="Images/button.png",
+		overFile="Images/button-over.png",
 		width=150, height=35,
 		onRelease = onOptionsBtnRelease
 	}
@@ -126,9 +126,8 @@ function scene:show (event)
 end
 
 -- Called when scene is about to move offscreen:
-function scene:exitScene( event )
+function scene:exit2( event )
 	local group = self.view
-	
 end
 
 -- If scene's view is removed, scene:destroyScene() will be called just prior to:

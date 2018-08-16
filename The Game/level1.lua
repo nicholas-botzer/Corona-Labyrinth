@@ -29,18 +29,18 @@ local invBtn
 local tempHealth = 100
 local screenW, screenH, halfW = display.contentWidth, display.contentHeight, display.contentWidth*0.5
 local swordBtn
-local swordClashSound = audio.loadSound("swordClash.mp3")
-local openChestSound = audio.loadSound("chestOpen.mp3")
-local swordSwishSound = audio.loadSound("swordSwish.mp3")
-local stairsSound = audio.loadSound("stairs.mp3")
-local hurt1Sound = audio.loadSound("hurt1.mp3")
-local hurt2Sound = audio.loadSound("hurt2.mp3")
-local hurt3Sound = audio.loadSound("hurt3.mp3")
-local hurt4Sound = audio.loadSound("hurt4.mp3")
-local hurt5Sound = audio.loadSound("hurt5.mp3")
+local swordClashSound = audio.loadSound("SFX/swordClash.mp3")
+local openChestSound = audio.loadSound("SFX/chestOpen.mp3")
+local swordSwishSound = audio.loadSound("SFX/swordSwish.mp3")
+local stairsSound = audio.loadSound("SFX/stairs.mp3")
+local hurt1Sound = audio.loadSound("SFX/hurt1.mp3")
+local hurt2Sound = audio.loadSound("SFX/hurt2.mp3")
+local hurt3Sound = audio.loadSound("SFX/hurt3.mp3")
+local hurt4Sound = audio.loadSound("SFX/hurt4.mp3")
+local hurt5Sound = audio.loadSound("SFX/hurt5.mp3")
 local background, wall, ground, mask
-local labyrinthMusic = audio.loadStream("Battle Escape.mp3")
-local bossMusic = audio.loadStream("battleThemeA.mp3")
+local labyrinthMusic = audio.loadStream("Music/Battle Escape.mp3")
+local bossMusic = audio.loadStream("Music/battleThemeA.mp3")
 currentScore = 0
 -- 'onRelease' event listener
 local function onInvBtnRelease()

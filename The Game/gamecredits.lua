@@ -40,8 +40,8 @@ function scene:create (event)
 	menuBtn = widget.newButton{
 		label="Menu",
 		labelColor = { default = {255}, over= {128} },
-		defaultFile="button.png",
-		overFile="button-over.png",
+		defaultFile="Images/button.png",
+		overFile="Images/button-over.png",
 		width=154, height=30,
 		onRelease = onMenuBtnRelease	-- event listener function
 	}
@@ -51,8 +51,8 @@ function scene:create (event)
 	backBtn = widget.newButton{
 		label="Back",
 		labelColor = { default = {255}, over= {128} },
-		defaultFile="button.png",
-		overFile="button-over.png",
+		defaultFile="Images/button.png",
+		overFile="Images/button-over.png",
 		width=154, height=30,
 		onRelease = onBackBtnRelease	-- event listener function
 	}
